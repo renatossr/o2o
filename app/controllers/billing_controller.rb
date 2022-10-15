@@ -4,5 +4,9 @@ class BillingController < ApplicationController
   end
 
   def bill
+    members = Member.all
+    members.each do |member|
+      invoices = member.invoices.where()
+    end
   end
 end
