@@ -1,0 +1,41 @@
+<p style="color: green"><%= notice %></p>
+
+<div class="row align-items-md-stretch">
+  <div class="col-md-6">
+    <div class="h-100 p-5 bg-light border rounded-3">
+      <div class="row align-items-md-stretch">
+        <div class="col-md-8">
+          <h2><%= @member.name%></h2>
+        </div>
+        <div class="col-md-4">
+          <%= link_to "Alterar Dados", edit_member_path(@member), class: "btn btn-primary float-end"%>
+        </div>
+      </div>
+      <hr>
+      <span><i class="pull-right bi bi-whatsapp text-success"></i> <%= @member.alias %></span> <br>
+      <span><i class="pull-right bi bi-telephone-fill"></i> <%= @member.cel_number %></span> <br>
+      <span>Ativo: <%= @member.active %></span>
+
+      <hr>
+      <div>
+        <%= link_to "Alunos", members_path %>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="h-100 p-5 bg-light border rounded-3">
+      <h2>Aulas esse mês: <%=@member.workouts.where(start_at: DateTime.current.beginning_of_month..DateTime.current.end_of_month).count %></h2>
+      <hr>
+      <ol class="list-group list-group-numbered">
+        <% @member.coaches.each do |coach|%>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+          <div class="ms-2 me-auto">
+            <div class="fw-bold"><%= coach.name %></div>
+          </div>
+          <span class="badge bg-primary rounded-pill"><%=coach.workouts.where(member_id: @member.id, start_at: DateTime.current.beginning_of_month..DateTime.current.end_of_month).count %></span>
+        </li>
+        <% end %>
+      </ol>
+    </div>
+  </div>
+</div>

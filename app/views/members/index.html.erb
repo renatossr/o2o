@@ -1,0 +1,43 @@
+<% if notice %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <%= notice %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+<%end%>
+
+<h1>Alunos</h1>
+
+<table class="table table-striped mt-3" data-controller="masks" id="members">
+  <thead class="table-dark">
+    <tr>
+      <th>Nome</th>
+      <th>Apelido</th>
+      <th>Celular</th>
+      <th>Ativo</th>
+      <th>Mensalidade</th>
+      <th>Valor por aula</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @members.each do |member| %>
+      <tr id="<%= dom_id member %>">
+      <td><%= link_to member.name, member %></td>
+      <td><%= member.alias %></td>
+      <td data-masks-target="phone"><%= member.cel_number %></td>
+      <td>
+        <% if member.active? %>
+          <i class="bi bi-check text-success"></i>
+        <% else %>
+          <i class="bi bi-x text-danger"></i>
+        <% end %>
+      </td>
+      <td><span>R$ </span><span data-masks-target="money"><%= member.subscription_price %></span></td>
+      <td><span>R$ </span><span data-masks-target="money"><%= member.class_price %></span></td>
+      <td><%= link_to raw("<i class=\"bi bi-pencil-square\"></i>"), edit_member_path(member), class: "btn btn-sm btn-warning" %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to "Novo Aluno", new_member_path, class: "btn btn-primary" %>

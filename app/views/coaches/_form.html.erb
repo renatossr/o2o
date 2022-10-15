@@ -1,0 +1,50 @@
+<%= form_with(model: coach, html: { data: { controller: "masks" } }) do |form| %>
+  <% if coach.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(coach.errors.count, "error") %> prohibited this coach from being saved:</h2>
+
+      <ul>
+        <% coach.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row mt-2">
+    <div class="col-md-6">
+      <%= form.label :first_name, "Primeiro Nome", class:"form-label" %>
+      <%= form.text_field :first_name , class: "form-control", placeholder: "Primeiro Nome..."%>
+    </div>
+    <div class="col-md-6">
+      <%= form.label :last_name, "Sobrenome", class:"form-label" %>
+      <%= form.text_field :last_name , class: "form-control", placeholder: "Sobrenome..."%>
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-md-6">
+      <%= form.label :cel_number, "Celular", class:"form-label" %>
+      <%= form.telephone_field :cel_number , class: "form-control", data: { masks_target: 'phone' }, placeholder: "Número do celular..."%>
+    </div>
+    <div class="col-md-6">
+      <%= form.label :alias, "Apelido", class:"form-label" %>
+      <%= form.text_field :alias , class: "form-control", placeholder: "Sobrenome..."%>
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-md-6">
+      <%= form.label :pay_fixed, "Salário Fixo", class:"form-label" %>
+      <%= form.text_field :pay_fixed , class: "form-control", data: { masks_target: 'money' }, placeholder: "Salário fixo (Pode ser zero)..."%>
+    </div>
+    <div class="col-md-6">
+      <%= form.label :pay_per_workout, "Salário Fixo", class:"form-label" %>
+      <%= form.text_field :pay_per_workout , class: "form-control", data: { masks_target: 'money' }, placeholder: "Pagamento por aula (Pode ser zero)..."%>
+    </div>
+  </div>
+
+  <div class="mt-5">
+    <%= form.submit "Salvar", class: "btn btn-primary" %>
+  </div>  
+<% end %>

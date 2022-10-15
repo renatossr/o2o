@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  member_id: 1
+  coach_id: 1
+  start_at: 2022-10-14 17:00:25
+  end_at: 2022-10-14 17:00:25
+  location: MyString
+  comments: MyText
+
+two:
+  member_id: 1
+  coach_id: 1
+  start_at: 2022-10-14 17:00:25
+  end_at: 2022-10-14 17:00:25
+  location: MyString
+  comments: MyText

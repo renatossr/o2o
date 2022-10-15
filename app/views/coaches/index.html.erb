@@ -1,0 +1,35 @@
+<% if notice %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <%= notice %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+<%end%>
+
+<h1>Coaches</h1>
+
+<table class="table table-striped mt-3" data-controller="masks" id="members">
+  <thead class="table-dark">
+    <tr>
+      <th>Nome</th>
+      <th>Apelido</th>
+      <th>Celular</th>
+      <th>Salário Fixo</th>
+      <th>Valor por Aula</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @coaches.each do |coach| %>
+      <tr id="<%= dom_id coach %>">
+        <td><%= coach.name %></td>
+        <td><%= coach.alias %></td>
+        <td data-masks-target="phone"><%= coach.cel_number %></td>
+        <td><span>R$ </span><span data-masks-target="money"><%= coach.pay_fixed %></span></td>
+        <td><span>R$ </span><span data-masks-target="money"><%= coach.pay_per_workout %></span></td>
+        <td><%= link_to raw("<i class=\"bi bi-pencil-square\"></i>"), edit_coach_path(coach), class: "btn btn-sm btn-warning" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to "Novo Coach", new_coach_path, class: "btn btn-primary" %>
