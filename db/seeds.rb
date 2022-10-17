@@ -5,8 +5,8 @@ Faker::Config.locale = 'pt-BR'
 Member.destroy_all
 10.times do
   firstName = Faker::Name.first_name
-  subscriptionPrice = Faker::Number.number(digits: 4)*100
-  classPrice = Faker::Number.number(digits: 3)*100
+  subscriptionPrice = Faker::Number.within(range: 1000..2000)*100
+  classPrice = Faker::Number.within(range: 100..200)*100
 
   Member.create!([{
     first_name: firstName,
@@ -28,8 +28,8 @@ Coach.destroy_all
     last_name: Faker::Name.last_name,
     alias: firstName,
     cel_number: Faker::PhoneNumber.cell_phone,
-    pay_fixed: Faker::Number.number(digits: 5),
-    pay_per_workout: Faker::Number.number(digits: 5)
+    pay_fixed: Faker::Number.within(range: 1000..2000)*100,
+    pay_per_workout: Faker::Number.within(range: 50..100)*100
   }])
 end
 p "Created #{Coach.count} Coaches"

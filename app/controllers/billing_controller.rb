@@ -51,5 +51,6 @@ class BillingController < ApplicationController
         end
       end
     end
+    redirect_to action: "index"
   end
 end
