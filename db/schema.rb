@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_15_185407) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_16_113625) do
   create_table "coaches", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
@@ -42,6 +42,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_15_185407) do
     t.integer "payable_by"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "total_cents"
   end
 
   create_table "members", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
