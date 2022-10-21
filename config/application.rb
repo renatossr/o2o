@@ -18,5 +18,8 @@ module O2o
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    #config.default_calendar = "one2onefight@gmail.com"
+    config.default_calendar = "renato.fairbanks@gmail.com"
   end
 end

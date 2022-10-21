@@ -1,0 +1,52 @@
+<% if notice %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <%= notice %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+<%end%>
+
+<div class="container">
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-10 col-xl-8 mx-auto">
+    <h2 class="h3 mb-4 page-title">Admin</h2>
+    <hr>
+    <h5 class="mb-0 mt-5">Google Calendar</h5>
+    <p>Ações relacionadas à integração com o Google Calendar.</p>
+    <div class="list-group mb-5">
+      <div class="list-group-item">
+        <div class="row align-items-center">
+          <div class="col">
+            <strong class="mb-3">Autenticação</strong>
+            <p class="text-muted mb-0">Solicitar autenticação para o Google.</p>
+          </div>
+          <div class="col-auto">
+            <%= link_to 'Solicitar', redirect_url, class: 'btn btn-primary' %>
+          </div>
+        </div>
+      </div>
+      <div class="list-group-item">
+        <div class="row align-items-center">
+          <div class="col">
+            <strong class="mb-3">Synch Adicional</strong>
+            <p class="text-muted mb-0">Sincronizar. Última sincronização: </p><span><%= SyncToken.last.blank? ? 'Sincronização total ainda não realizada' : SyncToken.last.created_at%></span>
+          </div>
+          <div class="col-auto">
+            <%= link_to 'Sync', events_url, class: 'btn btn-primary' + (SyncToken.last.blank? ? ' disabled' : '') %>
+          </div>
+        </div>
+      </div>
+      <div class="list-group-item">
+        <div class="row align-items-center">
+          <div class="col">
+            <strong class="mb-3">Synch Completo</strong>
+            <p class="text-muted mb-0">Refazer a sincronismo completo com o Google Calendar.</p>
+          </div>
+          <div class="col-auto">
+            <%= link_to 'Iniciar', eventsFullSync_url, class: 'btn btn-primary' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

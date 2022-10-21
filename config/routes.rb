@@ -1,12 +1,15 @@
 Rails.application.routes.draw do
-  get 'admin/index'
-  get 'billing/index'
-  get 'billing/bill'
+  get "calendar_event/index"
+  get "calendar_event/process_events", as: "proc_events"
+  get "/admin", to: "admin#index", as: "admin"
+  get "billing/index", as: "billing"
+  get "billing/bill"
 
-  get '/redirect', to: 'gcalendar#redirect', as: 'redirect'
-  get '/callback', to: 'gcalendar#callback', as: 'callback'
-  get '/calendars', to: 'gcalendar#calendars', as: 'calendars'
-  get '/events/:calendar_id', to: 'gcalendar#events', as: 'events', calendar_id: /[^\/]+/
+  get "/redirect", to: "g_calendar#redirect", as: "redirect"
+  get "/callback", to: "g_calendar#callback", as: "callback"
+  get "/calendars", to: "g_calendar#calendars", as: "calendars"
+  get "/events", to: "g_calendar#events", as: "events"
+  get "/events/full", to: "g_calendar#eventsFullSync", as: "eventsFullSync"
 
   resources :workouts
   resources :coaches

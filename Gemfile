@@ -36,6 +36,9 @@ gem 'jquery_mask_rails', '~> 0.1.0'
 # Google calendar gem
 gem 'google-api-client', require: 'google/apis/calendar_v3'
 
+# Demerau-levenshtein gem for comparing string distances
+gem 'damerau-levenshtein'
+
 # Use Redis adapter to run Action Cable in production
 # gem "redis", "~> 4.0"
 

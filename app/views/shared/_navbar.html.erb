@@ -8,14 +8,29 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
+        <li class="nav-item me-3">
             <h4>
               <%= link_to "Alunos", members_path, class: "nav-link active"%>
             </h4>
         </li>
-        <li class="nav-item">
+        <li class="nav-item me-3">
           <h4>
             <%= link_to "Coaches", coaches_path, class: "nav-link active"%>
+          </h4>
+        </li>
+        <li class="nav-item me-3">
+          <h4>
+            <%= link_to "Faturamento", billing_path, class: "nav-link active"%>
+          </h4>
+        </li>
+        <li class="nav-item me-3">
+          <h4>
+            <%= link_to "Admin", admin_path, class: "nav-link active"%>
+          </h4>
+        </li>
+        <li class="nav-item me-3">
+          <h4>
+            <%= link_to "Eventos", proc_events_path, class: "nav-link active"%>
           </h4>
         </li>
       </ul>

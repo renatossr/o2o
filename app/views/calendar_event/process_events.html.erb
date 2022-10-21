@@ -1,0 +1,42 @@
+<div class="container pb-3">
+    <div class="container">
+      <h1>Processar os Eventos</h1>
+      <hr class="mb-5">
+    </div>
+    
+    <div class="d-grid gap-3" style="grid-template-columns: 1fr 2fr;">
+      <div class="list-group">
+      <% @events.each do |event| %>
+      <%= link_to proc_events_path(:event => event.id), class: "list-group-item list-group-item-action d-flex justify-content-between align-items-start gap-3 py-3" do %>
+          <div class="ms-2 me-auto">
+            <h6 class="mb-0"><%= truncate(event.title, length: 40) %></h6>
+            <p class="mb-0 opacity-75"><%= event.start_at.localtime.strftime("%d/%m/%y %H:%M") %></p>
+          </div>
+           <span class="badge bg-danger rounded-pill"><%= "Novo" unless event.processed? %></span>
+      <% end %>
+      <% end %>
+      </div>
+      <div class="p-5 border rounded-3">
+        <div class="row">
+          <div class="col-8" style="height: 100px">
+            <h3 class="mb-3"><%= @current_event.title %></h3>
+          </div>
+          <div class="col-4 text-end">
+            <h5 class="mb-0 opacity-75"><%= @current_event.start_at.localtime.strftime("%d/%m/%y %H:%M") %></h5>
+          </div>
+        </div class="row">
+          <div class="col-12">
+            <%= form_with model: @workout do |workout_form| %>
+              <h2 class="mt-5">Coach</h2>
+              <%= workout_form.select :coach_id, Coach.all.map { |m| [m.name, m.id]}, {include_blank: "Coach..." }, class: "form-select mb-3"%>
+              
+              <h2 class="mt-5">Alunos</h2>
+              <%= workout_form.fields_for :members do |member_form|%>
+                <%= member_form.select :id, Member.all.map { |m| [m.name, m.id]}, {include_blank: "Aluno..." }, class: "form-select mb-3"%>
+              <% end %>
+              <br/>
+              <%= workout_form.submit "Confirmar", class: "btn btn-primary" %>
+            <% end %>
+        </div>
+    </div>
+  </div>

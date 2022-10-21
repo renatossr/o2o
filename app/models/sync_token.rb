@@ -1,0 +1,2 @@
+class SyncToken < ApplicationRecord
+end

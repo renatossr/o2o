@@ -1,0 +1,5 @@
+<ul>
+  <% @events.each do |event| %>
+    <li><%= event.id %> | <%= event.summary %> | <%= event.html_link %> | (<%= event.start.date_time unless event.start.blank? %> | <%= event.end.date_time unless event.end.blank? %> | <%= event.status %>)</li>
+  <% end %>
+</ul>

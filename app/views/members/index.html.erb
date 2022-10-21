@@ -27,9 +27,9 @@
       <td data-masks-target="phone"><%= member.cel_number %></td>
       <td>
         <% if member.active? %>
-          <i class="bi bi-check text-success"></i>
+          <i class="bi bi-check text-success fs-5 fw-bolder"></i>
         <% else %>
-          <i class="bi bi-x text-danger"></i>
+          <i class="bi bi-x text-danger fs-5 fw-bolder"></i>
         <% end %>
       </td>
       <td><span>R$ </span><span data-masks-target="money"><%= member.subscription_price %></span></td>

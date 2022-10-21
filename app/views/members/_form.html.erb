@@ -41,9 +41,14 @@
     <%= form.text_field :class_price , class: "form-control", data: { masks_target: 'money' }, placeholder: "Valor por aula (Pode ser zero)..."%>
   </div>
 
-  <div class="form-check form-switch">
+  <div class="mb-3">
+    <%= form.label :class_price, "Responsável pelo pagamento", style: "display: block", class:"form-label" %>
+    <%= form.select :responsible_id, Member.all.map { |m| [m.name, m.id]}, {include_blank: "Selecionar responsável caso diferente do Aluno" }, class: "form-select"%>
+  </div>
+
+  <div class="form-check form-switch mb-3">
     <%= form.check_box :active , class: "form-check-input" %>
-    <%= form.label :active, "Aluno Ativo", style: "display: block", class:"form-check-label" %>
+    <%= form.label :active, "Aluno Ativo", style: "display: block", class:"form-check-label"%>
   </div>
   
 
