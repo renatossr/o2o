@@ -31,4 +31,32 @@ class Member < ApplicationRecord
   def responsible_self?
     (responsible_id == id) || (responsible_id.blank?)
   end
+
+  def workouts_available_in_month(date)
+    dates = [*date.beginning_of_month..date.end_of_month]
+
+    mon = self.monday.nil? ? 0 : self.monday
+    tue = self.tuesday.nil? ? 0 : self.tuesday
+    wed = self.wednesday.nil? ? 0 : self.wednesday
+    thu = self.thursday.nil? ? 0 : self.thursday
+    fri = self.friday.nil? ? 0 : self.friday
+    sat = self.saturday.nil? ? 0 : self.saturday
+    sun = self.sunday.nil? ? 0 : self.sunday
+
+    mondays_in_month = dates.count { |d| (d.wday == 1) } # Number of Mondays in month
+    tuesdays_in_month = dates.count { |d| (d.wday == 2) } # Number of Tuesday in month
+    wednesdays_in_month = dates.count { |d| (d.wday == 3) } # Number of Wednesday in month
+    thursdays_in_month = dates.count { |d| (d.wday == 4) } # Number of Thursday in month
+    fridays_in_month = dates.count { |d| (d.wday == 5) } # Number of Friday in month
+    saturdays_in_month = dates.count { |d| (d.wday == 6) } # Number of Saturdayy in month
+    sundays_in_month = dates.count { |d| (d.wday == 0) } # Number of Sunday in month
+
+    available_monday_workouts = mon * mondays_in_month
+    available_monday_workouts += tue * tuesdays_in_month
+    available_monday_workouts += wed * wednesdays_in_month
+    available_monday_workouts += thu * thursdays_in_month
+    available_monday_workouts += fri * fridays_in_month
+    available_monday_workouts += sat * saturdays_in_month
+    available_monday_workouts += sun * sundays_in_month
+  end
 end

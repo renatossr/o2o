@@ -42,7 +42,7 @@
             <p class="text-muted mb-0">Refazer a sincronismo completo com o Google Calendar.</p>
           </div>
           <div class="col-auto">
-            <%= link_to 'Iniciar', eventsFullSync_url, class: 'btn btn-primary' %>
+            <%= link_to 'Iniciar', eventsFullSync_url, class: 'btn btn-primary' + (GToken.where(token_type: 'refresh').last.blank? ? ' disabled' : '') %>
           </div>
         </div>
       </div>

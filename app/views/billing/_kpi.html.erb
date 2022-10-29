@@ -1,0 +1,16 @@
+<div class="container rounded bg-white mt-5">
+  <div class="p-3">
+    <div class="d-flex flex-wrap justify-content-between">
+      <h4><%= kpi %></h4>
+    </div>
+    <div id="sales" class="carousel slide dashboard-widget-carousel position-static pt-2 pointer-event" data-bs-ride="carousel">
+      <div class="d-flex flex-wrap align-items-baseline">
+        <h2 class="me-3"><%= unit %> <%= value %></h2>
+        <%= kpi_formatted_ratio_html_tag(ratio) %>
+      </div>
+      <div class="mb-3">
+        <p class="text-muted fw-bold text-small">North Ludwig <span class=" fw-normal">($2643M last month)</span></p>
+      </div>
+    </div>
+  </div>
+</div>

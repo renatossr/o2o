@@ -4,4 +4,8 @@ class BillingItem < ApplicationRecord
   belongs_to :payer, class_name: "Member", foreign_key: :payable_by
 
   scope :all_draft, -> { where(status: "draft") }
+
+  def value_cents
+    price_cents * quantity
+  end
 end

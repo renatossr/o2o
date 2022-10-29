@@ -1,52 +1,103 @@
-<h1>Faturas</h1>
-
-<table class="table table-hover mt-3" data-controller="masks" id="members">
-  <thead class="table-dark">
-    <tr>
-      <th></th>
-      <th>ID</th>
-      <th>Aluno</th>
-      <th>Data</th>
-      <th>Status</th>
-      <th>Valor Total</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @invoices.each do |invoice| %>
-    <tr id="<%= dom_id invoice %>">
-      <td><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#<%= dom_id invoice %>_items" aria-expanded="false" aria-controls="<%= dom_id invoice %>_items"><i class="bi bi-plus"></i></button></td>
-      <td><%= invoice.id %></td>
-      <td><%= invoice.member.name %></td>
-      <td><%= invoice.reference_date %></td>
-      <td><%= invoice.status %></td>
-      <td><span>R$ </span><span data-masks-target="money"><%= invoice.total_value_cents %></span></td>
-    </tr>
-    <tr>
-      <td colspan="6" class="py-0">
-        <div id="<%= dom_id invoice %>_items" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#<%= dom_id invoice %>"> 
-        <table class="table table-striped">
-          <thead>
-            <tr class="info">
-              <th></th>
-              <th></th>
-              <th>Descrição</th>
-              <th>Valor</th>
+<h1>Financeiro</h1>
+<div class="row">
+  <div class="col-md-3">
+    <%= render "kpi", kpi: 'Aulas', unit: '', value: 1760, ratio: 105.3/100 %>
+  </div>
+  <div class="col-md-3">
+    <%= render "kpi", kpi: 'Receita', unit: 'R$', value: 257632, ratio: 102.3/100 %>
+  </div>
+  <div class="col-md-3">
+    <%= render "kpi", kpi: 'Alunos', unit: '', value: 250, ratio: 88.8/100 %>
+  </div>
+  <div class="col-md-3"></div>
+</div>
+<div class="container rounded bg-white mt-5 mb-5">
+  <div class="p-3 py-5">
+    <div class="d-flex p-0 mb-2 justify-content-between">
+      <div class="p-2">
+        <%= paginate @invoices, window: 1, theme: 'bootstrap-5', pagination_class: "pagination-sm" %>
+        <%= page_entries_info @invoices %>
+      </div>
+      <div class="ml-auto p-2 align-self-end">
+        <%= link_to raw("<i class=\"bi bi-clipboard2-plus\"></i> Nova Fatura"), "#", class: "btn btn-primary" %>
+      </div>
+    </div>
+    <table class="table table-hover mt-3 table-borderless" data-controller="masks" id="members">
+      <thead class="table-dark">
+        <tr>
+          <th></th>
+          <th>ID</th>
+          <th>Aluno</th>
+          <th>Data</th>
+          <th>Status</th>
+          <th>Valor Total</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @invoices.each do |invoice| %>
+          <tr id="<%= dom_id invoice %>" class="border-top">
+            <td><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#<%= dom_id invoice %>_items" aria-expanded="false" aria-controls="<%= dom_id invoice %>_items"><i class="bi bi-plus"></i></button></td>
+            <td><%= invoice.id %></td>
+            <td><%= invoice.member.name %></td>
+            <td><%= invoice.reference_date %></td>
+            <td><%= invoice.status %></td>
+            <td><span>R$ </span><span data-masks-target="money"><%= invoice.total_value_cents %></span></td>
+            <td><%= link_to raw("<i class=\"bi bi-pencil-square\"></i>"), edit_invoice_path(invoice), class: "btn btn-sm btn-warning" %></td>
+          </tr>
+          <tr>
+            <td colspan="7" class="py-0">
+              <div id="<%= dom_id invoice %>_items" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#<%= dom_id invoice %>">
+                <div class="container py-3 px-3 pe-5">
+                  <h5 class="font-size-15">Detalhes da fatura</h5>
+                  <div class="table-responsive">
+                    <table class="table table-nowrap table-centered mb-0">
+                      <thead>
+                        <tr>
+                          <th style="width: 70px;">No.</th>
+                          <th>Descrição</th>
+                          <th class="text-end">Preço</th>
+                          <th class="text-end">Quantidade</th>
+                          <th colspan="2" class="text-end" style="width: 120px;">Valor</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% counter = 1 %>
+                        <% invoice.billing_items.each do |item| %>
+                          <tr>
+                            <th scope="row"><%= counter %></th>
+                            <td>
+                              <h6 class="mb-1"><%= item.description %></h6>
+                            </td>
+                            <td class="text-end"><%= number_to_currency(item.price_cents/100, unit: "R$", separator: ",", delimiter: ".") %></td>
+                            <td class="text-end"><%= item.quantity %></td>
+                            <td colspan="2" class="text-end"><%= number_to_currency(item.value_cents/100, unit: "R$", separator: ",", delimiter: ".") %></td>
+                          </tr>
+                          <% counter += 1%>
+                        <% end %>
+                        <tr>
+                          <th scope="row" colspan="4" class="text-end">Sub Total</th>
+                          <td class="text-end"><%= number_to_currency(invoice.total_value_cents/100, unit: "R$", separator: ",", delimiter: ".") %></td>
+                        </tr>
+                        <tr>
+                          <th scope="row" colspan="4" class="border-0 text-end">
+                            Desconto</th>
+                          <td class="border-0 text-end">- <%= number_to_currency(invoice.discount_cents/100, unit: "R$", separator: ",", delimiter: ".") %></td>
+                        </tr>
+                        <tr>
+                          <th scope="row" colspan="4" class="border-0 text-end">Total</th>
+                          <td class="border-0 text-end">
+                            <h6 class="m-0"><%= number_to_currency(invoice.final_value_cent/100, unit: "R$", separator: ",", delimiter: ".") %></h6>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </td>
             </tr>
-          </thead>	
-          
-          <tbody>
-            <% invoice.billing_items.each do |item| %>
-            <tr>
-              <td></td>
-              <td></td>
-              <td><%= item.description %></td>
-              <td><span>R$ </span><span data-masks-target="money"><%= item.total_cents %></span></td>
-            </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </td>
-    </tr>
-    <% end %>
-  </tbody>
-</table>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>

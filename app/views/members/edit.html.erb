@@ -1,10 +1,50 @@
-<h1>Dados do Aluno</h1>
-
+<h1>Perfil do aluno</h1>
 <%= render "form", member: @member %>
-
-<br>
-
-<div>
-  <%= link_to "Show this member", @member %> |
-  <%= link_to "Back to members", members_path %>
+<div class="container rounded bg-white">
+  <div class="row">
+    <div class="col-md-7">
+      <div class="p-3 py-5">
+        <h4 class="mb-0">Treinos</h4>
+        <hr>
+        <table class="table mt-3" id="workouts">
+          <thead>
+            <tr>
+              <th scope="col">Data</th>
+              <th scope="col">Coach</th>
+              <th scope="col">Local</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @workouts.each do |workout| %>
+              <tr id="<%= dom_id workout %>">
+                <td><%= l(workout.start_at.localtime, format: "%A, %d/%m - %H:%M") %></td>
+                <td><%= workout.coach&.name %></td>
+                <td><%= workout.location %></td>
+                <td class="text-end" style="font-size: 14px"><span class="badge bg-success rounded-pill"><%= workout.status %></span></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-md-5">
+      <div class="p-3 py-5">
+        <h4 class="mb-0">Faturas</h4>
+        <hr>
+        <ul class="list-group">
+          <% @member.invoices.order("reference_date desc").each do |invoice|%>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <div class="fw-bold"><%= l(invoice.reference_date, format: "%Y - %B") %></div>
+                <span>R$ </span><span data-masks-target="money"><%= invoice.total_value_cents %></span>
+                <%= link_to '', show_invoice_path(invoice), class: "stretched-link" %>
+              </div>
+              <span class="badge bg-primary rounded-pill"><%= invoice.status %></span>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>

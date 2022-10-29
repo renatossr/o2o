@@ -39,6 +39,11 @@ gem 'google-api-client', require: 'google/apis/calendar_v3'
 # Demerau-levenshtein gem for comparing string distances
 gem 'damerau-levenshtein'
 
+gem 'simple_form'
+gem 'kaminari'
+gem 'bootstrap5-kaminari-views'
+# gem "select2-rails"
+
 # Use Redis adapter to run Action Cable in production
 # gem "redis", "~> 4.0"
 

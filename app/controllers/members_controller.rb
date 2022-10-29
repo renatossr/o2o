@@ -4,7 +4,7 @@ class MembersController < ApplicationController
 
   # GET /members or /members.json
   def index
-    @members = Member.all
+    @members = Member.all.page(params[:page])
   end
 
   # GET /members/1 or /members/1.json
@@ -73,6 +73,7 @@ class MembersController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_member
     @member = Member.find(params[:id])
+    @workouts = @member.workouts.order("start_at DESC")
   end
 
   # Only allow a list of trusted parameters through.
@@ -86,6 +87,13 @@ class MembersController < ApplicationController
       :subscription_price,
       :class_price,
       :active,
+      :monday,
+      :tuesday,
+      :wednesday,
+      :thursday,
+      :friday,
+      :saturday,
+      :sunday,
     )
   end
 

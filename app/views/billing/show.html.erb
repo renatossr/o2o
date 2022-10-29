@@ -1,0 +1,95 @@
+<h1>Fatura</h1>
+<div class="container rounded bg-white mt-5 mb-5" data-controller="masks" >
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card border-white py2">
+        <div class="card-body">
+          <div class="invoice-title">
+            <h4 class="float-end">Fatura #<%= @invoice.id %> <span class="badge bg-success ms-2">Paid</span></h4>
+            <div class="mb-4 d-flex justify-content-left">
+              <%= image_tag "logo-one2one.png", alt: "One 2 One", height: "100" %>
+              <div class="container pt-2">
+                <strong class="mb-1">One 2 One Fight</strong>
+                <p class="mb-1 text-muted">Rua Florida, 1901</p>
+                <p class="mb-1 text-muted">(11) 98888-7777</p>
+              </div>
+            </div>
+          </div>
+          <hr class="my-4">
+          <div class="row mb-5">
+            <div class="col-sm-6">
+              <div class="text-muted">
+                <h5 class="mb-3">Aluno faturado:</h5>
+                <h6 class="mb-2"><%= @invoice.member.name %></h6>
+                <p><%= @invoice.member.cel_number %></p>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="text-muted text-sm-end">
+                <div>
+                  <h5 class="font-size-16 mb-1">Número da Fatura:</h5>
+                  <p>#<%= @invoice.id %></p>
+                </div>
+                <div class="mt-4">
+                  <h5 class="font-size-16 mb-1">Mês da Fatura:</h5>
+                  <p><%= l(@invoice.reference_date, format: "%b, %Y") %></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="py-2">
+            <h5 class="font-size-15">Detalhes da fatura</h5>
+            <div class="table-responsive">
+              <table class="table table-nowrap table-centered mb-0">
+                <thead>
+                  <tr>
+                    <th style="width: 70px;">No.</th>
+                    <th>Descrição</th>
+                    <th class="text-end">Preço</th>
+                    <th class="text-end">Quantidade</th>
+                    <th colspan="2" class="text-end" style="width: 120px;">Valor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% counter = 1 %>
+                  <% @invoice.billing_items.each do |item| %>
+                    <tr>
+                      <th scope="row"><%= counter %></th>
+                      <td>
+                        <h6 class="mb-1"><%= item.description %></h6>
+                      </td>
+                      <td class="text-end"><%= number_to_currency(item.price_cents/100, unit: "R$", separator: ",", delimiter: ".") %></td>
+                      <td class="text-end"><%= item.quantity %></td>
+                      <td colspan="2" class="text-end"><%= number_to_currency(item.value_cents/100, unit: "R$", separator: ",", delimiter: ".") %></td>
+                    </tr>
+                    <% counter += 1%>
+                  <% end %>
+                  <tr>
+                    <th scope="row" colspan="4" class="text-end">Sub Total</th>
+                    <td class="text-end"><%= number_to_currency(@invoice.total_value_cents/100, unit: "R$", separator: ",", delimiter: ".") %></td>
+                  </tr>
+                  <tr>
+                    <th scope="row" colspan="4" class="border-0 text-end">
+                      Desconto</th>
+                    <td class="border-0 text-end">- <%= number_to_currency(@invoice.discount_cents/100, unit: "R$", separator: ",", delimiter: ".") %></td>
+                  </tr>
+                  <tr>
+                    <th scope="row" colspan="4" class="border-0 text-end">Total</th>
+                    <td class="border-0 text-end">
+                      <h4 class="m-0"><%= number_to_currency(@invoice.final_value_cent/100, unit: "R$", separator: ",", delimiter: ".") %></h4>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="d-print-none mt-4">
+              <div class="float-end">
+                <a href="#" class="btn btn-primary">Salvar</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

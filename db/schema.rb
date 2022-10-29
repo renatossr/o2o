@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_20_181714) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_26_204404) do
   create_table "billing_items", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "member_id"
     t.string "description"
@@ -20,7 +20,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_20_181714) do
     t.integer "payable_by"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "total_cents"
+    t.integer "price_cents"
+    t.integer "quantity"
   end
 
   create_table "billings", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -40,6 +41,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_20_181714) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "processed", default: false
+    t.integer "color_id"
+    t.string "ical_id"
+    t.boolean "confirmed", default: false
     t.index ["external_id"], name: "index_calendar_events_on_external_id"
   end
 
@@ -59,6 +63,13 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_20_181714) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "g_tokens", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "token"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "token_type"
+  end
+
   create_table "invoices", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "external_id"
     t.string "external_url"
@@ -69,6 +80,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_20_181714) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.date "paid_at"
+    t.integer "discount_cents", default: 0
   end
 
   create_table "members", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -82,6 +94,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_20_181714) do
     t.integer "class_price"
     t.boolean "active", default: true
     t.integer "responsible_id"
+    t.integer "monday"
+    t.integer "tuesday"
+    t.integer "wednesday"
+    t.integer "thursday"
+    t.integer "friday"
+    t.integer "saturday"
+    t.integer "sunday"
+    t.integer "replacement_classes", default: 0
   end
 
   create_table "members_workouts", id: false, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -106,6 +126,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_20_181714) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "calendar_event_id"
+    t.string "status", default: "confirmed"
   end
 
 end

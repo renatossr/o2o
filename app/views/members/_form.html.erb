@@ -2,7 +2,6 @@
   <% if member.errors.any? %>
     <div style="color: red">
       <h2><%= pluralize(member.errors.count, "error") %> prohibited this member from being saved:</h2>
-
       <ul>
         <% member.errors.each do |error| %>
           <li><%= error.full_message %></li>
@@ -10,49 +9,106 @@
       </ul>
     </div>
   <% end %>
-
-  <div class="mb-3">
-    <%= form.label :first_name, "Primeiro Nome", style: "display: block", class:"form-label" %>
-    <%= form.text_field :first_name , class: "form-control", placeholder: "Primeiro Nome..."%>
+  <div class="container rounded bg-white mt-5 mb-5">
+    <div class="row">
+      <div class="col-md-3 border-end">
+        <div class="d-flex flex-column align-items-center text-center p-3 py-1"><img class="rounded-circle mt-5" width="150px" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
+          <h4 class="font-weight-bold"><%= member.name%></h4>
+          <span class="text-black-50"><%= member.alias%></span>
+          <span class="text-black-50">Reposições: <%= member.alias%></span>
+          <div class="form-check form-switch my-3">
+            <%= form.check_box :active , class: "form-check-input" %>
+            <%= form.label :active, "Aluno Ativo", style: "display: block", class:"form-check-label"%>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 border-end">
+        <div class="p-3 py-5">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="text-right">Dados do aluno</h4>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <%= form.label :first_name, "Primeiro Nome", style: "display: block", class:"form-label" %>
+              <%= form.text_field :first_name , class: "form-control", placeholder: "Primeiro Nome..."%>
+            </div>
+            <div class="col-md-6">
+              <%= form.label :last_name, "Sobrenome", style: "display: block", class:"form-label" %>
+              <%= form.text_field :last_name , class: "form-control", placeholder: "Sobrenome..."%>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <%= form.label :alias, "Apelido", style: "display: block", class:"form-label" %>
+              <%= form.text_field :alias , class: "form-control", placeholder: "Apelido..."%>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <%= form.label :cel_number, "Celular", style: "display: block", class:"form-label" %>
+              <%= form.telephone_field :cel_number , class: "form-control", data: { masks_target: 'phone' }, placeholder: "Número do celular..."%>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-12" data-controller="select2">
+              <%= form.label :class_price, "Responsável pelo pagamento", style: "display: block", class:"form-label" %>
+              <%= form.select :responsible_id, Member.all.map { |m| [m.name, m.id]}, {include_blank: "Selecionar..." }, class: "form-select js-s2-select"%>
+            </div>
+          </div>
+          <div class="mt-5 text-center">
+            <%= form.submit "Salvar Aluno", class: "btn btn-primary" %>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <div class="p-3 py-5">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="text-right">Planos</h4>
+          </div>
+          <div class="row mt-2 mb-3 pb-3 border-bottom">
+            <div class="col-md-5 pe-1">
+              <%= form.label :subscription_price, "Mensal", style: "display: block", class:"form-label" %>
+              <%= form.text_field :subscription_price , class: "form-control", data: { masks_target: 'money' }, placeholder: "-"%>
+            </div>
+            <div class="col-md-1 px-1">
+              <%= form.label :monday, "S", style: "display: block", class:"form-label ps-2" %>
+              <%= form.text_field :monday , class: "form-control", placeholder: "-"%>
+            </div>
+            <div class="col-md-1 px-1">
+              <%= form.label :tuesday, "T", style: "display: block", class:"form-label ps-2" %>
+              <%= form.text_field :tuesday , class: "form-control", placeholder: "-"%>
+            </div>
+            <div class="col-md-1 px-1">
+              <%= form.label :wednesday, "Q", style: "display: block", class:"form-label ps-2" %>
+              <%= form.text_field :wednesday , class: "form-control", placeholder: "-"%>
+            </div>
+            <div class="col-md-1 px-1">
+              <%= form.label :thursday, "Q", style: "display: block", class:"form-label ps-2" %>
+              <%= form.text_field :thursday , class: "form-control", placeholder: "-"%>
+            </div>
+            <div class="col-md-1 px-1">
+              <%= form.label :friday, "S", style: "display: block", class:"form-label ps-2" %>
+              <%= form.text_field :friday , class: "form-control", placeholder: "-"%>
+            </div>
+            <div class="col-md-1 px-1">
+              <%= form.label :saturday, "S", style: "display: block", class:"form-label ps-2" %>
+              <%= form.text_field :saturday , class: "form-control", placeholder: "-"%>
+            </div>
+            <div class="col-md-1 px-1">
+              <%= form.label :sunday, "D", style: "display: block", class:"form-label ps-2" %>
+              <%= form.text_field :sunday , class: "form-control", placeholder: "-"%>
+            </div>
+          </div>
+          <div class="row mt-2 mb-3 pb-3">
+            <div class="col-md-5 pe-1">
+              <%= form.label :class_price, "Avulso", style: "display: block", class:"form-label" %>
+              <%= form.text_field :class_price , class: "form-control", data: { masks_target: 'money' }, placeholder: "-"%>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <div class="mb-3">
-    <%= form.label :last_name, "Sobrenome", style: "display: block", class:"form-label" %>
-    <%= form.text_field :last_name , class: "form-control", placeholder: "Sobrenome..."%>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :alias, "Apelido", style: "display: block", class:"form-label" %>
-    <%= form.text_field :alias , class: "form-control", placeholder: "Apelido..."%>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :cel_number, "Celular", style: "display: block", class:"form-label" %>
-    <%= form.telephone_field :cel_number , class: "form-control", data: { masks_target: 'phone' }, placeholder: "Número do celular..."%>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :subscription_price, "Mensalidade", style: "display: block", class:"form-label" %>
-    <%= form.text_field :subscription_price , class: "form-control", data: { masks_target: 'money' }, placeholder: "Valor da mensalidade (Pode ser zero)..."%>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :class_price, "Valor por aula", style: "display: block", class:"form-label" %>
-    <%= form.text_field :class_price , class: "form-control", data: { masks_target: 'money' }, placeholder: "Valor por aula (Pode ser zero)..."%>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :class_price, "Responsável pelo pagamento", style: "display: block", class:"form-label" %>
-    <%= form.select :responsible_id, Member.all.map { |m| [m.name, m.id]}, {include_blank: "Selecionar responsável caso diferente do Aluno" }, class: "form-select"%>
-  </div>
-
-  <div class="form-check form-switch mb-3">
-    <%= form.check_box :active , class: "form-check-input" %>
-    <%= form.label :active, "Aluno Ativo", style: "display: block", class:"form-check-label"%>
-  </div>
-  
-
-  <div>
-    <%= form.submit "Salvar", class: "btn btn-primary" %>
-  </div>  
+</div>
+</div>
 <% end %>

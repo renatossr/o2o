@@ -1,10 +1,10 @@
 class CoachesController < ApplicationController
-  before_action :set_coach, only: %i[ show edit update destroy ]
-  before_action :sanitize_values, only: %i[ create update ]
+  before_action :set_coach, only: %i[show edit update destroy]
+  before_action :sanitize_values, only: %i[create update]
 
   # GET /coaches or /coaches.json
   def index
-    @coaches = Coach.all
+    @coaches = Coach.all.page(params[:page])
   end
 
   # GET /coaches/1 or /coaches/1.json
@@ -59,19 +59,20 @@ class CoachesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_coach
-      @coach = Coach.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def coach_params
-      params.require(:coach).permit(:first_name, :last_name, :alias, :cel_number, :pay_fixed, :pay_per_workout)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_coach
+    @coach = Coach.find(params[:id])
+  end
 
-    def sanitize_values
-      params[:coach][:cel_number] = params[:coach][:cel_number].sub('(', '').sub(')', '').sub('-', '').sub(' ', '')
-      params[:coach][:pay_fixed] = (params[:coach][:pay_fixed].sub('.', '').sub(',', '.').to_d*100).to_i
-      params[:coach][:pay_per_workout] = (params[:coach][:pay_per_workout].sub('.', '').sub(',', '.').to_d*100).to_i
-    end
+  # Only allow a list of trusted parameters through.
+  def coach_params
+    params.require(:coach).permit(:first_name, :last_name, :alias, :cel_number, :pay_fixed, :pay_per_workout)
+  end
+
+  def sanitize_values
+    params[:coach][:cel_number] = params[:coach][:cel_number].sub("(", "").sub(")", "").sub("-", "").sub(" ", "")
+    params[:coach][:pay_fixed] = (params[:coach][:pay_fixed].sub(".", "").sub(",", ".").to_d * 100).to_i
+    params[:coach][:pay_per_workout] = (params[:coach][:pay_per_workout].sub(".", "").sub(",", ".").to_d * 100).to_i
+  end
 end

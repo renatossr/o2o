@@ -1,2 +1,7 @@
+$primary: #6610f2;
+
 @import "bootstrap/scss/bootstrap";
 @import "bootstrap-icons/font/bootstrap-icons";
+
+@import "select2/src/scss/core";
+@import "select2-bootstrap-5-theme/src/include-all";

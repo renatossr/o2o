@@ -1,39 +1,33 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top bg-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">
-      <%= image_tag "logo-one2one.png", alt: "One 2 One", height: "100" %>
+      <%= image_tag "logo-one2one.png", alt: "One 2 One", height: "50" %>
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item me-3">
-            <h4>
-              <%= link_to "Alunos", members_path, class: "nav-link active"%>
-            </h4>
+    <div class="collapse navbar-collapse" id="navbarScroll">
+      <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+        <li class="nav-item">
+          <h5><%= link_to "Alunos", members_path, class: "nav-link active"%></h5>
         </li>
-        <li class="nav-item me-3">
-          <h4>
-            <%= link_to "Coaches", coaches_path, class: "nav-link active"%>
-          </h4>
+        <li class="nav-item">
+          <h5><%= link_to "Coaches", coaches_path, class: "nav-link active"%></h5>
         </li>
-        <li class="nav-item me-3">
-          <h4>
-            <%= link_to "Faturamento", billing_path, class: "nav-link active"%>
-          </h4>
+        <li class="nav-item">
+          <h5><%= link_to "Financeiro", billing_path, class: "nav-link active"%></h5>
         </li>
-        <li class="nav-item me-3">
-          <h4>
-            <%= link_to "Admin", admin_path, class: "nav-link active"%>
-          </h4>
-        </li>
-        <li class="nav-item me-3">
-          <h4>
-            <%= link_to "Eventos", proc_events_path, class: "nav-link active"%>
-          </h4>
+        <li class="nav-item">
+          <h5><%= link_to "Eventos", proc_events_path, class: "nav-link active"%></h5>
         </li>
       </ul>
+      <div class="d-flex">
+        <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+          <li class="nav-item">
+            <h5><%= link_to "Admin", admin_path, class: "nav-link active"%></h5>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </nav>

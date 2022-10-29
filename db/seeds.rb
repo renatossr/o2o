@@ -67,21 +67,8 @@ CalendarEvent.destroy_all
         start_at: time,
         end_at: Time.parse(time) + 30.minutes,
         status: "confirmada",
+        color_id: rand(1..11),
       },
     )
-
-  wk =
-    Workout.create!(
-      {
-        coach_id: coach_id,
-        calendar_event_id: ev.id,
-        start_at: ev.start_at,
-        end_at: ev.end_at,
-        location: Faker::Address.street_address,
-        comments: "",
-      },
-    )
-
-  member_ids.each { |id| wk.members << Member.find(id) }
 end
-p "Created #{Coach.count} CalendarEvents and #{Workout.count} Workouts"
+p "Created #{CalendarEvent.count} CalendarEvents"
