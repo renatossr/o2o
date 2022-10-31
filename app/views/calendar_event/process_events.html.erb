@@ -1,4 +1,4 @@
-<div class="container d-flex justify-content-between">
+<div class="d-flex justify-content-between">
   <h1>Aulas para confirmação</h1>
   <h3 class="text-muted"><span class="badge bg-danger rounded-pill"><%= @unconfirmed_total_count %></span></h3>
 </div>
@@ -7,7 +7,7 @@
     <%= render "event_to_process", event: event %>
   <% end %>
   <% if @events.count <= 0 %>
-    <div class="row align-items-center border-bottom rounded bg-white my-2" style="min-height: 150px;">
+    <div class="row align-items-center border-bottom rounded bg-white mt-0 mb-4" style="min-height: 150px;">
       <div class="col text-center">
         <h4>Sem mais aulas para confirmar!</h4>
       </div>

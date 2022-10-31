@@ -2,22 +2,22 @@
 // Run that command whenever you add a new controller or create them with
 // ./bin/rails generate stimulus controllerName
 
-import { application } from "./application";
+import { application } from "./application"
 
-import HelloController from "./hello_controller";
-application.register("hello", HelloController);
+import InvoiceValueCalculatorController from "./invoice_value_calculator_controller"
+application.register("invoice-value-calculator", InvoiceValueCalculatorController)
 
-import InvoiceValueCalculatorController from "./invoice_value_calculator_controller";
-application.register("invoice-value-calculator", InvoiceValueCalculatorController);
+import ItemValueCalculatorController from "./item_value_calculator_controller"
+application.register("item-value-calculator", ItemValueCalculatorController)
 
-import ItemValueCalculatorController from "./item_value_calculator_controller";
-application.register("item-value-calculator", ItemValueCalculatorController);
+import MasksController from "./masks_controller"
+application.register("masks", MasksController)
 
-import MasksController from "./masks_controller";
-application.register("masks", MasksController);
+import Select2Controller from "./select2_controller"
+application.register("select2", Select2Controller)
 
-import Select2Controller from "./select2_controller";
-application.register("select2", Select2Controller);
+import SetActiveLinkController from "./set_active_link_controller"
+application.register("set-active-link", SetActiveLinkController)
 
-import NestedForm from "stimulus-rails-nested-form";
-application.register("nested-form", NestedForm);
+import SubmitOnChangeController from "./submit_on_change_controller"
+application.register("submit-on-change", SubmitOnChangeController)

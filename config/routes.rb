@@ -7,10 +7,13 @@ Rails.application.routes.draw do
   patch "calendar_event/confirm(/:id)", to: "calendar_event#confirm", as: "confirm_event"
 
   get "/admin", to: "admin#index", as: "admin"
-  get "billing/index", as: "billing"
+  get "billing/dashboard", as: "billing_dashboard"
   get "billing/bill"
+  get "billing/billing_cycle", as: "billing_cycle"
+  post "billing/start_cycle", as: "start_cycle"
   get "billing/invoice(/:id)", to: "billing#show", as: "show_invoice"
   get "billing/invoice(/:id)/edit", to: "billing#edit", as: "edit_invoice"
+  patch "billing/invoice(/:id)", to: "billing#update", as: "update_invoice"
 
   get "/redirect", to: "g_calendar#redirect", as: "redirect"
   get "/callback", to: "g_calendar#callback", as: "callback"

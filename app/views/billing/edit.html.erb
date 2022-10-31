@@ -1,5 +1,5 @@
 <h1>Editar Fatura</h1>
-<%= simple_form_for @invoice, url: edit_invoice_path(@invoice), html: { data: {controller: 'masks nested-form', nested_form_wrapper_selector_value: '.nested-form-wrapper'} } do |f| %>
+<%= simple_form_for @invoice, url: update_invoice_path(@invoice), html: { data: {controller: 'masks nested-form', nested_form_wrapper_selector_value: '.nested-form-wrapper'} } do |f| %>
   <div class="container rounded bg-white mt-5 mb-5">
     <div class="row">
       <div class="col-lg-12">
@@ -84,7 +84,8 @@
             </div>
             <div class="d-print-none mt-4">
               <div class="float-end">
-                <a href="#" class="btn btn-primary">Salvar</a>
+                <%= hidden_field_tag :previous_request, request.referer %>
+                <%= f.submit "Salvar", class: "btn btn-primary"%>
               </div>
             </div>
           </div>

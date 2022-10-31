@@ -1,12 +1,10 @@
-<div class="container">
-  <h1>Aulas</h1>
-  <%= paginate @events, window: 1, theme: 'bootstrap-5', pagination_class: "pagination-sm" %>
-  <%= page_entries_info @events %>
-  <ul class="list-group">
-    <% @events.each do |event|%>
-      <li class="list-group-item">
-        <%= event.title %>
-      </li>
-    <% end %>
-  </ul>
-</div>
+<h1>Aulas</h1>
+<%= paginate @events, window: 1, theme: 'bootstrap-5', pagination_class: "pagination-sm" %>
+<%= page_entries_info @events %>
+<ul class="list-group">
+  <% @events.each do |event|%>
+    <li class="list-group-item">
+      <%= event.title %>
+    </li>
+  <% end %>
+</ul>

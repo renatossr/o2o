@@ -69,4 +69,9 @@ class Billing
       end
     end
   end
+
+  def self.start_billing_cycle(month)
+    month = Date.strptime(month, "%B, %Y")
+    puts month
+  end
 end

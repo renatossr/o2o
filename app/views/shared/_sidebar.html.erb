@@ -1,0 +1,59 @@
+<div class="position-sticky pt-3 sidebar-sticky">
+  <ul class="nav flex-column">
+    <li class="nav-item">
+      <a class="nav-link" aria-current="page" href="#">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather align-text-bottom" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        Dashboard
+      </a>
+    </li>
+    <li class="nav-item">
+      <%= link_to "#collapseCadastro", class: "nav-link", "data-bs-toggle": "collapse", role: "button" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather align-text-bottom" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Cadastro
+      <% end %>
+      <ul class="collapse p-0 ps-4 mb-3" id="collapseCadastro">
+        <li class="nav-link p-0">
+          <%= link_to members_path, class: "nav-link pt-0" do %>
+            <i class="bi bi-arrow-right-short"></i> Alunos
+          <% end %>
+        </li>
+        <li class="nav-link p-0">
+          <%= link_to coaches_path, class: "nav-link pt-0" do %>
+            <i class="bi bi-arrow-right-short"></i> Coaches
+          <% end %>
+        </li>
+      </ul>
+    </li>
+    <li class="nav-item">
+      <%= link_to "#collapseFinanceiro", class: "nav-link", "data-bs-toggle": "collapse", role: "button" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="feather align-text-bottom" aria-hidden="true" viewBox="0 0 16 16">
+          <path d="M5.5 9.511c.076.954.83 1.697 2.182 1.785V12h.6v-.709c1.4-.098 2.218-.846 2.218-1.932 0-.987-.626-1.496-1.745-1.76l-.473-.112V5.57c.6.068.982.396 1.074.85h1.052c-.076-.919-.864-1.638-2.126-1.716V4h-.6v.719c-1.195.117-2.01.836-2.01 1.853 0 .9.606 1.472 1.613 1.707l.397.098v2.034c-.615-.093-1.022-.43-1.114-.9H5.5zm2.177-2.166c-.59-.137-.91-.416-.91-.836 0-.47.345-.822.915-.925v1.76h-.005zm.692 1.193c.717.166 1.048.435 1.048.91 0 .542-.412.914-1.135.982V8.518l.087.02z"/>
+          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+          <path d="M8 13.5a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11zm0 .5A6 6 0 1 0 8 2a6 6 0 0 0 0 12z"/>
+        </svg>
+        Financeiro
+      <% end %>
+      <ul class="collapse p-0 ps-4 mb-3" id="collapseFinanceiro">
+        <li class="nav-link p-0">
+          <%= link_to billing_dashboard_path, class: "nav-link pt-0" do %>
+            <i class="bi bi-arrow-right-short"></i> Dashboard
+          <% end %>
+        </li>
+        <li class="nav-link p-0">
+          <%= link_to billing_cycle_path, class: "nav-link pt-0" do %>
+            <i class="bi bi-arrow-right-short"></i> Faturamento
+          <% end %>
+        </li>
+      </ul>
+    </li>
+    <li class="nav-item">
+      <%= link_to proc_events_path, class: "nav-link" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="feather align-text-bottom" viewBox="0 0 16 16">
+          <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H2z"/>
+          <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5V4zM11 7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
+        </svg>
+        Eventos Google Calendar
+      <% end %>
+    </li>
+  </ul>
+</div>

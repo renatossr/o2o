@@ -17,10 +17,10 @@ export default class extends Controller {
 
     let total_value = 0;
     this.item_valueTargets.forEach((element) => {
-      total_value += parseInt(element.textContent.replace(/\D/g, "")) || 0;
+      total_value += parseInt(element.textContent.replace(/[^0-9-]/g, "")) || 0;
     });
     this.total_valueTarget.textContent = formatter.format(total_value / 100);
-    const discount_value = parseInt(this.discount_valueTarget.value.replace(/\D/g, "")) || 0;
+    const discount_value = parseInt(this.discount_valueTarget.value.replace(/[^0-9-]/g, "")) || 0;
     const final_value = total_value - discount_value;
     this.final_valueTarget.textContent = formatter.format(final_value / 100);
   }

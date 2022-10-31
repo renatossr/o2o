@@ -19,7 +19,7 @@ export default class extends Controller {
       maximumFractionDigits: 2, // (causes 2500.99 to be printed as $2,501)
     });
 
-    const price = parseInt(this.priceTarget.value.replace(/\D/g, "") || 0);
+    const price = parseInt(this.priceTarget.value.replace(/[^0-9-]/g, "") || 0);
     const quantity = parseInt(this.quantityTarget.value.replace(/\D/g, "") || 0);
     const item_value = price * quantity;
     this.item_valueTarget.textContent = formatter.format(item_value / 100);

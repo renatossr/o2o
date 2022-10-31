@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>O2o</title>
+    <title>O2O</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -10,8 +10,19 @@
   </head>
   <body class="bg-light">
     <%= render "shared/navbar" %>
-    <main class="container text-dark mt-5">
-      <%= yield %>
-    </main>
+    <div class="container-fluid">
+      <div class="row">
+        <nav id="sidebarMenu" class="col-md-2 col-lg-2 d-md-block bg-light sidebar collapse" data-controller="set-active-link">
+          <%= render "shared/sidebar" %>
+        </nav>
+        <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4">
+          <div class="container mt-5">
+            <div class="container">
+              <%= yield %>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
   </body>
 </html>
