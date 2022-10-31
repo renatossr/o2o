@@ -2,7 +2,7 @@ class Invoice < ApplicationRecord
   belongs_to :member
   has_many :billing_items
 
-  accepts_nested_attributes_for :billing_items
+  accepts_nested_attributes_for :billing_items, allow_destroy: true
 
   def update_totals!
     self.total_value_cents = 0
@@ -12,5 +12,8 @@ class Invoice < ApplicationRecord
 
   def final_value_cent
     total_value_cents - discount_cents
+  end
+
+  def self.list_billing_cycles
   end
 end
