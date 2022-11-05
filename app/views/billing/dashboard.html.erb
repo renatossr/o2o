@@ -19,7 +19,7 @@
         <%= page_entries_info @invoices %>
       </div>
       <div class="ml-auto p-2 align-self-end">
-        <%= link_to raw("<i class=\"bi bi-clipboard2-plus\"></i> Nova Fatura"), "#", class: "btn btn-primary" %>
+        <%= link_to raw("<i class=\"bi bi-clipboard2-plus\"></i> Nova Fatura"), new_invoice_path, class: "btn btn-primary" %>
       </div>
     </div>
     <table class="table table-hover mt-3 table-borderless" data-controller="masks" id="members">
@@ -41,9 +41,12 @@
             <td><%= invoice.id %></td>
             <td><%= invoice.member.name %></td>
             <td><%= invoice.reference_date %></td>
-            <td><%= invoice.status %></td>
+            <td><%= render(BadgeComponent.new(text: invoice.status, color: invoice.status_color)) %></td>
             <td><span>R$ </span><span data-masks-target="money"><%= invoice.total_value_cents %></span></td>
-            <td><%= link_to raw("<i class=\"bi bi-pencil-square\"></i>"), edit_invoice_path(invoice), class: "btn btn-sm btn-warning" %></td>
+            <td>
+              <%= link_to raw("<i class=\"bi bi-pencil-square\"></i>"), edit_invoice_path(invoice), class: "btn btn-sm btn-outline-warning" if invoice.status == "draft" %>
+              <%= link_to raw("<i class=\"bi bi-eye-fill\"></i>"), invoice_path(invoice), class: "btn btn-sm btn-outline-warning" unless invoice.status == "draft" %>
+            </td>
           </tr>
           <tr>
             <td colspan="7" class="py-0">

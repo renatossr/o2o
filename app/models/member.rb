@@ -1,5 +1,6 @@
 class Member < ApplicationRecord
-  has_and_belongs_to_many :workouts
+  has_many :members_workouts
+  has_many :workouts, through: :members_workouts
   has_many :invoices
   has_many :billing_items
   has_many :coaches, -> { distinct }, through: :workouts
@@ -20,6 +21,22 @@ class Member < ApplicationRecord
     class_price > 0
   end
 
+  def has_billing_items_in_range?(range)
+    billing_items.where(reference_date: range).count > 0
+  end
+
+  def is_already_in_billing_cycle?(range)
+    result = false
+    billing_items.each do |item|
+      if range.cover?(item.invoice.reference_date) && item.invoice.invoice_type == "billing_cycle" &&
+           item.invoice.status != "canceled"
+        result = true
+        break
+      end
+    end
+    return result
+  end
+
   def has_workouts_in_range?(range)
     workouts.where(start_at: range).count > 0
   end
@@ -30,6 +47,10 @@ class Member < ApplicationRecord
 
   def responsible_self?
     (responsible_id == id) || (responsible_id.blank?)
+  end
+
+  def whatsapp_link
+    "https://wa.me/+55#{cel_number}"
   end
 
   def workouts_available_in_month(date)

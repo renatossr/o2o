@@ -5,7 +5,7 @@
       <div class="card border-white py2">
         <div class="card-body">
           <div class="invoice-title">
-            <h4 class="float-end">Fatura #<%= @invoice.id %> <span class="badge bg-success ms-2">Paid</span></h4>
+            <h4 class="float-end">Fatura #<%= @invoice.id %> <%= render(BadgeComponent.new(text: @invoice.status, color: @invoice.status_color)) %></h4>
             <div class="mb-4 d-flex justify-content-left">
               <%= image_tag "logo-one2one.png", alt: "One 2 One", height: "100" %>
               <div class="container pt-2">
@@ -84,7 +84,11 @@
             </div>
             <div class="d-print-none mt-4">
               <div class="float-end">
-                <a href="#" class="btn btn-primary">Salvar</a>
+                <%= simple_form_for :invoice, url: "", method: :patch do |f|%>
+                  <%= f.hidden_field :id %>
+                  <%= f.submit "2a via",  formaction: '', class: "btn btn-sm btn-primary" %>
+                  <%= f.submit "Cancelar",  formaction: cancel_invoice_path, class: "btn btn-sm btn-danger" %>
+                <% end %>
               </div>
             </div>
           </div>

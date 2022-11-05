@@ -16,18 +16,22 @@
         <div class="row">
           <div class="col-md-8">
             <div class="px-0">
-              <div class="d-flex justify-content-start align-items-top">
+              <div class="justify-content-start align-items-top">
                 <h6 class="text-right me-3">Alunos</h6>
-                <%= w.association :members, label: false, input_html: { class: "js-s2-select", id: "members_id_#{event.workout.id}", style: "width: 400px"} %>
+                <%= w.association :members, label: false, input_html: { class: "js-s2-select", id: "members_id_#{event.workout.id}", style: "width: 100%;"} %>
               </div>
             </div>
           </div>
           <div class="col-md-4 pe-0">
             <div class="px-0">
-              <div class="d-flex justify-content-start align-items-top">
+              <div class="justify-content-start align-items-top">
                 <h6 class="text-right me-3">Coach</h6>
+                <%= w.input :coach_id, label: false, collection: Coach.all, input_html: { class: "js-s2-select", id: "coach_id_#{event.workout.id}", style: "width: 100%"} %>
+              </div>
+              <div class="d-flex justify-content-start align-items-top mt-3">
+                <h6 class="text-right me-3">Reposição</h6>
                 <div class="col-md-6">
-                  <%= w.input :coach_id, label: false, collection: Coach.all, input_html: { class: "js-s2-select", id: "coach_id_#{event.workout.id}", style: "width: 150px"} %>
+                  <%= w.input :with_replacement, label: false %>
                 </div>
               </div>
             </div>
@@ -39,7 +43,7 @@
           <div class="col">
             <span></span>
             <div class="float-end">
-              <span class="badge badge-outline bg-danger rounded-pill"><%= "!" unless event.confirmed? %></span>
+              <span class="badge badge-outline bg-danger rounded-pill"><%= "!" unless event.reviewed? %></span>
             </div>
           </div>
         </div>

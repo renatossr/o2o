@@ -1,4 +1,5 @@
 $primary: #6610f2;
+$light: #f5f5f5;
 
 @import "bootstrap/scss/bootstrap";
 @import "bootstrap-icons/font/bootstrap-icons";
@@ -8,6 +9,7 @@ $primary: #6610f2;
 
 body {
   font-size: 0.9rem;
+  overflow-y: scroll;
 }
 
 .feather {

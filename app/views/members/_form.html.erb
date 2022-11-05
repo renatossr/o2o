@@ -15,7 +15,7 @@
         <div class="d-flex flex-column align-items-center text-center p-3 py-1"><img class="rounded-circle mt-5" width="150px" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
           <h4 class="font-weight-bold"><%= member.name%></h4>
           <span class="text-black-50"><%= member.alias%></span>
-          <span class="text-black-50">Reposições: <%= member.alias%></span>
+          <span class="text-black-50">Reposições: <%= member.replacement_classes %></span>
           <div class="form-check form-switch my-3">
             <%= form.check_box :active , class: "form-check-input" %>
             <%= form.label :active, "Aluno Ativo", style: "display: block", class:"form-check-label"%>

@@ -3,9 +3,10 @@ class CalendarEvent < ApplicationRecord
   accepts_nested_attributes_for :workout
 
   scope :all_unprocessed, -> { where(processed: false) }
-  scope :all_unconfirmed, -> { where(confirmed: false) }
+  scope :all_unreviewed, -> { where(reviewed: false) }
 
   after_save :process_event, if: proc { !self.processed? }
+  after_save :set_workout_reviewed, if: proc { self.reviewed? }
 
   def process_event
     workout = self.workout
@@ -20,25 +21,31 @@ class CalendarEvent < ApplicationRecord
     workout.status = "cancelled" if cancelled?
 
     # Process Members
-    unless processed_title.first.blank?
-      workout.members = extract_members(processed_title.first)
-      if workout.members.count > 0 && replacement?
-        workout.members.each { |member| member.replacement_classes += 1 }
-      end
-    end
+    workout.members = extract_members(processed_title.first) unless processed_title.first.blank?
+
+    # Process replacement
+    workout.with_replacement = true if replacement?
 
     # Process Coach
-    unless processed_title.second.blank?
-      workout.coach = extract_coach(processed_title.second)
-    end
+    workout.coach = extract_coach(processed_title.second) unless processed_title.second.blank?
     workout.save!
 
     self.processed = true
     self.save!
   end
 
+  def set_workout_reviewed
+    workout = self.workout
+    workout.mark_reviewed
+  end
+
+  def set_workout_with_replacement
+    workout = self.workout
+    workout.mark_replacement
+  end
+
   def self.process_all
-    events = CalendarEvent.all_unconfirmed
+    events = CalendarEvent.all_unprocessed
     events.each { |event| event.process_event }
   end
 
@@ -51,9 +58,7 @@ class CalendarEvent < ApplicationRecord
 
     return false if status.blank?
     return true if status.downcase.include?("cancelado")
-    status
-      .split(/\W+/)
-      .each { |word| return true if generate_score("cancelado", word) <= 0.25 }
+    status.split(/\W+/).each { |word| return true if generate_score("cancelado", word) <= 0.25 }
     return false
   end
 
@@ -62,9 +67,7 @@ class CalendarEvent < ApplicationRecord
 
     return false if status.blank?
     return true if status.downcase.include?("reposição")
-    status
-      .split(/\W+/)
-      .each { |word| return true if generate_score("reposição", word) <= 0.25 }
+    status.split(/\W+/).each { |word| return true if generate_score("reposição", word) <= 0.25 }
     return false
   end
 
@@ -117,8 +120,7 @@ class CalendarEvent < ApplicationRecord
     end
 
     coach_distances.sort_by! { |k| k[:score] }
-    if coach_distances.length == 1 ||
-         (coach_distances.length > 1 && coach_distances.first[:score] < 1)
+    if coach_distances.length == 1 || (coach_distances.length > 1 && coach_distances.first[:score] < 1)
       Coach.find(coach_distances.first[:coach])
     end
   end
@@ -154,8 +156,7 @@ class CalendarEvent < ApplicationRecord
       end
 
       member_distances.sort_by! { |k| k[:score] }
-      if member_distances.length == 1 ||
-           (member_distances.length > 1 && member_distances.first[:score] < 1)
+      if member_distances.length == 1 || (member_distances.length > 1 && member_distances.first[:score] < 1)
         member_results.push(Member.find(member_distances.first[:member]))
       end
     end
@@ -171,10 +172,7 @@ class CalendarEvent < ApplicationRecord
 
     # Testa o sobrenome contra o sobrenome e primeiro nome
     score_last =
-      [
-        generate_score(model.last_name, last_name),
-        generate_score(model.last_name, first_name),
-      ].minmax.length() * 0.3
+      [generate_score(model.last_name, last_name), generate_score(model.last_name, first_name)].minmax.length() * 0.3
 
     # Testa o nome inteiro
     score_full = generate_score(model.name, name) * 0.1

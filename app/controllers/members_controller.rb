@@ -26,15 +26,11 @@ class MembersController < ApplicationController
 
     respond_to do |format|
       if @member.save
-        format.html do
-          redirect_to members_url, notice: "Member was successfully created."
-        end
+        format.html { redirect_to members_url, notice: "Member was successfully created." }
         format.json { render :show, status: :created, location: @member }
       else
         format.html { render :new, status: :unprocessable_entity }
-        format.json do
-          render json: @member.errors, status: :unprocessable_entity
-        end
+        format.json { render json: @member.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -43,15 +39,11 @@ class MembersController < ApplicationController
   def update
     respond_to do |format|
       if @member.update(member_params)
-        format.html do
-          redirect_to members_url, notice: "Member was successfully updated."
-        end
+        format.html { redirect_to members_url, notice: "Member was successfully updated." }
         format.json { render :show, status: :ok, location: @member }
       else
         format.html { render :edit, status: :unprocessable_entity }
-        format.json do
-          render json: @member.errors, status: :unprocessable_entity
-        end
+        format.json { render json: @member.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -61,9 +53,7 @@ class MembersController < ApplicationController
     @member.destroy
 
     respond_to do |format|
-      format.html do
-        redirect_to members_url, notice: "Member was successfully destroyed."
-      end
+      format.html { redirect_to members_url, notice: "Member was successfully destroyed." }
       format.json { head :no_content }
     end
   end
@@ -98,16 +88,10 @@ class MembersController < ApplicationController
   end
 
   def sanitize_values
-    params[:member][:cel_number] = params[:member][:cel_number]
-      .sub("(", "")
-      .sub(")", "")
-      .sub("-", "")
-      .sub(" ", "")
+    params[:member][:cel_number] = params[:member][:cel_number].sub("(", "").sub(")", "").sub("-", "").sub(" ", "")
     params[:member][:subscription_price] = (
       params[:member][:subscription_price].sub(".", "").sub(",", ".").to_d * 100
     ).to_i
-    params[:member][:class_price] = (
-      params[:member][:class_price].sub(".", "").sub(",", ".").to_d * 100
-    ).to_i
+    params[:member][:class_price] = (params[:member][:class_price].sub(".", "").sub(",", ".").to_d * 100).to_i
   end
 end

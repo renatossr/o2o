@@ -42,6 +42,7 @@ gem 'damerau-levenshtein'
 gem 'simple_form'
 gem 'kaminari'
 gem 'bootstrap5-kaminari-views'
+gem "view_component", require: "view_component/engine"
 # gem "select2-rails"
 
 # Use Redis adapter to run Action Cable in production

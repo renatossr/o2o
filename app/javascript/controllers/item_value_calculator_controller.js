@@ -23,7 +23,5 @@ export default class extends Controller {
     const quantity = parseInt(this.quantityTarget.value.replace(/\D/g, "") || 0);
     const item_value = price * quantity;
     this.item_valueTarget.textContent = formatter.format(item_value / 100);
-
-    window.dispatchEvent(event);
   }
 }

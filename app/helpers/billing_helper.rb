@@ -10,8 +10,7 @@ module BillingHelper
       signal = ""
       css_class = ""
     end
-    result =
-      "<h4 class=\"#{css_class} fw-bold\">#{signal}#{((ratio - 1) * 100.0).round(1)}%</h4>"
+    result = "<h4 class=\"#{css_class} fw-bold\">#{signal}#{((ratio - 1) * 100.0).round(1)}%</h4>"
     result.html_safe
   end
 end

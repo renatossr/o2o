@@ -32,7 +32,10 @@
           <tr id="<%= dom_id member %>">
             <td><%= link_to member.name, edit_member_path(member)%></td>
             <td><%= member.alias %></td>
-            <td data-masks-target="phone"><%= member.cel_number %></td>
+            <td>
+              <span data-masks-target="phone"><%= member.cel_number %></span>
+              <%= link_to raw("<i class=\"bi bi-whatsapp\"></i"), member.whatsapp_link, target: :_blank, class: "btn btn-sm ms-2", style: "color: #25D366;" %>
+            </td>
             <td>
               <% if member.active? %>
                 <i class="bi bi-check text-success fs-5 fw-bolder"></i>

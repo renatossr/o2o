@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_26_204404) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_05_164625) do
   create_table "billing_items", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "member_id"
     t.string "description"
@@ -22,6 +22,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_26_204404) do
     t.datetime "updated_at", null: false
     t.integer "price_cents"
     t.integer "quantity"
+    t.string "billing_type", default: "general"
   end
 
   create_table "billings", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -43,7 +44,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_26_204404) do
     t.boolean "processed", default: false
     t.integer "color_id"
     t.string "ical_id"
-    t.boolean "confirmed", default: false
+    t.boolean "reviewed", default: false
     t.index ["external_id"], name: "index_calendar_events_on_external_id"
   end
 
@@ -81,6 +82,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_26_204404) do
     t.datetime "updated_at", null: false
     t.date "paid_at"
     t.integer "discount_cents", default: 0
+    t.string "payment_method"
+    t.integer "paid_cents"
+    t.string "invoice_type"
   end
 
   create_table "members", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -104,11 +108,13 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_26_204404) do
     t.integer "replacement_classes", default: 0
   end
 
-  create_table "members_workouts", id: false, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "members_workouts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "workout_id"
     t.integer "member_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "status"
+    t.integer "billing_item_id"
   end
 
   create_table "sync_tokens", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -127,6 +133,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_26_204404) do
     t.datetime "updated_at", null: false
     t.integer "calendar_event_id"
     t.string "status", default: "confirmed"
+    t.boolean "reviewed", default: false
+    t.boolean "with_replacement", default: false
+    t.integer "billing_item_id"
   end
 
 end

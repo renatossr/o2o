@@ -1,7 +1,13 @@
+<% if notice %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <%= notice %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+<%end%>
 <h1 class="ms-4" >Faturamento</h1>
 <div class="container rounded bg-white mt-5" data-controller="select2">
   <div class="p-3">
-    <%= simple_form_for :billing_cycle, url: billing_cycle_path, method: :get, html:{ "data-controller": "submit-on-change", "data-submit-on-change-target": "form_to_submit" } do |f|%>
+    <%= simple_form_for :billing_cycle, url: start_cycle_path, method: :post, html:{ "data-controller": "submit-on-change", "data-submit-on-change-target": "form_to_submit" } do |f|%>
       <div class="d-flex row justify-content-between align-items-center">
         <div class="col-9 ">
           <h2 class="me-3">Selecionar ciclo de faturamento</h2>
@@ -13,7 +19,8 @@
   </div>
 </div>
 <% if @invoices %>
-  <%= simple_form_for :invoices_in_cycle, url: '', method: :post do |fi| %>
+  <%= simple_form_for :invoices_in_cycle, url: confirm_invoices_path, method: :patch, html: {"data-controller": "checkbox-select-all"} do |fi| %>
+    <%= hidden_field_tag "billing_cycle[cycle]", @selected_date %>
     <div class="container rounded bg-white mt-5 mb-5">
       <div class="p-3 py-5">
         <div class="d-flex p-0 mb-2 justify-content-between">
@@ -22,13 +29,16 @@
             <%= page_entries_info @invoices %>
           </div>
           <div class="ml-auto p-2 align-self-end">
-            <%= link_to raw("<i class=\"bi bi-clipboard2-plus\"></i> Nova Fatura"), "#", class: "btn btn-primary" %>
+            <%= link_to raw("<i class=\"bi bi-clipboard2-plus\"></i> Nova Fatura"), new_invoice_path, class: "btn btn-primary" %>
+            <%= button_tag type: 'submit', class: 'btn btn-primary' do %>
+              <i class="bi bi-check"></i> Confirmar selecionadas
+            <% end %>
           </div>
         </div>
         <table class="table table-hover mt-3 table-borderless" data-controller="masks" id="members">
           <thead class="table-dark">
             <tr>
-              <th></th>
+              <th><%= fi.input :confirm, label: false, as: :boolean, input_html: {data: {"checkbox-select-all-target": "parent",  "action": "change->checkbox-select-all#toggleChildren"}} %></th>
               <th></th>
               <th>ID</th>
               <th>Aluno</th>
@@ -41,14 +51,22 @@
           <tbody>
             <% @invoices.each do |invoice| %>
               <tr id="<%= dom_id invoice %>" class="border-top">
-                <td><%= fi.input :confirm, label: false, as: :boolean %></td>
+                <td><%= fi.input :confirm, label: false, as: :boolean, input_html: {name: "invoices_in_cycle[#{invoice.id}]", data: {"checkbox-select-all-target": "child",  "action": "change->checkbox-select-all#toggleParent"}} if invoice.status == "draft" %></td>
                 <td><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#<%= dom_id invoice %>_items" aria-expanded="false" aria-controls="<%= dom_id invoice %>_items"><i class="bi bi-plus"></i></button></td>
                 <td><%= invoice.id %></td>
                 <td><%= invoice.member.name %></td>
                 <td><%= invoice.reference_date %></td>
-                <td><%= invoice.status %></td>
+                <td><%= render(BadgeComponent.new(text: invoice.status, color: invoice.status_color)) %></td>
                 <td><span>R$ </span><span data-masks-target="money"><%= invoice.total_value_cents %></span></td>
-                <td><%= link_to raw("<i class=\"bi bi-pencil-square\"></i>"), edit_invoice_path(invoice), class: "btn btn-sm btn-warning" %></td>
+                <td class="text-end">
+                  <% if invoice.status == "draft" %>
+                    <%= link_to raw("<i class=\"bi bi-pencil-square\"></i>"), edit_invoice_path(invoice), class: "btn btn-sm btn-outline-warning" %>
+                    <%= button_tag type: 'submit', class: 'btn btn-sm btn-outline-success', data: {"checkbox-select-all-name-param": "invoices_in_cycle[#{invoice.id}]", "action": "checkbox-select-all#confirmIndividual"} do %>
+                      <i class="bi bi-check"></i>
+                    <% end %>
+                  <% end %>
+                  <%= link_to raw("<i class=\"bi bi-eye-fill\"></i>"), invoice_path(invoice), class: "btn btn-sm btn-outline-warning" unless invoice.status == "draft" %>
+                </td>
               </tr>
               <tr>
                 <td colspan="8" class="py-0">

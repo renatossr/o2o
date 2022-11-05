@@ -38,9 +38,9 @@
               <div class="ms-2 me-auto">
                 <div class="fw-bold"><%= l(invoice.reference_date, format: "%Y - %B") %></div>
                 <span>R$ </span><span data-masks-target="money"><%= invoice.total_value_cents %></span>
-                <%= link_to '', show_invoice_path(invoice), class: "stretched-link" %>
+                <%= link_to '', invoice_path(invoice), class: "stretched-link" %>
               </div>
-              <span class="badge bg-primary rounded-pill"><%= invoice.status %></span>
+              <%= render(BadgeComponent.new(text: invoice.status, color: invoice.status_color)) %>
             </li>
           <% end %>
         </ul>

@@ -1,12 +1,11 @@
-<h1>Editar Fatura</h1>
-<%= simple_form_for @invoice, url: update_invoice_path(@invoice), html: { data: {controller: 'masks nested-form', nested_form_wrapper_selector_value: '.nested-form-wrapper'} } do |f| %>
+<%= simple_form_for @invoice, html: { data: {controller: 'masks nested-form replacement-discount-line', nested_form_wrapper_selector_value: '.nested-form-wrapper'} } do |f| %>
   <div class="container rounded bg-white mt-5 mb-5">
     <div class="row">
       <div class="col-lg-12">
         <div class="card border-white py2">
           <div class="card-body">
             <div class="invoice-title">
-              <h4 class="float-end">Fatura #<%= @invoice.id %> <span class="badge bg-success ms-2">Paid</span></h4>
+              <h4 class="float-end">Fatura #<%= @invoice.id %> <%= render(BadgeComponent.new(text: @invoice.status, color: @invoice.status_color)) %></h4>
               <div class="mb-4 d-flex justify-content-left">
                 <%= image_tag "logo-one2one.png", alt: "One 2 One", height: "100" %>
                 <div class="container pt-2">
@@ -32,7 +31,7 @@
                   </div>
                   <div class="mt-4">
                     <h5 class="font-size-16 mb-1">Mês da Fatura:</h5>
-                    <p><%= l(@invoice.reference_date, format: "%b, %Y") %></p>
+                    <p><%= l(@invoice.reference_date, format: "%b, %Y") if @invoice.reference_date? %></p>
                   </div>
                 </div>
               </div>
@@ -62,9 +61,21 @@
                       <% counter += 1%>
                     <% end %>
                     <tr data-nested-form-target="target">
-                      <th><button type="button" class="btn btn-outline-primary" data-action="nested-form#add"><i class="fw-bolder bi bi-file-earmark-plus"></i> linha</button></th>
+                      <th class="d-flex justify-content-left">
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-action="nested-form#add"><i class="fw-bolder bi bi-file-earmark-plus"></i> linha</button>
+                        <% replacement_classes = @invoice.member&.replacement_classes ||0 %>
+                        <% if replacement_classes > 0 %>
+                          <div class="d-flex justify-content-between form-control-group">
+                            <button type="button" class="btn btn-sm btn-outline-primary ms-3" data-action="nested-form#add replacement-discount-line#fill"><i class="fw-bolder bi bi-calendar2-x"></i> Descontar reposições</button>
+                            <%= text_field_tag :additional_replacements, replacement_classes, "data-replacement-discount-line-target": "replacements", class: "form-control form-control-sm ms-2", style: "width: 75px;" %>
+                            <%= hidden_field_tag :max_additional_replacements, replacement_classes, "data-replacement-discount-line-target": "max_replacements" %>
+                            <%= hidden_field_tag :max_additional_replacements, replacement_classes, "data-replacement-discount-line-target": "remaining_replacements" %>
+                            <%= hidden_field_tag :price_per_class, @invoice.member.class_price, "data-replacement-discount-line-target": "price_per_class" %>
+                          </div>
+                        <% end %>
+                      </th>
                       <th scope="row" colspan="2" class="text-end">Sub Total</th>
-                      <td class="text-end" data-invoice-value-calculator-target="total_value"><%= number_to_currency(@invoice.total_value_cents/100, unit: "R$ ", separator: ",", delimiter: ".") %></td>
+                      <td class="text-end" data-invoice-value-calculator-target="total_value"><%= number_to_currency((@invoice.total_value_cents || 0)/100, unit: "R$ ", separator: ",", delimiter: ".") %></td>
                       <td class="text-end"></td>
                     </tr>
                     <tr>
@@ -94,4 +105,3 @@
     </div>
   </div>
 <% end %>
-</div>

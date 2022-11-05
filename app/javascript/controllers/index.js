@@ -4,6 +4,9 @@
 
 import { application } from "./application"
 
+import CheckboxSelectAllController from "./checkbox_select_all_controller"
+application.register("checkbox-select-all", CheckboxSelectAllController)
+
 import InvoiceValueCalculatorController from "./invoice_value_calculator_controller"
 application.register("invoice-value-calculator", InvoiceValueCalculatorController)
 
@@ -12,6 +15,9 @@ application.register("item-value-calculator", ItemValueCalculatorController)
 
 import MasksController from "./masks_controller"
 application.register("masks", MasksController)
+
+import ReplacementDiscountLineController from "./replacement_discount_line_controller"
+application.register("replacement-discount-line", ReplacementDiscountLineController)
 
 import Select2Controller from "./select2_controller"
 application.register("select2", Select2Controller)
