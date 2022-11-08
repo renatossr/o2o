@@ -26,4 +26,15 @@ class Workout < ApplicationRecord
     self.with_replacement = true
     self.save
   end
+
+  def has_not_loyal_billed_member
+    result = false
+    self.members_workouts.each do |member_workout|
+      if member_workout.billing_item_id == nil && member_workout.member.loyal == false
+        result = true
+        break
+      end
+    end
+    result
+  end
 end

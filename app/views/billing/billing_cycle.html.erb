@@ -10,7 +10,7 @@
     <%= simple_form_for :billing_cycle, url: start_cycle_path, method: :post, html:{ "data-controller": "submit-on-change", "data-submit-on-change-target": "form_to_submit" } do |f|%>
       <div class="d-flex row justify-content-between align-items-center">
         <div class="col-9 ">
-          <h2 class="me-3">Selecionar ciclo de faturamento</h2>
+          <h2 class="me-3"><%= @selected_date%>: <%= number_to_currency((@invoices.sum(:total_value_cents)||0)/100, unit: "R$", separator: ",", delimiter: ".")%></h2>
         </div>
         <div class="col-2"><%= f.input :cycle, label: false, collection: 12.times.map { |i| (Date.today - (i).month).end_of_month.strftime('%B, %Y') }, selected: @selected_date,  input_html: {class: "js-s2-select form-control-sm me-2", "data-action": "submit-on-change#trigger_form_submit"} %></div>
         <div class="col-1"><%= f.submit "Iniciar", class: "btn btn-primary" %></div>
@@ -92,7 +92,7 @@
                                 <td>
                                   <h6 class="mb-1"><%= item.description %></h6>
                                 </td>
-                                <td class="text-end"><%= number_to_currency(item.price_cents/100, unit: "R$", separator: ",", delimiter: ".") %></td>
+                                <td class="text-end"><%= number_to_currency((item.price_cents||0)/100, unit: "R$", separator: ",", delimiter: ".") %></td>
                                 <td class="text-end"><%= item.quantity %></td>
                                 <td colspan="2" class="text-end"><%= number_to_currency(item.value_cents/100, unit: "R$", separator: ",", delimiter: ".") %></td>
                               </tr>
@@ -100,17 +100,17 @@
                             <% end %>
                             <tr>
                               <th scope="row" colspan="4" class="text-end">Sub Total</th>
-                              <td class="text-end"><%= number_to_currency(invoice.total_value_cents/100, unit: "R$", separator: ",", delimiter: ".") %></td>
+                              <td class="text-end"><%= number_to_currency((invoice.total_value_cents||0)/100, unit: "R$", separator: ",", delimiter: ".") %></td>
                             </tr>
                             <tr>
                               <th scope="row" colspan="4" class="border-0 text-end">
                                 Desconto</th>
-                              <td class="border-0 text-end">- <%= number_to_currency(invoice.discount_cents/100, unit: "R$", separator: ",", delimiter: ".") %></td>
+                              <td class="border-0 text-end">- <%= number_to_currency((invoice.discount_cents||0)/100, unit: "R$", separator: ",", delimiter: ".") %></td>
                             </tr>
                             <tr>
                               <th scope="row" colspan="4" class="border-0 text-end">Total</th>
                               <td class="border-0 text-end">
-                                <h6 class="m-0"><%= number_to_currency(invoice.final_value_cent/100, unit: "R$", separator: ",", delimiter: ".") %></h6>
+                                <h6 class="m-0"><%= number_to_currency((invoice.final_value_cent||0)/100, unit: "R$", separator: ",", delimiter: ".") %></h6>
                               </td>
                             </tr>
                           </tbody>

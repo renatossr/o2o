@@ -1,9 +1,9 @@
 class WorkoutsController < ApplicationController
-  before_action :set_workout, only: %i[show edit update destroy]
+  before_action :set_workout, only: %i[show edit update destroy invoice_individual_workout]
 
   # GET /workouts or /workouts.json
   def index
-    @workouts = Workout.all
+    @workouts = Workout.all.order("start_at desc").page(params[:page])
   end
 
   # GET /workouts/1 or /workouts/1.json
@@ -23,50 +23,26 @@ class WorkoutsController < ApplicationController
   def create
     @workout = Workout.new(workout_params)
 
-    respond_to do |format|
-      if @workout.save
-        format.html do
-          redirect_to workout_url(@workout),
-                      notice: "Workout was successfully created."
-        end
-        format.json { render :show, status: :created, location: @workout }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json do
-          render json: @workout.errors, status: :unprocessable_entity
-        end
-      end
+    if @workout.save
+      redirect_to workouts_path, notice: "Workout was successfully created."
+    else
+      render :new, status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /workouts/1 or /workouts/1.json
   def update
-    respond_to do |format|
-      if @workout.update(workout_params)
-        format.html do
-          redirect_to workout_url(@workout),
-                      notice: "Workout was successfully updated."
-        end
-        format.json { render :show, status: :ok, location: @workout }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json do
-          render json: @workout.errors, status: :unprocessable_entity
-        end
-      end
+    if @workout.update(workout_params)
+      redirect_to workout_url(@workout), notice: "Workout was successfully updated."
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
   # DELETE /workouts/1 or /workouts/1.json
   def destroy
     @workout.destroy
-
-    respond_to do |format|
-      format.html do
-        redirect_to workouts_url, notice: "Workout was successfully destroyed."
-      end
-      format.json { head :no_content }
-    end
+    redirect_to workouts_url, notice: "Workout was successfully destroyed."
   end
 
   private
@@ -78,13 +54,6 @@ class WorkoutsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def workout_params
-    params.require(:workout).permit(
-      :member_id,
-      :coach_id,
-      :start_at,
-      :end_at,
-      :location,
-      :comments,
-    )
+    params.require(:workout).permit(:coach_id, :start_at, :end_at, :location, :comments, member_ids: [])
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_05_164625) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_07_154930) do
   create_table "billing_items", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "member_id"
     t.string "description"
@@ -106,6 +106,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_05_164625) do
     t.integer "saturday"
     t.integer "sunday"
     t.integer "replacement_classes", default: 0
+    t.boolean "loyal", default: false
   end
 
   create_table "members_workouts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|

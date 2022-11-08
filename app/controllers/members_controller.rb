@@ -63,7 +63,7 @@ class MembersController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_member
     @member = Member.find(params[:id])
-    @workouts = @member.workouts.order("start_at DESC")
+    @members_workouts = @member.members_workouts.joins(:workout).order("start_at DESC")
   end
 
   # Only allow a list of trusted parameters through.
@@ -76,6 +76,7 @@ class MembersController < ApplicationController
       :responsible_id,
       :subscription_price,
       :class_price,
+      :loyal,
       :active,
       :monday,
       :tuesday,

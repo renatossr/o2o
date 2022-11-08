@@ -1,5 +1,15 @@
+<% if @invoice.errors.any? %>
+  <div style="color: red">
+    <h2><%= pluralize(@invoice.errors.count, "error") %> prohibited this workout from being saved:</h2>
+    <ul>
+      <% @invoice.errors.each do |error| %>
+        <li><%= error.full_message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
 <%= simple_form_for @invoice, html: { data: {controller: 'masks nested-form replacement-discount-line', nested_form_wrapper_selector_value: '.nested-form-wrapper'} } do |f| %>
-  <div class="container rounded bg-white mt-5 mb-5">
+  <div class="container rounded bg-white mt-5 mb-5" data-controller="select2">
     <div class="row">
       <div class="col-lg-12">
         <div class="card border-white py2">
@@ -20,7 +30,7 @@
               <div class="col-sm-6">
                 <div class="text-muted">
                   <h5 class="mb-3">Aluno faturado:</h5>
-                  <h6 class="mb-2"><%= f.association :member, label: false, collection: Member.all %></h6>
+                  <h6 class="mb-2"><%= f.association :member, label: false, collection: Member.all, input_html: {class: "js-s2-select form-control form-control-sm ms-2"} %></h6>
                 </div>
               </div>
               <div class="col-sm-6">
@@ -31,7 +41,7 @@
                   </div>
                   <div class="mt-4">
                     <h5 class="font-size-16 mb-1">Mês da Fatura:</h5>
-                    <p><%= l(@invoice.reference_date, format: "%b, %Y") if @invoice.reference_date? %></p>
+                    <p><%= l(@invoice.reference_date || Date.current.beginning_of_month, format: "%b, %Y") %></p>
                   </div>
                 </div>
               </div>
@@ -63,7 +73,7 @@
                     <tr data-nested-form-target="target">
                       <th class="d-flex justify-content-left">
                         <button type="button" class="btn btn-sm btn-outline-primary" data-action="nested-form#add"><i class="fw-bolder bi bi-file-earmark-plus"></i> linha</button>
-                        <% replacement_classes = @invoice.member&.replacement_classes ||0 %>
+                        <% replacement_classes = @invoice.member&.replacement_classes || 0 %>
                         <% if replacement_classes > 0 %>
                           <div class="d-flex justify-content-between form-control-group">
                             <button type="button" class="btn btn-sm btn-outline-primary ms-3" data-action="nested-form#add replacement-discount-line#fill"><i class="fw-bolder bi bi-calendar2-x"></i> Descontar reposições</button>

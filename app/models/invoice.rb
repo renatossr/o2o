@@ -1,6 +1,9 @@
 class Invoice < ApplicationRecord
   belongs_to :member
-  has_many :billing_items
+  has_many :billing_items, dependent: :destroy
+
+  validates :member_id, presence: true
+  validates :billing_items, presence: true
 
   accepts_nested_attributes_for :billing_items, allow_destroy: true
 
@@ -8,6 +11,8 @@ class Invoice < ApplicationRecord
   scope :all_cancelling, -> { where(status: "cancelling") }
   scope :all_from_cycles, -> { where(invoice_type: "billing_cycle") }
   scope :all_manual, -> { where(invoice_type: "manual") }
+  scope :all_ad_hoc, -> { where(invoice_type: "ad-hoc") }
+  scope :all_paid, -> { where(invoice_type: "paid") }
 
   after_save :set_billing_items_status
 
@@ -42,8 +47,48 @@ class Invoice < ApplicationRecord
     Invoice.all_from_cycles.pluck(:reference_date).uniq
   end
 
-  def new_from_workout(workout)
-    new_billing_item = BillingItem.new(description: "Aula Avulsa", quantity: 1)
+  def self.create_from_workout(workout)
+    billing_items = []
+    workout.members_workouts.each do |member_workout|
+      member = member_workout.member
+      unless member.loyal
+        new_item =
+          BillingItem.create(
+            member_id: member.id,
+            payable_by: member.responsible,
+            description: "Aula Avulsa",
+            quantity: 1,
+            price_cents: member.class_price,
+            billing_type: "ad-hoc",
+            status: "draft",
+            reference_date: Date.current.beginning_of_month,
+          )
+        member_workout.billing_item = new_item
+        member_workout.status = new_item.status
+        billing_items << new_item
+        member_workout.save!
+      end
+    end
+
+    paying_members = Member.find(billing_items.pluck(:payable_by).uniq)
+    paying_members.each do |member|
+      items = billing_items.select { |i| (i.payable_by == member.id && i.invoice_id == nil) }
+      if items.count > 0
+        invoice =
+          Invoice.create(
+            status: "draft",
+            reference_date: Date.current.beginning_of_month,
+            member_id: member.id,
+            invoice_type: "ad-hoc",
+          )
+        items.each do |item|
+          item.status = "billed"
+          invoice.billing_items << item
+          item.save
+        end
+        invoice.update_totals!
+      end
+    end
   end
 
   def issue_invoice

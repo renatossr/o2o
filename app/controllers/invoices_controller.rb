@@ -10,7 +10,7 @@ class InvoicesController < ApplicationController
     @invoice.status = "draft"
     @invoice.invoice_type = "manual"
     @invoice.reference_date = Date.current.beginning_of_month
-    if @invoice.billing_items.present? && @invoice.save!
+    if @invoice.save
       @invoice.update_totals!
       if params[:previous_request]
         redirect_to params[:previous_request]
@@ -28,7 +28,8 @@ class InvoicesController < ApplicationController
 
   def new_from_workout
     @workout = Workout.find(params[:workout_id])
-    @invoice = Invoice.new.new_from_workout(workout)
+    Invoice.create_from_workout(@workout)
+    redirect_to workouts_path
   end
 
   def edit
@@ -76,8 +77,12 @@ class InvoicesController < ApplicationController
 
   def sanitize_currency
     params[:invoice][:discount_cents] = (params[:invoice][:discount_cents].sub(".", "").sub(",", ".").to_d * 100).to_i
-    params[:invoice][:billing_items_attributes].each do |key, value|
-      value[:price_cents] = (value[:price_cents].sub(".", "").sub(",", ".").to_d * 100).to_i
+    if params[:invoice][:billing_items_attributes].present?
+      params[:invoice][:billing_items_attributes].each do |key, value|
+        value[:price_cents] = (value[:price_cents].sub(".", "").sub(",", ".").to_d * 100).to_i if value[
+          :price_cents
+        ].present?
+      end
     end
   end
 

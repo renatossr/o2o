@@ -28,8 +28,8 @@ class Member < ApplicationRecord
   def is_already_in_billing_cycle?(range)
     result = false
     billing_items.each do |item|
-      if range.cover?(item.invoice.reference_date) && item.invoice.invoice_type == "billing_cycle" &&
-           item.invoice.status != "canceled"
+      if item.invoice.present? && range.cover?(item.invoice.reference_date) &&
+           item.invoice.invoice_type == "billing_cycle" && item.invoice.status != "canceled"
         result = true
         break
       end

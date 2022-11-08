@@ -1,10 +1,6 @@
-<p style="color: green"><%= notice %></p>
-
+<h1>Perfil do Coach</h1>
 <%= render @coach %>
-
 <div>
-  <%= link_to "Edit this coach", edit_coach_path(@coach) %> |
   <%= link_to "Back to coaches", coaches_path %>
-
   <%= button_to "Destroy this coach", @coach, method: :delete %>
 </div>

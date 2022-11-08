@@ -1,47 +1,53 @@
-<%= form_with(model: workout) do |form| %>
-  <% if workout.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(workout.errors.count, "error") %> prohibited this workout from being saved:</h2>
-
-      <ul>
-        <% workout.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+<% if workout.errors.any? %>
+  <div style="color: red">
+    <h2><%= pluralize(workout.errors.count, "error") %> prohibited this workout from being saved:</h2>
+    <ul>
+      <% workout.errors.each do |error| %>
+        <li><%= error.full_message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+<%= simple_form_for workout do |f| %>
+  <div class="container rounded bg-white mt-5 mb-5"  data-controller="select2">
+    <div class="row">
+      <div class="col-md-10">
+        <div class="p-3 py-5">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="text-right">Dados da Aula</h4>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <%= f.input :start_at, html5: true, input_html: {step: 60 } %>
+            </div>
+            <div class="col-md-6">
+              <%= f.input :end_at, html5: true, input_html: {step: 60 }%>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <%= f.input :location %>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <%= f.input :coach_id, label: false, collection: Coach.all, input_html: { class: "js-s2-select", id: "coach_id_#{workout.id}", style: "width: 100%"} %>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <%= f.association :members, label: false, input_html: { class: "js-s2-select", id: "members_id_#{workout.id}", style: "width: 100%;"} %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="p-3 py-5">
+          <div class="text-end">
+            <%= f.submit "Salvar Aula", class: "btn btn-primary" %>
+          </div>
+        </div>
+      </div>
     </div>
-  <% end %>
-
-  <div>
-    <%= form.label :member_id, style: "display: block" %>
-    <%= form.number_field :member_id %>
-  </div>
-
-  <div>
-    <%= form.label :coach_id, style: "display: block" %>
-    <%= form.number_field :coach_id %>
-  </div>
-
-  <div>
-    <%= form.label :start_at, style: "display: block" %>
-    <%= form.datetime_field :start_at %>
-  </div>
-
-  <div>
-    <%= form.label :end_at, style: "display: block" %>
-    <%= form.datetime_field :end_at %>
-  </div>
-
-  <div>
-    <%= form.label :location, style: "display: block" %>
-    <%= form.text_field :location %>
-  </div>
-
-  <div>
-    <%= form.label :comments, style: "display: block" %>
-    <%= form.text_area :comments %>
-  </div>
-
-  <div>
-    <%= form.submit %>
   </div>
 <% end %>

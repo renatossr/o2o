@@ -1,17 +1,73 @@
-<div id="<%= dom_id coach %>">
-  <p>
-    <strong>First name:</strong>
-    <%= coach.first_name %>
-  </p>
-
-  <p>
-    <strong>Last name:</strong>
-    <%= coach.last_name %>
-  </p>
-
-  <p>
-    <strong>Cel number:</strong>
-    <%= coach.cel_number %>
-  </p>
-
-</div>
+<%= form_with(model: coach, html: { data: { controller: "masks" } }) do |form| %>
+  <% if coach.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(coach.errors.count, "error") %> prohibited this coach from being saved:</h2>
+      <ul>
+        <% coach.errors.each do |error| %>
+          <li><%= coach.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="container rounded bg-white mt-5 mb-5">
+    <div class="row">
+      <div class="col-md-3 border-end">
+        <div class="d-flex flex-column align-items-center text-center p-3 py-1"><img class="rounded-circle mt-5 mb-3" width="150px" src=<%= image_url('fem-avatar-04.jpg')%>>
+          <h4 class="font-weight-bold"><%= coach.name%></h4>
+          <span class="text-black-50"><%= coach.alias%></span>
+        </div>
+      </div>
+      <div class="col-md-4 border-end">
+        <div class="p-3 py-5">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="text-right">Dados do coach</h4>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <%= form.label :first_name, "Primeiro Nome", style: "display: block", class:"form-label" %>
+              <%= form.text_field :first_name , class: "form-control form-control-sm", placeholder: "Primeiro Nome...", disabled: true %>
+            </div>
+            <div class="col-md-6">
+              <%= form.label :last_name, "Sobrenome", style: "display: block", class:"form-label" %>
+              <%= form.text_field :last_name , class: "form-control form-control-sm", placeholder: "Sobrenome...", disabled: true %>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <%= form.label :alias, "Apelido", style: "display: block", class:"form-label" %>
+              <%= form.text_field :alias , class: "form-control form-control-sm", placeholder: "Apelido...", disabled: true %>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <%= form.label :cel_number, "Celular", style: "display: block", class:"form-label" %>
+              <%= form.telephone_field :cel_number , class: "form-control form-control-sm", data: { masks_target: 'phone' }, placeholder: "Número do celular...", disabled: true %>
+            </div>
+          </div>
+          <div class="mt-5 text-center">
+            <%= link_to "Editar Coach", edit_coach_path(coach), class: "btn btn-primary" %>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <div class="p-3 py-5">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="text-right">Valores</h4>
+          </div>
+          <div class="row mt-2 mb-3">
+            <div class="col-md-5 pe-1">
+              <%= form.label :pay_fixed, "Fixo R$", style: "display: block", class:"form-label" %>
+              <%= form.text_field :pay_fixed , class: "form-control form-control-sm", data: { masks_target: 'money' }, placeholder: "-", disabled: true %>
+            </div>
+          </div>
+          <div class="row mt-2 mb-3">
+            <div class="col-md-5 pe-1">
+              <%= form.label :pay_per_workout, "Por aula R$", style: "display: block", class:"form-label" %>
+              <%= form.text_field :pay_per_workout , class: "form-control form-control-sm", data: { masks_target: 'money' }, placeholder: "-", disabled: true %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

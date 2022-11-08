@@ -28,5 +28,6 @@ Rails.application.routes.draw do
   resources :invoices do
     patch :confirm, on: :collection, as: :confirm
     patch :cancel, on: :member, as: :cancel
+    get :new_from_workout, on: :collection
   end
 end

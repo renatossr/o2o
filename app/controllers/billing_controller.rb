@@ -4,7 +4,7 @@ class BillingController < ApplicationController
   end
 
   def billing_cycle
-    @selected_date = (Date.today - 1.month).beginning_of_month.strftime("%B, %Y")
+    @selected_date = Date.today.beginning_of_month.strftime("%B, %Y")
     @selected_date = params[:billing_cycle][:cycle] if params[:billing_cycle]
     reference_date = Date.strptime(@selected_date, "%B, %Y")
     @invoices = Invoice.all.where(reference_date: reference_date).page(params[:page]).per(50)
