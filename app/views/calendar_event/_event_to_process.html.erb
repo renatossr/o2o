@@ -29,6 +29,10 @@
                 <%= w.input :coach_id, label: false, collection: Coach.all, input_html: { class: "js-s2-select", id: "coach_id_#{event.workout.id}", style: "width: 100%"} %>
               </div>
               <div class="d-flex justify-content-start align-items-top mt-3">
+                <h6 class="text-right me-3">Cancelada</h6>
+                <div class="col-md-6">
+                  <%= w.input :cancelled, label: false %>
+                </div>
                 <h6 class="text-right me-3">Reposição</h6>
                 <div class="col-md-6">
                   <%= w.input :with_replacement, label: false %>

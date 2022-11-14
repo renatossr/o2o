@@ -1,10 +1,19 @@
+<!-- Breadcrumb -->
+<h1>Alunos</h1>
+<nav class="d-flex">
+  <h6 class="ms-1 mb-0">
+    <%= link_to "Home", root_path, class: "text-reset"%>
+    <span>/</span>
+    <a href="" class="text-reset">Alunos</a>
+  </h6>
+</nav>
+<!-- Breadcrumb -->
 <% if notice %>
-  <div class="alert alert-success alert-dismissible fade show" role="alert">
+  <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
     <%= notice %>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
 <%end%>
-<h1>Alunos</h1>
 <div class="container rounded bg-white mt-5 mb-5">
   <div class="p-3 py-5">
     <div class="d-flex p-0 mb-2 justify-content-between">
@@ -16,16 +25,22 @@
         <%= link_to raw("<i class=\"bi bi-person-plus-fill\"></i> Novo Aluno"), new_member_path, class: "btn btn-primary" %>
       </div>
     </div>
-    <table class="table table-striped mt-3" data-controller="masks" id="members">
+    <%= search_form_for @q do |f| %>
+      <div class="container d-flex bg-dark px-2 pt-2 mb-0 align-items-center justify-content-start">
+        <%= f.text_field :name_or_alias_or_cel_number_cont, placeholder: "Buscar...", class: "form-control form-control-sm mt-0 w-25" %>
+        <%= f.submit "", style: "display:none;" %>
+      </div>
+    <% end %>
+    <table class="table table-striped mt-0" data-controller="masks" id="members">
       <thead class="table-dark">
         <tr>
-          <th>Nome</th>
-          <th>Apelido</th>
+          <th><%= sort_link @q, :name, "Nome", default_order: :asc, class: "link-light text-decoration-none" %></th>
+          <th><%= sort_link @q, :alias, "Apelido", default_order: :asc, class: "link-light text-decoration-none" %></th>
           <th>Celular</th>
           <th class="text-center">Fidelizado</th>
           <th class="text-center">Ativo</th>
-          <th>Mensalidade</th>
-          <th>Valor por aula</th>
+          <th><%= sort_link @q, :subscription_price, "Mensalidade", default_order: :asc, class: "link-light text-decoration-none" %></th>
+          <th><%= sort_link @q, :class_price, "Valor por aula", default_order: :asc, class: "link-light text-decoration-none" %></th>
         </tr>
       </thead>
       <tbody>
@@ -35,7 +50,7 @@
             <td><%= member.alias %></td>
             <td>
               <span data-masks-target="phone"><%= member.cel_number %></span>
-              <%= link_to raw("<i class=\"bi bi-whatsapp\"></i"), member.whatsapp_link, target: :_blank, class: "btn btn-sm ms-2", style: "color: #25D366;" %>
+              <%= link_to raw("<i class=\"bi bi-whatsapp\"></i>"), member.whatsapp_link, target: :_blank, class: "btn btn-sm ms-2", style: "color: #25D366;" %>
             </td>
             <td class="text-center">
               <% if member.loyal? %>

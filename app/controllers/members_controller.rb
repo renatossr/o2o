@@ -4,10 +4,12 @@ class MembersController < ApplicationController
 
   # GET /members or /members.json
   def index
-    @members = Member.all.page(params[:page])
+    @q = Member.ransack(params[:q])
+    @members = @q.result(distinct: true)
+    @members = @members.page(params[:page])
   end
 
-  # GET /members/1 or /members/1.json
+  # GET /members/1
   def show
   end
 
@@ -20,42 +22,30 @@ class MembersController < ApplicationController
   def edit
   end
 
-  # POST /members or /members.json
+  # POST /members
   def create
     @member = Member.new(member_params)
 
-    respond_to do |format|
-      if @member.save
-        format.html { redirect_to members_url, notice: "Member was successfully created." }
-        format.json { render :show, status: :created, location: @member }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @member.errors, status: :unprocessable_entity }
-      end
+    if @member.save
+      redirect_to members_url, notice: "Member was successfully created."
+    else
+      render :new, status: :unprocessable_entity
     end
   end
 
-  # PATCH/PUT /members/1 or /members/1.json
+  # PATCH/PUT /members/1
   def update
-    respond_to do |format|
-      if @member.update(member_params)
-        format.html { redirect_to members_url, notice: "Member was successfully updated." }
-        format.json { render :show, status: :ok, location: @member }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @member.errors, status: :unprocessable_entity }
-      end
+    if @member.update(member_params)
+      redirect_to members_url, notice: "Member was successfully updated."
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
-  # DELETE /members/1 or /members/1.json
+  # DELETE /members/1
   def destroy
     @member.destroy
-
-    respond_to do |format|
-      format.html { redirect_to members_url, notice: "Member was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    redirect_to members_url, notice: "Member was successfully destroyed."
   end
 
   private

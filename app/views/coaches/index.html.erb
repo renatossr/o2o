@@ -1,13 +1,19 @@
+<h1>Coaches</h1>
+<!-- Breadcrumb -->
+<nav class="d-flex">
+  <h6 class="ms-1 mb-0">
+    <%= link_to "Home", root_path, class: "text-reset"%>
+    <span>/</span>
+    <%= link_to "Coaches", coaches_path, class: "text-reset"%>
+  </h6>
+</nav>
+<!-- Breadcrumb -->
 <% if notice %>
-  <div class="alert alert-success alert-dismissible fade show" role="alert">
+  <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
     <%= notice %>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
 <%end%>
-
-<h1>Coaches</h1>
-
-
 <div class="container rounded bg-white mt-5 mb-5">
   <div class="p-3 py-5">
     <div class="d-flex p-0 mb-2 justify-content-between">
@@ -19,32 +25,33 @@
         <%= link_to raw("<i class=\"bi bi-person-plus-fill\"></i> Novo Coach"), new_coach_path, class: "btn btn-primary" %>
       </div>
     </div>
-
-
-    <table class="table table-striped mt-3" data-controller="masks" id="members">
+    <%= search_form_for @q do |f| %>
+      <div class="container d-flex bg-dark px-2 pt-2 mb-0 align-items-center justify-content-start">
+        <%= f.text_field :name_or_alias_or_cel_number_cont, placeholder: "Buscar...", class: "form-control form-control-sm mt-0 w-25" %>
+        <%= f.submit "", style: "display:none;" %>
+      </div>
+    <% end %>
+    <table class="table table-striped mt-0" data-controller="masks" id="members">
       <thead class="table-dark">
         <tr>
-          <th>Nome</th>
-          <th>Apelido</th>
+          <th><%= sort_link @q, :name, "Nome", default_order: :asc, class: "link-light text-decoration-none" %></th>
+          <th><%= sort_link @q, :alias, "Apelido", default_order: :asc, class: "link-light text-decoration-none" %></th>
           <th>Celular</th>
           <th>Salário Fixo</th>
           <th>Valor por Aula</th>
-          <th></th>
         </tr>
       </thead>
       <tbody>
         <% @coaches.each do |coach| %>
           <tr id="<%= dom_id coach %>">
-            <td><%= coach.name %></td>
+            <td><%= link_to coach.name, coach_path(coach) %></td>
             <td><%= coach.alias %></td>
             <td data-masks-target="phone"><%= coach.cel_number %></td>
             <td><span>R$ </span><span data-masks-target="money"><%= coach.pay_fixed %></span></td>
             <td><span>R$ </span><span data-masks-target="money"><%= coach.pay_per_workout %></span></td>
-            <td><%= link_to raw("<i class=\"bi bi-pencil-square\"></i>"), edit_coach_path(coach), class: "btn btn-sm btn-warning" %></td>
           </tr>
         <% end %>
       </tbody>
     </table>
-
   </div>
 </div>

@@ -1,3 +1,14 @@
 <h1>Perfil do aluno</h1>
+<!-- Breadcrumb -->
+<nav class="d-flex">
+  <h6 class="ms-1 mb-0">
+    <%= link_to "Home", root_path, class: "text-reset"%>
+    <span>/</span>
+    <%= link_to "Alunos", members_path, class: "text-reset"%>
+    <span>/</span>
+    <a href="" class="text-reset">Perfil do Aluno</a>
+  </h6>
+</nav>
+<!-- Breadcrumb -->
 <%= render "view", member: @member %>
 <%= render "additional_information", member: @member, members_workouts: @members_workouts %>

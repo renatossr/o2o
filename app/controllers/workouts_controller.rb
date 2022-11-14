@@ -22,7 +22,7 @@ class WorkoutsController < ApplicationController
   # POST /workouts or /workouts.json
   def create
     @workout = Workout.new(workout_params)
-
+    @workout.reviewed = true
     if @workout.save
       redirect_to workouts_path, notice: "Workout was successfully created."
     else

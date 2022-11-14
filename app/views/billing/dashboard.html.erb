@@ -12,7 +12,7 @@
     <%= render "kpi", kpi: 'Alunos Ativos', unit: '', value: MembersWorkout.joins(:workout).where(workout: {start_at: kpi_range_now}).pluck(:member_id).uniq.count, ratio: MembersWorkout.joins(:workout).where(workout: {start_at: kpi_range_now}).pluck(:member_id).uniq.count.to_f/MembersWorkout.joins(:workout).where(workout: {start_at: kpi_range_before}).pluck(:member_id).uniq.count.to_f %>
   </div>
   <div class="container rounded bg-white mt-5 p-5 mb-5">
-    <%= line_chart Invoice.group_by_month(:reference_date).sum("total_value_cents/100"), prefix: "R$", thousands: ".", decimal: ",", round: 0, dataset: {borderWidth: 4, tension: 0.1}, library: {scales: {y: {grid: {display: false}}}}, colors: ["#6610f2"] %>
+    <%= line_chart BillingItem.group_by_month(:reference_date).sum("(price_cents * quantity)/100"), prefix: "R$", thousands: ".", decimal: ",", round: 0, dataset: {borderWidth: 4, tension: 0.1}, library: {scales: {y: {grid: {display: false}}}}, colors: ["#6610f2"] %>
   </div>
 </div>
 <div class="row">

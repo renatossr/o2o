@@ -4,7 +4,9 @@ class CoachesController < ApplicationController
 
   # GET /coaches or /coaches.json
   def index
-    @coaches = Coach.all.page(params[:page])
+    @q = Coach.ransack(params[:q])
+    @coaches = @q.result(distinct: true)
+    @coaches = @coaches.page(params[:page])
   end
 
   # GET /coaches/1 or /coaches/1.json
@@ -24,38 +26,26 @@ class CoachesController < ApplicationController
   def create
     @coach = Coach.new(coach_params)
 
-    respond_to do |format|
-      if @coach.save
-        format.html { redirect_to coach_url(@coach), notice: "Coach was successfully created." }
-        format.json { render :show, status: :created, location: @coach }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @coach.errors, status: :unprocessable_entity }
-      end
+    if @coach.save
+      redirect_to coaches_url, notice: "Coach was successfully created."
+    else
+      render :new, status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /coaches/1 or /coaches/1.json
   def update
-    respond_to do |format|
-      if @coach.update(coach_params)
-        format.html { redirect_to coach_url(@coach), notice: "Coach was successfully updated." }
-        format.json { render :show, status: :ok, location: @coach }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @coach.errors, status: :unprocessable_entity }
-      end
+    if @coach.update(coach_params)
+      redirect_to coaches_url, notice: "Coach was successfully updated."
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
   # DELETE /coaches/1 or /coaches/1.json
   def destroy
     @coach.destroy
-
-    respond_to do |format|
-      format.html { redirect_to coaches_url, notice: "Coach was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    redirect_to coaches_url, notice: "Coach was successfully destroyed."
   end
 
   private

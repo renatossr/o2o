@@ -4,44 +4,54 @@
       <div class="p-3 py-5">
         <h4 class="mb-0">Treinos</h4>
         <hr>
-        <table class="table mt-3" id="workouts">
-          <thead>
-            <tr>
-              <th scope="col">Data</th>
-              <th scope="col">Coach</th>
-              <th scope="col">Local</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @members_workouts.each do |member_workout| %>
-              <tr id="<%= dom_id member_workout %>">
-                <td><%= l(member_workout.workout.start_at.localtime, format: "%A, %d/%m - %H:%M") %></td>
-                <td><%= member_workout.workout.coach&.name %></td>
-                <td><%= member_workout.workout.location %></td>
-                <td class="text-end" style="font-size: 14px"><span class="badge bg-success rounded-pill"><%= member_workout.status %></span></td>
+        <div class="overflow-auto" style="max-height: 350px">
+          <table class="table" id="workouts">
+            <thead>
+              <tr>
+                <th scope="col">Data</th>
+                <th scope="col">Coach</th>
+                <th scope="col">Local</th>
+                <th scope="col text-center">Status</th>
+                <th scope="col">Fat.</th>
               </tr>
-            <% end %>
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              <% @members_workouts.each do |member_workout| %>
+                <tr id="<%= dom_id member_workout %>">
+                  <td><%= l(member_workout.workout.start_at.localtime, format: "%a, %d/%m - %H:%M") %></td>
+                  <td><%= member_workout.workout.coach&.name %></td>
+                  <td><%= member_workout.workout.location %></td>
+                  <td class="text-center" style="font-size: 14px"><span class="badge bg-success rounded-pill"><%= member_workout.status %></span></td>
+                  <td>
+                    <% unless member.loyal? || member_workout.billed? %>
+                      <%= link_to raw("<i class=\"bi bi-currency-dollar\"></i>"), new_from_workout_invoices_path(workout_id: member_workout.workout.id), class: "btn btn-sm btn-outline-success" %>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
     <div class="col-md-5">
       <div class="p-3 py-5">
         <h4 class="mb-0">Faturas</h4>
         <hr>
-        <ul class="list-group">
-          <% @member.invoices.order("reference_date desc").each do |invoice|%>
-            <li class="list-group-item d-flex justify-content-between align-items-start">
-              <div class="ms-2 me-auto">
-                <div class="fw-bold"><%= l(invoice.reference_date, format: "%Y - %B") %></div>
-                <span>R$ </span><span data-masks-target="money"><%= invoice.total_value_cents %></span>
-                <%= link_to '', invoice_path(invoice), class: "stretched-link" %>
-              </div>
-              <%= render(BadgeComponent.new(text: invoice.status, color: invoice.status_color)) %>
-            </li>
-          <% end %>
-        </ul>
+        <div class="overflow-auto" style="max-height: 350px">
+          <ul class="list-group">
+            <% @member.invoices.order("reference_date desc").each do |invoice|%>
+              <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                  <div class="fw-bold"><%= l(invoice.reference_date, format: "%Y - %B") %></div>
+                  <span>R$ </span><span data-masks-target="money"><%= invoice.total_value_cents %></span>
+                  <%= link_to '', invoice_path(invoice), class: "stretched-link" %>
+                </div>
+                <%= render(BadgeComponent.new(text: invoice.status, color: invoice.status_color)) %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
       </div>
     </div>
   </div>

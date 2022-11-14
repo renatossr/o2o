@@ -1,57 +1,59 @@
-<div class="container rounded bg-white mt-5 mb-5">
-  <div class="row">
-    <div class="col-md-3">
-      <div class="p-3 py-5">
-        <h4 class="text-right mb-4">Data e Horário</h4>
-        <div class="row mt-2">
-          <div class="col-md-12">
-            <%= l(workout.start_at.localtime, format: "%d/%m/%Y - %A") %>
+<% if workout.errors.any? %>
+  <div style="color: red">
+    <h2><%= pluralize(workout.errors.count, "error") %> prohibited this workout from being saved:</h2>
+    <ul>
+      <% workout.errors.each do |error| %>
+        <li><%= error.full_message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+<%= simple_form_for workout do |f| %>
+  <div class="container rounded bg-white mt-5 mb-5"  data-controller="select2">
+    <div class="row">
+      <div class="col-md-10">
+        <div class="p-3 py-5">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="text-right">Dados da Aula</h4>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <%= f.input :start_at, html5: true, input_html: {step: 60, class: "form-control-sm ms-0", disabled: true } %>
+            </div>
+            <div class="col-md-6">
+              <%= f.input :end_at, html5: true, input_html: {step: 60, class: "form-control-sm ms-0", disabled: true  }%>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <%= f.input :location, input_html: {class: "form-control-sm", disabled: true } %>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <%= f.input :coach_id, label: "Coach", collection: Coach.all, input_html: { class: "js-s2-select form-control-sm", id: "coach_id_#{workout.id}", style: "width: 100%", disabled: true } %>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <%= f.association :members, label: "Alunos", input_html: { class: "js-s2-select form-control-sm", id: "members_id_#{workout.id}", style: "width: 100%;", disabled: true } %>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <%= f.input :cancelled, label: "Cancelada", input_html: { disabled: true } %>
+              <%= f.input :with_replacement, label: "Reposição", input_html: { disabled: true } %>
+            </div>
           </div>
         </div>
-        <div class="row mt-2">
-          <div class="col-md-12">
-            Das <%= l(workout.start_at.localtime, format: "%H:%M") %> às <%= l(workout.end_at.localtime, format: "%H:%M") %>
-          </div>
-        </div>
       </div>
-    </div>
-    <div class="col-md-2">
-      <div class="p-3 py-5">
-        <h4 class="text-right mb-4">Unidade</h4>
-        <%= workout.location %>
-      </div>
-    </div>
-    <div class="col-md-2">
-      <div class="p-3 py-5">
-        <h4 class="mb-4">Coach</h4>
-        <%= workout.coach.name %>
-      </div>
-    </div>
-    <div class="col-md-2">
-      <div class="p-3 py-5">
-        <h4 class="text-right mb-4">Alunos</h4>
-        <ul class="list-group list-group-numbered list-group-flush">
-          <% workout.members.each do |member| %>
-            <li class="list-group-item ps-0"><%= member.name %></li>
-          <% end %>
-        </ul>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="p-3 py-5">
-        <div class="row">
-          <div class="col d-flex justify-content-end mb-2">
-            <%= link_to raw("<i class=\"bi bi-pencil\"></i> Editar"), edit_workout_path(@workout), class: "btn btn-primary" %>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col d-flex justify-content-end">
-            <% if workout.has_not_loyal_billed_member %>
-              <%= link_to raw("<i class=\"bi bi-currency-dollar\"></i> Faturar"), new_from_workout_invoices_path(workout_id: workout.id), class: "btn btn-success" %>
-            <% end %>
+      <div class="col-md-2">
+        <div class="p-3 py-5">
+          <div class="text-end">
+            <%= link_to "Editar Aula", edit_workout_path(workout), class: "btn btn-primary" %>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+<% end %>

@@ -4,9 +4,10 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   connect() {
     this.element.querySelector('a[href="' + window.location.pathname + '"]').classList.add("active");
-    this.element
-      .querySelector('a[href="' + window.location.pathname + '"]')
-      .closest("ul")
-      .classList.add("show");
+    let el = this.element.querySelector('a[href="' + window.location.pathname + '"]').closest("ul.collapse");
+    if (el != null) {
+      el.classList.add("show");
+      el = null;
+    }
   }
 }

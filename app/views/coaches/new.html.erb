@@ -1,6 +1,14 @@
 <h1>Perfil do novo Coach</h1>
+<!-- Breadcrumb -->
+<nav class="d-flex">
+  <h6 class="ms-1 mb-0">
+    <%= link_to "Home", root_path, class: "text-reset"%>
+    <span>/</span>
+    <%= link_to "Coaches", coaches_path, class: "text-reset"%>
+    <span>/</span>
+    <a href="" class="text-reset">Novo Coach</a>
+  </h6>
+</nav>
+<!-- Breadcrumb -->
 <%= render "form", coach: @coach %>
 <br>
-<div>
-  <%= link_to "Back to coaches", coaches_path %>
-</div>

@@ -18,25 +18,31 @@
           </div>
           <div class="row mt-2">
             <div class="col-md-6">
-              <%= f.input :start_at, html5: true, input_html: {step: 60 } %>
+              <%= f.input :start_at, html5: true, input_html: {step: 60, class: "form-control-sm ms-0" } %>
             </div>
             <div class="col-md-6">
-              <%= f.input :end_at, html5: true, input_html: {step: 60 }%>
+              <%= f.input :end_at, html5: true, input_html: {step: 60, class: "form-control-sm ms-0" }%>
             </div>
           </div>
           <div class="row mt-3">
             <div class="col-md-12">
-              <%= f.input :location %>
+              <%= f.input :location, input_html: {class: "form-control-sm"} %>
             </div>
           </div>
           <div class="row mt-3">
             <div class="col-md-12">
-              <%= f.input :coach_id, label: false, collection: Coach.all, input_html: { class: "js-s2-select", id: "coach_id_#{workout.id}", style: "width: 100%"} %>
+              <%= f.input :coach_id, label: "Coach", collection: Coach.all, input_html: { class: "js-s2-select form-control-sm", id: "coach_id_#{workout.id}", style: "width: 100%"} %>
             </div>
           </div>
           <div class="row mt-3">
             <div class="col-md-12">
-              <%= f.association :members, label: false, input_html: { class: "js-s2-select", id: "members_id_#{workout.id}", style: "width: 100%;"} %>
+              <%= f.association :members, label: "Alunos", input_html: { class: "js-s2-select form-control-sm", id: "members_id_#{workout.id}", style: "width: 100%;"} %>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <%= f.input :cancelled, label: "Cancelada" %>
+              <%= f.input :with_replacement, label: "Reposição" %>
             </div>
           </div>
         </div>

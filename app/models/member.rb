@@ -1,9 +1,19 @@
 class Member < ApplicationRecord
   has_many :members_workouts
+
+  has_many :beneficiaries, class_name: "Member", foreign_key: "responsible_id"
+  belongs_to :responsible, class_name: "Member", optional: true
+
   has_many :workouts, through: :members_workouts
   has_many :invoices
   has_many :billing_items
   has_many :coaches, -> { distinct }, through: :workouts
+
+  validates :first_name, presence: true
+  validates :last_name, presence: true
+  validates :cel_number, presence: true
+
+  before_save :assign_sponsor_self, if: proc { self.responsible_id.nil? }
 
   def name
     "#{first_name} #{last_name}"
@@ -41,10 +51,6 @@ class Member < ApplicationRecord
     workouts.where(start_at: range).count > 0
   end
 
-  def responsible
-    responsible_id || id
-  end
-
   def responsible_self?
     (responsible_id == id) || (responsible_id.blank?)
   end
@@ -79,5 +85,36 @@ class Member < ApplicationRecord
     available_monday_workouts += fri * fridays_in_month
     available_monday_workouts += sat * saturdays_in_month
     available_monday_workouts += sun * sundays_in_month
+  end
+
+  ransacker :name, formatter: proc { |v| v.mb_chars.downcase.to_s } do |parent|
+    Arel::Nodes::NamedFunction.new(
+      "LOWER",
+      [
+        Arel::Nodes::NamedFunction.new(
+          "concat_ws",
+          [Arel::Nodes::SqlLiteral.new("' '"), parent.table[:first_name], parent.table[:last_name]],
+        ),
+      ],
+    )
+  end
+
+  def billable_extra_workouts_count(month)
+    workouts_count =
+      self.members_workouts.all_not_billed.all_reviewed.within(month.beginning_of_month..month.end_of_month).count
+    available_workouts = self.workouts_available_in_month(month.beginning_of_month)
+    billable_extra_workouts = workouts_count - available_workouts # (total de aulas) - (aulas no plano)
+    billable_extra_workouts = [0, billable_extra_workouts].max
+  end
+
+  def replacements_for_discount(billable_extra_workouts_count)
+    replacements = self.replacement_classes
+    replacements_for_discount = [billable_extra_workouts_count, replacements].min
+  end
+
+  private
+
+  def assign_sponsor_self
+    self.responsible_id = self.id
   end
 end

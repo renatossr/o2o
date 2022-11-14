@@ -5,6 +5,15 @@
   </div>
 <%end%>
 <h1>Aulas</h1>
+<!-- Breadcrumb -->
+<nav class="d-flex">
+  <h6 class="ms-1 mb-0">
+    <%= link_to "Home", root_path, class: "text-reset"%>
+    <span>/</span>
+    <%= link_to "Aulas", workouts_path, class: "text-reset"%>
+  </h6>
+</nav>
+<!-- Breadcrumb -->
 <div class="container rounded bg-white mt-5 mb-5">
   <div class="p-3 py-5">
     <div class="d-flex p-0 mb-2 justify-content-between">
@@ -33,17 +42,13 @@
       <tbody>
         <% @workouts.each do |workout| %>
           <tr id="<%= dom_id workout %>">
-            <td><%= link_to workout.id, edit_workout_path(workout)%></td>
+            <td><%= link_to workout.id, workout_path(workout)%></td>
             <td><%= l(workout.start_at.localtime, format: "%d/%m - %a") %></td>
             <td><%= l(workout.start_at.localtime, format: "%H:%M") %></td>
             <td><%= l(workout.end_at.localtime, format: "%H:%M") %></td>
             <td><%= workout.coach.name %></td>
             <td><%= workout.members.count %></td>
-            <td>
-              <% workout.members.each do |member| %>
-                <%= member.name unless member.loyal? %>
-              <% end %>
-            </td>
+            <td><%= workout.members.map(&:name).join(', ') %></td>
             <td><%= workout.location %></td>
             <td class="text-end">
               <% if workout.has_not_loyal_billed_member %>

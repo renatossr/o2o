@@ -14,12 +14,18 @@ class Invoice < ApplicationRecord
   scope :all_ad_hoc, -> { where(invoice_type: "ad-hoc") }
   scope :all_paid, -> { where(invoice_type: "paid") }
 
+  before_save :update_totals
   after_save :set_billing_items_status
 
   def update_totals!
     self.total_value_cents = 0
     self.billing_items.each { |item| self.total_value_cents += item.value_cents }
     self.save!
+  end
+
+  def update_totals
+    self.total_value_cents = 0
+    self.billing_items.each { |item| self.total_value_cents += item.value_cents }
   end
 
   def final_value_cent
@@ -43,19 +49,31 @@ class Invoice < ApplicationRecord
     end
   end
 
-  def self.list_billing_cycles
-    Invoice.all_from_cycles.pluck(:reference_date).uniq
-  end
-
   def self.create_from_workout(workout)
     billing_items = []
     workout.members_workouts.each do |member_workout|
       member = member_workout.member
-      unless member.loyal
+      unless member.loyal || member_workout.billed?
+        member_responsible = member.responsible
+        invoice =
+          Invoice.where(
+            reference_date: Date.current.beginning_of_month,
+            member: member_responsible,
+            invoice_type: "ad-hoc",
+            status: "draft",
+          )
+        invoice =
+          Invoice.new(
+            status: "draft",
+            reference_date: Date.current.beginning_of_month,
+            member: member_responsible,
+            invoice_type: "ad-hoc",
+          ) if invoice.blank?
+
         new_item =
-          BillingItem.create(
+          BillingItem.new(
             member_id: member.id,
-            payable_by: member.responsible,
+            payer: member_responsible,
             description: "Aula Avulsa",
             quantity: 1,
             price_cents: member.class_price,
@@ -63,32 +81,17 @@ class Invoice < ApplicationRecord
             status: "draft",
             reference_date: Date.current.beginning_of_month,
           )
-        member_workout.billing_item = new_item
-        member_workout.status = new_item.status
-        billing_items << new_item
-        member_workout.save!
+        new_item.members_workouts << member_workout
+        invoice.billing_items << new_item
+        invoice.save!
       end
     end
+  end
 
-    paying_members = Member.find(billing_items.pluck(:payable_by).uniq)
-    paying_members.each do |member|
-      items = billing_items.select { |i| (i.payable_by == member.id && i.invoice_id == nil) }
-      if items.count > 0
-        invoice =
-          Invoice.create(
-            status: "draft",
-            reference_date: Date.current.beginning_of_month,
-            member_id: member.id,
-            invoice_type: "ad-hoc",
-          )
-        items.each do |item|
-          item.status = "billed"
-          invoice.billing_items << item
-          item.save
-        end
-        invoice.update_totals!
-      end
-    end
+  def whatsapp_link
+    final_link = self.member.whatsapp_link
+    message = "Segue o link da fatura: #{self.external_url}"
+    final_link = final_link + "?text=" + URI.encode_www_form_component(message)
   end
 
   def issue_invoice

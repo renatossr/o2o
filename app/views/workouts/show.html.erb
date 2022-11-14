@@ -1,6 +1,13 @@
-<p style="color: green"><%= notice %></p>
 <h1>Dados da Aula</h1>
+<!-- Breadcrumb -->
+<nav class="d-flex">
+  <h6 class="ms-1 mb-0">
+    <%= link_to "Home", root_path, class: "text-reset"%>
+    <span>/</span>
+    <%= link_to "Aulas", workouts_path, class: "text-reset"%>
+    <span>/</span>
+    <%= link_to "Dados da Aula", workout_path(@workout), class: "text-reset"%>
+  </h6>
+</nav>
+<!-- Breadcrumb -->
 <%= render @workout %>
-<div>
-  <%= link_to "Voltar para aulas", workouts_path %>
-</div>

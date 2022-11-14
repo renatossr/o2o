@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_07_154930) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_13_182307) do
   create_table "billing_items", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "member_id"
     t.string "description"
@@ -85,6 +85,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_07_154930) do
     t.string "payment_method"
     t.integer "paid_cents"
     t.string "invoice_type"
+    t.date "due_date"
   end
 
   create_table "members", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -118,6 +119,27 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_07_154930) do
     t.integer "billing_item_id"
   end
 
+  create_table "payable_items", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "coach_id"
+    t.string "description"
+    t.integer "price_cents"
+    t.integer "quantity"
+    t.integer "value_cents"
+    t.integer "payable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.date "reference_date"
+    t.string "payable_type"
+  end
+
+  create_table "payables", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "coach_id"
+    t.date "reference_date"
+    t.integer "total_value_cents"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "sync_tokens", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "token"
     t.datetime "created_at", null: false
@@ -137,6 +159,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_07_154930) do
     t.boolean "reviewed", default: false
     t.boolean "with_replacement", default: false
     t.integer "billing_item_id"
+    t.integer "payable_item_id"
+    t.boolean "cancelled"
   end
 
 end

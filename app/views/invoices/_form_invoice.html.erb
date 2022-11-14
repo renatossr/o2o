@@ -27,21 +27,27 @@
             </div>
             <hr class="my-4">
             <div class="row mb-5">
-              <div class="col-sm-6">
+              <div class="col-sm-3">
                 <div class="text-muted">
                   <h5 class="mb-3">Aluno faturado:</h5>
-                  <h6 class="mb-2"><%= f.association :member, label: false, collection: Member.all, input_html: {class: "js-s2-select form-control form-control-sm ms-2"} %></h6>
+                  <h6 class="mb-2"><%= f.association :member, label: false, collection: Member.all, input_html: {class: "js-s2-select form-control form-control-sm ms-2 w-25"} %></h6>
                 </div>
               </div>
-              <div class="col-sm-6">
+              <div class="col-sm-9">
                 <div class="text-muted text-sm-end">
                   <div>
                     <h5 class="font-size-16 mb-1">Número da Fatura:</h5>
                     <p>#<%= @invoice.id %></p>
                   </div>
                   <div class="mt-4">
-                    <h5 class="font-size-16 mb-1">Mês da Fatura:</h5>
+                    <h5 class="font-size-16 mb-1">Mês de referência:</h5>
                     <p><%= l(@invoice.reference_date || Date.current.beginning_of_month, format: "%b, %Y") %></p>
+                  </div>
+                  <div class="mt-4">
+                    <h5 class="font-size-16 mb-1">Data de vencimento:</h5>
+                    <div  class="mt-2 d-flex justify-content-end align-items-end">
+                      <%= f.input :due_date, label: false, html5: true, input_html: {class: "form-control-sm" } %>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -3,6 +3,12 @@ class InvoicesController < ApplicationController
   before_action :sanitize_currency, only: %i[update create]
 
   def index
+    # @invoices = Invoice.all.includes(:billing_items).page(params[:page]).per(25)
+
+    @q = Invoice.ransack(params[:q])
+    @q.sorts = ["reference_date desc"]
+    @invoices = @q.result.includes(:member)
+    @invoices = @invoices.page(params[:page])
   end
 
   def create
@@ -96,6 +102,7 @@ class InvoicesController < ApplicationController
     params.require(:invoice).permit(
       :id,
       :member_id,
+      :due_date,
       :discount_cents,
       billing_items_attributes: %i[id description price_cents quantity billing_type member_id payable_by _destroy],
     )
