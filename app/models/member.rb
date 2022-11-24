@@ -1,30 +1,42 @@
 class Member < ApplicationRecord
   has_many :members_workouts
-
   has_many :beneficiaries, class_name: "Member", foreign_key: "responsible_id"
   belongs_to :responsible, class_name: "Member", optional: true
-
   has_many :workouts, through: :members_workouts
   has_many :invoices
   has_many :billing_items
   has_many :coaches, -> { distinct }, through: :workouts
 
+  scope :all_billable_in_range, ->(range) { joins(:workouts).where(workouts: { start_at: range, reviewed: true }).uniq }
+
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :cel_number, presence: true
 
-  before_save :assign_sponsor_self, if: proc { self.responsible_id.nil? }
+  after_create :assign_sponsor_self, if: proc { self.responsible_id.nil? }
+
+  def self.all_billable_within(range)
+    Member.all_billable_in_range(range).select { |r| r.billable_in_range?(range) }
+  end
 
   def name
     "#{first_name} #{last_name}"
   end
 
-  def billable?
-    has_subscription? || has_individual?
+  def billable_in_range?(range)
+    (has_billable_subscription? || has_billable_individual_class_in_range?(range)) && is_not_in_billing_cycle?(range)
+  end
+
+  def has_billable_subscription?
+    has_subscription? && loyal?
   end
 
   def has_subscription?
     subscription_price > 0
+  end
+
+  def has_billable_individual_class_in_range?(range)
+    has_individual? && has_billable_workouts_in_range?(range)
   end
 
   def has_individual?
@@ -35,20 +47,24 @@ class Member < ApplicationRecord
     billing_items.where(reference_date: range).count > 0
   end
 
-  def is_already_in_billing_cycle?(range)
-    result = false
+  def is_not_in_billing_cycle?(range)
+    result = true
     billing_items.each do |item|
       if item.invoice.present? && range.cover?(item.invoice.reference_date) &&
            item.invoice.invoice_type == "billing_cycle" && item.invoice.status != "canceled"
-        result = true
+        result = false
         break
       end
     end
-    return result
+    result
   end
 
-  def has_workouts_in_range?(range)
-    workouts.where(start_at: range).count > 0
+  def has_billable_workouts_in_range?(range)
+    billable_workouts_in_range(range).count > 0
+  end
+
+  def billable_workouts_in_range(range)
+    members_workouts.all_billable_within(range)
   end
 
   def responsible_self?
@@ -100,8 +116,7 @@ class Member < ApplicationRecord
   end
 
   def billable_extra_workouts_count(month)
-    workouts_count =
-      self.members_workouts.all_not_billed.all_reviewed.within(month.beginning_of_month..month.end_of_month).count
+    workouts_count = billable_workouts_in_range(month.beginning_of_month..month.end_of_month).count
     available_workouts = self.workouts_available_in_month(month.beginning_of_month)
     billable_extra_workouts = workouts_count - available_workouts # (total de aulas) - (aulas no plano)
     billable_extra_workouts = [0, billable_extra_workouts].max
@@ -116,5 +131,6 @@ class Member < ApplicationRecord
 
   def assign_sponsor_self
     self.responsible_id = self.id
+    save!
   end
 end

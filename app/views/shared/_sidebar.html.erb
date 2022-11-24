@@ -44,21 +44,30 @@
         Financeiro
       <% end %>
       <ul class="collapse p-0 ps-4 mb-3" id="collapseFinanceiro">
-        <li class="nav-link p-0">
-          <%= link_to billing_dashboard_path, class: "nav-link pt-0" do %>
-            <i class="bi bi-arrow-right-short"></i> Dashboard
-          <% end %>
-        </li>
-        <li class="nav-link p-0">
-          <%= link_to billing_cycle_path, class: "nav-link pt-0" do %>
-            <i class="bi bi-arrow-right-short"></i> Faturamento
-          <% end %>
-        </li>
+        <% if current_user&.admin? %>
+          <li class="nav-link p-0">
+            <%= link_to  dashboard_billings_path, class: "nav-link pt-0" do %>
+              <i class="bi bi-arrow-right-short"></i> Dashboard
+            <% end %>
+          </li>
+          <li class="nav-link p-0">
+            <%= link_to billings_path, class: "nav-link pt-0" do %>
+              <i class="bi bi-arrow-right-short"></i> Fechamento
+            <% end %>
+          </li>
+        <% end %>
         <li class="nav-link p-0">
           <%= link_to invoices_path, class: "nav-link pt-0" do %>
             <i class="bi bi-arrow-right-short"></i> Faturas
           <% end %>
         </li>
+        <% if current_user&.admin? %>
+          <li class="nav-link p-0">
+            <%= link_to payables_path, class: "nav-link pt-0" do %>
+              <i class="bi bi-arrow-right-short"></i> Pagamentos
+            <% end %>
+          </li>
+        <% end %>
       </ul>
     </li>
     <li class="nav-item">

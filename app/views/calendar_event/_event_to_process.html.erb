@@ -4,8 +4,8 @@
       <div class="col-md-3 border-end py-3">
         <div class="d-flex justify-contents-between align-items-top text-start px-2">
           <div class="col-md-10">
-            <h6 class="mb-1" style="font-size: 16px; letter-spacing: .1px; text-rendering: geometricPrecision;"><%= event.title %></h6>
-            <span class="text-black-50" style="font-size: 14px; letter-spacing: .1px;"><%= l(event.start_at.localtime, format: "%A, %d/%m - %H:%M") %></span>
+            <h6 class="mb-1" style="font-size: 14px; letter-spacing: .1px; text-rendering: geometricPrecision;"><%= event.title %></h6>
+            <span class="text-black-50" style="font-size: 14px; letter-spacing: .1px;"><%= I18n.l(event.start_at.localtime, format: "%A, %d/%m - %H:%M") %></span>
           </div>
           <div class="col-md-2">
             <div class="container rounded border border-1 pe-0 me-0" style="background-color: <%= event_color(event.color) %>; height: 30px; width: 30px"></div>
@@ -14,27 +14,30 @@
       </div>
       <div class="col-md-7 border-end py-3 px-4">
         <div class="row">
-          <div class="col-md-8">
+          <div class="col-md-7">
             <div class="px-0">
               <div class="justify-content-start align-items-top">
-                <h6 class="text-right me-3">Alunos</h6>
+                <div class="d-flex justify-content-start">
+                  <h6 class="text-right me-2">Alunos</h6>
+                  <%= link_to raw("<i class=\"bi bi-person-plus-fill\"></i>"), new_member_path %>
+                </div>
                 <%= w.association :members, label: false, input_html: { class: "js-s2-select", id: "members_id_#{event.workout.id}", style: "width: 100%;"} %>
               </div>
             </div>
           </div>
-          <div class="col-md-4 pe-0">
+          <div class="col-md-5 pe-0">
             <div class="px-0">
               <div class="justify-content-start align-items-top">
                 <h6 class="text-right me-3">Coach</h6>
                 <%= w.input :coach_id, label: false, collection: Coach.all, input_html: { class: "js-s2-select", id: "coach_id_#{event.workout.id}", style: "width: 100%"} %>
               </div>
               <div class="d-flex justify-content-start align-items-top mt-3">
-                <h6 class="text-right me-3">Cancelada</h6>
-                <div class="col-md-6">
+                <h6 class="text-right me-2">Cancelada</h6>
+                <div class="col-md-auto me-4">
                   <%= w.input :cancelled, label: false %>
                 </div>
-                <h6 class="text-right me-3">Reposição</h6>
-                <div class="col-md-6">
+                <h6 class="text-right me-2">Reposição</h6>
+                <div class="col-md-auto">
                   <%= w.input :with_replacement, label: false %>
                 </div>
               </div>
@@ -44,16 +47,18 @@
       </div>
       <div class="col-md-2 py-3">
         <div class="row align-items-start" style="min-height: 90px;">
+          <!--
           <div class="col">
-            <span></span>
+            <span>Quantidade de alunos diferente</span>
             <div class="float-end">
               <span class="badge badge-outline bg-danger rounded-pill"><%= "!" unless event.reviewed? %></span>
             </div>
           </div>
+          -->
         </div>
         <div class="row align-items-end">
           <div class="col text-end">
-            <%= f.submit 'OK', class: 'btn btn-sm btn-primary' %>
+            <%= f.submit 'Confirmar', class: 'btn btn-sm btn-primary' %>
           </div>
         </div>
       </div>

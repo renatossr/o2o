@@ -1,0 +1,82 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-10 col-xl-8 mx-auto">
+      <h2 class="h3 mb-4 page-title">Admin</h2>
+      <hr>
+      <h5 class="mb-0 mt-5">Google Calendar</h5>
+      <p>Ações relacionadas à integração com o Google Calendar.</p>
+      <div class="list-group mb-5">
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col">
+              <strong class="mb-3">Autenticação</strong>
+              <p class="text-muted mb-0">Solicitar autenticação para o Google.</p>
+            </div>
+            <div class="col-auto">
+              <%= link_to 'Solicitar', redirect_url, class: 'btn btn-primary' %>
+            </div>
+          </div>
+        </div>
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col">
+              <strong class="mb-3">Synch Adicional</strong>
+              <p class="text-muted mb-0">Sincronizar. Última sincronização: </p>
+              <span><%= SyncToken.last.blank? ? 'Sincronização total ainda não realizada' : SyncToken.last.created_at%></span>
+            </div>
+            <div class="col-auto">
+              <%= link_to 'Sync', events_url, class: 'btn btn-primary' + (SyncToken.last.blank? ? ' disabled' : '') %>
+            </div>
+          </div>
+        </div>
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col">
+              <strong class="mb-3">Synch Completo</strong>
+              <p class="text-muted mb-0">Refazer a sincronismo completo com o Google Calendar.</p>
+            </div>
+            <div class="col-auto">
+              <%= link_to 'Iniciar', eventsFullSync_url, class: 'btn btn-primary' + (GToken.where(token_type: 'refresh').last.blank? ? ' disabled' : '') %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h5 class="mb-0 mt-5">Importação</h5>
+      <p>Processos de importação em massa.</p>
+      <div class="list-group mb-5">
+        <div class="list-group-item">
+          <%= form_for :import, url: items_import_import_members_path do |f|%>
+            <div class="row align-items-center">
+              <div class="col">
+                <strong class="mb-3">Importar Alunos</strong>
+                <p class="text-muted mb-0">Escolha o arquivo e inicie o processo.</p>
+              </div>
+              <div class="d-flex col-auto justify-content-end">
+                <%= f.file_field :file, accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', class: 'form-control form-control-sm' %>
+              </div>
+              <div class="d-flex col-auto justify-content-end">
+                <%= f.submit "Iniciar", class: 'btn btn-primary', data: { turbo: false } %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        <div class="list-group-item">
+          <%= form_for :import, url: items_import_import_coaches_path do |f| %>
+            <div class="row align-items-center">
+              <div class="col">
+                <strong class="mb-3">Importar Coaches</strong>
+                <p class="text-muted mb-0">Escolha o arquivo e inicie o processo.</p>
+              </div>
+              <div class="d-flex col-auto justify-content-end">
+                <%= f.file_field :file, accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', class: 'form-control form-control-sm' %>
+              </div>
+              <div class="d-flex col-auto justify-content-end">
+                <%= f.submit "Iniciar", class: 'btn btn-primary', data: { turbo: false } %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -16,10 +16,6 @@
           <h4 class="font-weight-bold"><%= member.name%></h4>
           <span class="text-black-50"><%= member.alias%></span>
           <div class="form-check form-switch mt-4 mb-2">
-            <%= form.check_box :active , class: "form-check-input"%>
-            <%= form.label :active, "Aluno Ativo", style: "display: block", class:"form-check-label"%>
-          </div>
-          <div class="form-check form-switch">
             <%= form.check_box :loyal , class: "form-check-input" %>
             <%= form.label :loyal, "Aluno Fidelizado", style: "display: block", class:"form-check-label"%>
           </div>

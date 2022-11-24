@@ -12,10 +12,20 @@
     <%= render "shared/navbar" %>
     <div class="container-fluid">
       <div class="row">
-        <nav id="sidebarMenu" class="col-md-2 col-lg-2 d-md-block bg-light sidebar collapse" data-controller="set-active-link">
-          <%= render "shared/sidebar" %>
-        </nav>
-        <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4">
+        <% if current_user %>
+          <nav id="sidebarMenu" class="col-md-2 col-lg-2 d-md-block bg-light sidebar collapse" data-controller="set-active-link">
+            <%= render "shared/sidebar" %>
+          </nav>
+        <% end %>
+        <main class="<%= current_user ? "col-md-10 col-lg-10" : "col-md-12 col-lg-12"%> ms-sm-auto px-md-4">
+          <% flash.each do |key, value| %>
+            <div class="container mt-5 mb-0 px-3">
+              <div class="<%= flash_class(key) %> alert-dismissible fade show" role="alert">
+                <%= value %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            </div>
+          <% end %>
           <div class="container mt-5">
             <div class="container">
               <%= yield %>

@@ -2,6 +2,16 @@ require "faker"
 
 Faker::Config.locale = "pt-BR"
 
+User.destroy_all
+User.create(
+  first_name: "Renato",
+  last_name: "Ribeiro",
+  email: "renato.fairbanks@gmail.com",
+  password: "password",
+  role: 99,
+)
+p "Created Master User: #{User.first.first_name}"
+
 Member.destroy_all
 10.times do
   firstName = Faker::Name.first_name
@@ -16,6 +26,7 @@ Member.destroy_all
       cel_number: Faker::PhoneNumber.cell_phone,
       subscription_price: subscriptionPrice,
       class_price: classPrice,
+      loyal: Faker::Boolean.boolean(true_ratio: 0.8),
     },
   )
 end
@@ -43,12 +54,7 @@ CalendarEvent.destroy_all
   title = ""
   member_ids = (Member.first.id..Member.last.id).to_a.sample(rand(1..3))
   coach_id = rand(Coach.first.id..Coach.last.id)
-  time =
-    Faker::Time.between(
-      from: DateTime.now - 1.month,
-      to: DateTime.now,
-      format: :default,
-    )
+  time = Faker::Time.between(from: DateTime.now - 1.month, to: DateTime.now, format: :default)
 
   member_ids.each do |id|
     if title.blank?

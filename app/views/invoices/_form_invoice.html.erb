@@ -41,7 +41,7 @@
                   </div>
                   <div class="mt-4">
                     <h5 class="font-size-16 mb-1">Mês de referência:</h5>
-                    <p><%= l(@invoice.reference_date || Date.current.beginning_of_month, format: "%b, %Y") %></p>
+                    <p><%= I18n.l(@invoice.reference_date || Date.current.beginning_of_month, format: "%b, %Y") %></p>
                   </div>
                   <div class="mt-4">
                     <h5 class="font-size-16 mb-1">Data de vencimento:</h5>
@@ -91,7 +91,7 @@
                         <% end %>
                       </th>
                       <th scope="row" colspan="2" class="text-end">Sub Total</th>
-                      <td class="text-end" data-invoice-value-calculator-target="total_value"><%= number_to_currency((@invoice.total_value_cents || 0)/100, unit: "R$ ", separator: ",", delimiter: ".") %></td>
+                      <td class="text-end" data-invoice-value-calculator-target="total_value"><%= number_to_currency((@invoice.total_value_cents || 0)/100.0, unit: "R$ ", separator: ",", delimiter: ".") %></td>
                       <td class="text-end"></td>
                     </tr>
                     <tr>
@@ -103,7 +103,7 @@
                   <tr>
                     <th scope="row" colspan="3" class="border-0 text-end">Total</th>
                     <td class="border-0 text-end">
-                      <h5 class="m-0" data-invoice-value-calculator-target="final_value"><%= number_to_currency(@invoice.final_value_cent/100, unit: "R$ ", separator: ",", delimiter: ".") %></h5>
+                      <h5 class="m-0" data-invoice-value-calculator-target="final_value"><%= number_to_currency(@invoice.final_value_cents/100.0, unit: "R$ ", separator: ",", delimiter: ".") %></h5>
                     </td>
                   </tr>
                 </tbody>
@@ -112,7 +112,9 @@
             <div class="d-print-none mt-4">
               <div class="float-end">
                 <%= hidden_field_tag :previous_request, request.referer %>
+                <%= f.hidden_field :id %>
                 <%= f.submit "Salvar", class: "btn btn-primary"%>
+                <%= f.submit "Emitir",  formaction: confirm_invoice_path(@invoice), class: "btn btn-primary" if @invoice.id.present? && @invoice.draft? %>
               </div>
             </div>
           </div>

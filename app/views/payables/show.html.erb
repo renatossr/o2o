@@ -1,0 +1,108 @@
+<h1>Fatura</h1>
+<!-- Breadcrumb -->
+<nav class="d-flex">
+  <h6 class="ms-1 mb-0">
+    <%= link_to "Home", root_path, class: "text-reset"%>
+    <span>/</span>
+    <%= link_to "Pagamentos", payables_path, class: "text-reset"%>
+    <span>/</span>
+    <%= link_to "O2OPMT##{@payable.id}", payable_path(@payable), class: "text-reset"%>
+  </h6>
+</nav>
+<!-- Breadcrumb -->
+<div class="container rounded bg-white mt-5 mb-5" data-controller="masks" >
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card border-white py2">
+        <div class="card-body">
+          <div class="payable-title">
+            <h4 class="float-end">Pagamento O2OPMT#<%= @payable.id %> <%= render(BadgeComponent.new(text: @payable.status, color: @payable.status_color)) %></h4>
+            <div class="mb-4 d-flex justify-content-left">
+              <%= image_tag "logo-one2one.png", alt: "One 2 One", height: "100" %>
+              <div class="container pt-2">
+                <strong class="mb-1">One 2 One Fight</strong>
+                <p class="mb-1 text-muted">Rua Florida, 1901</p>
+                <p class="mb-1 text-muted">(11) 98888-7777</p>
+              </div>
+            </div>
+          </div>
+          <hr class="my-4">
+          <div class="row mb-5">
+            <div class="col-sm-6">
+              <div class="text-muted">
+                <div>
+                  <h5 class="mb-1">Coach para pagamento:</h5>
+                  <p class="mb-2"><%= link_to @payable.coach.name, coach_path(@payable.coach) %></p>
+                  <p><%= @payable.coach.cel_number %></p>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="text-muted text-sm-end">
+                <div>
+                  <h5 class="font-size-16 mb-1">Número do Pagamento:</h5>
+                  <p class="mb-0">O2OPMT#<%= @payable.id %></p>
+                </div>
+                <div class="mt-4">
+                  <h5 class="font-size-16 mb-1">Mês de referência</h5>
+                  <p><%= I18n.l(@payable.reference_date, format: "%b, %Y") %></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="py-2">
+            <h5 class="font-size-15">Detalhes do pagamento</h5>
+            <div class="table-responsive">
+              <table class="table table-nowrap table-centered mb-0">
+                <thead>
+                  <tr>
+                    <th style="width: 70px;">No.</th>
+                    <th>Descrição</th>
+                    <th class="text-end">Valor</th>
+                    <th class="text-end">Quantidade</th>
+                    <th colspan="2" class="text-end" style="width: 120px;">Valor Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% counter = 1 %>
+                  <% @payable.payable_items.each do |item| %>
+                    <tr>
+                      <th scope="row"><%= counter %></th>
+                      <td>
+                        <h6 class="mb-1"><%= item.description %></h6>
+                      </td>
+                      <td class="text-end"><%= number_to_currency(item.price_cents/100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
+                      <td class="text-end"><%= item.quantity %></td>
+                      <td colspan="2" class="text-end"><%= number_to_currency(item.value_cents/100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
+                    </tr>
+                    <% counter += 1%>
+                  <% end %>
+                  <tr>
+                    <th scope="row" colspan="4" class="text-end">Sub Total</th>
+                    <td class="text-end"><%= number_to_currency(@payable.total_value_cents/100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
+                  </tr>
+                  <tr>
+                    <th scope="row" colspan="4" class="border-0 text-end">
+                      Desconto</th>
+                    <td class="border-0 text-end">- <%= number_to_currency(@payable.discount_cents/100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
+                  </tr>
+                  <tr>
+                    <th scope="row" colspan="4" class="border-0 text-end">Total</th>
+                    <td class="border-0 text-end">
+                      <h4 class="m-0"><%= number_to_currency(@payable.final_value_cents/100.0, unit: "R$", separator: ",", delimiter: ".") %></h4>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="d-print-none mt-4">
+              <div class="float-end">
+                <%= link_to "Editar",  edit_payable_path(@payable), class: "btn btn-sm btn-primary" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

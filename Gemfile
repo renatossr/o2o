@@ -44,6 +44,7 @@ gem 'kaminari'
 gem 'bootstrap5-kaminari-views'
 gem "view_component", require: "view_component/engine"
 gem 'ransack'
+gem 'devise'
 # gem "select2-rails"
 
 # Use Redis adapter to run Action Cable in production
@@ -94,3 +95,11 @@ end
 gem "chartkick", "~> 4.2"
 
 gem "groupdate", "~> 6.1"
+
+gem "devise_invitable", "~> 2.0"
+
+gem "pundit", "~> 2.2"
+
+gem "rubyXL", "~> 3.4"
+
+gem "roo", "~> 2.9"

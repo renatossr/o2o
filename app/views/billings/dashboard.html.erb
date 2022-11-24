@@ -95,7 +95,7 @@
                           <tr>
                             <th scope="row" colspan="4" class="border-0 text-end">Total</th>
                             <td class="border-0 text-end">
-                              <h6 class="m-0"><%= number_to_currency((invoice.final_value_cent||0)/100, unit: "R$", separator: ",", delimiter: ".") %></h6>
+                              <h6 class="m-0"><%= number_to_currency((invoice.final_value_cents||0)/100, unit: "R$", separator: ",", delimiter: ".") %></h6>
                             </td>
                           </tr>
                         </tbody>

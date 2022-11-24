@@ -8,12 +8,6 @@
   </h6>
 </nav>
 <!-- Breadcrumb -->
-<% if notice %>
-  <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-    <%= notice %>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-<%end%>
 <div class="container rounded bg-white mt-5 mb-5">
   <div class="p-3 py-5">
     <div class="d-flex p-0 mb-2 justify-content-between">
@@ -27,7 +21,7 @@
     </div>
     <%= search_form_for @q do |f| %>
       <div class="container d-flex bg-dark px-2 pt-2 mb-0 align-items-center justify-content-start">
-        <%= f.text_field :member_name_or_reference_date_or_status_cont, placeholder: "Buscar...", class: "form-control form-control-sm mt-0 w-25" %>
+        <%= f.text_field :member_first_name_or_member_last_name_or_reference_date_or_status_or_total_value_cents_cont_any, placeholder: "Buscar...", class: "form-control form-control-sm mt-0 w-25" %>
         <%= f.submit "", style: "display:none;" %>
       </div>
     <% end %>
@@ -53,8 +47,8 @@
             <td><%= render(BadgeComponent.new(text: invoice.status, color: invoice.status_color)) %></td>
             <td><span>R$ </span><span data-masks-target="money"><%= invoice.total_value_cents %></span></td>
             <td>
-              <%= link_to raw("<i class=\"bi bi-pencil-square\"></i>"), edit_invoice_path(invoice), class: "btn btn-sm btn-outline-warning" if invoice.status == "draft" %>
-              <%= link_to raw("<i class=\"bi bi-eye-fill\"></i>"), invoice_path(invoice), class: "btn btn-sm btn-outline-warning" unless invoice.status == "draft" %>
+              <%= link_to raw("<i class=\"bi bi-pencil-square\"></i>"), edit_invoice_path(invoice), class: "btn btn-sm btn-outline-warning" if invoice.draft? %>
+              <%= link_to raw("<i class=\"bi bi-eye-fill\"></i>"), invoice_path(invoice), class: "btn btn-sm btn-outline-warning" unless invoice.draft? %>
               <%= link_to raw("<i class=\"bi bi-whatsapp\"></i>"), invoice.whatsapp_link, target: :_blank, class: "btn btn-outline-success btn-sm ms-2", style: "color: #25D366;" unless invoice.external_url.blank? %>
             </td>
           </tr>
@@ -82,25 +76,25 @@
                             <td>
                               <h6 class="mb-1"><%= item.description %></h6>
                             </td>
-                            <td class="text-end"><%= number_to_currency((item.price_cents ||0)/100, unit: "R$", separator: ",", delimiter: ".") %></td>
+                            <td class="text-end"><%= number_to_currency((item.price_cents ||0)/100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
                             <td class="text-end"><%= item.quantity %></td>
-                            <td colspan="2" class="text-end"><%= number_to_currency((item.value_cents ||0)/100, unit: "R$", separator: ",", delimiter: ".") %></td>
+                            <td colspan="2" class="text-end"><%= number_to_currency((item.value_cents ||0)/100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
                           </tr>
                           <% counter += 1%>
                         <% end %>
                         <tr>
                           <th scope="row" colspan="4" class="text-end">Sub Total</th>
-                          <td class="text-end"><%= number_to_currency((invoice.total_value_cents ||0)/100, unit: "R$", separator: ",", delimiter: ".") %></td>
+                          <td class="text-end"><%= number_to_currency((invoice.total_value_cents ||0)/100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
                         </tr>
                         <tr>
                           <th scope="row" colspan="4" class="border-0 text-end">
                             Desconto</th>
-                          <td class="border-0 text-end">- <%= number_to_currency((invoice.discount_cents||0)/100, unit: "R$", separator: ",", delimiter: ".") %></td>
+                          <td class="border-0 text-end">- <%= number_to_currency((invoice.discount_cents||0)/100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
                         </tr>
                         <tr>
                           <th scope="row" colspan="4" class="border-0 text-end">Total</th>
                           <td class="border-0 text-end">
-                            <h6 class="m-0"><%= number_to_currency((invoice.final_value_cent||0)/100, unit: "R$", separator: ",", delimiter: ".") %></h6>
+                            <h6 class="m-0"><%= number_to_currency((invoice.final_value_cents||0)/100.0, unit: "R$", separator: ",", delimiter: ".") %></h6>
                           </td>
                         </tr>
                       </tbody>

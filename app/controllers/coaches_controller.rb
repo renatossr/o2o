@@ -4,6 +4,8 @@ class CoachesController < ApplicationController
 
   # GET /coaches or /coaches.json
   def index
+    authorize Coach
+
     @q = Coach.ransack(params[:q])
     @coaches = @q.result(distinct: true)
     @coaches = @coaches.page(params[:page])
@@ -11,23 +13,28 @@ class CoachesController < ApplicationController
 
   # GET /coaches/1 or /coaches/1.json
   def show
+    authorize @coach
   end
 
   # GET /coaches/new
   def new
     @coach = Coach.new
+    authorize @coach
   end
 
   # GET /coaches/1/edit
   def edit
+    authorize @coach
   end
 
   # POST /coaches or /coaches.json
   def create
     @coach = Coach.new(coach_params)
+    authorize @coach
 
     if @coach.save
-      redirect_to coaches_url, notice: "Coach was successfully created."
+      flash[:success] = "Coach criado com sucesso."
+      redirect_to coaches_url
     else
       render :new, status: :unprocessable_entity
     end
@@ -35,8 +42,10 @@ class CoachesController < ApplicationController
 
   # PATCH/PUT /coaches/1 or /coaches/1.json
   def update
+    authorize @coach
     if @coach.update(coach_params)
-      redirect_to coaches_url, notice: "Coach was successfully updated."
+      flash[:success] = "Coach alterado com sucesso."
+      redirect_to coaches_url
     else
       render :edit, status: :unprocessable_entity
     end
@@ -44,8 +53,10 @@ class CoachesController < ApplicationController
 
   # DELETE /coaches/1 or /coaches/1.json
   def destroy
+    authorize @coach
     @coach.destroy
-    redirect_to coaches_url, notice: "Coach was successfully destroyed."
+    flash[:success] = "Coach removido com sucesso."
+    redirect_to coaches_url
   end
 
   private

@@ -1,0 +1,33 @@
+<div class="container rounded bg-white mt-5 mb-5">
+  <div class="p-3 py-5">
+    <div class="d-flex p-0 mb-2 justify-content-between">
+      <div class="p-2">
+        <%= paginate @users, window: 1, theme: 'bootstrap-5', pagination_class: "pagination-sm" %>
+        <%= page_entries_info @users %>
+      </div>
+      <div class="ml-auto p-2 align-self-end">
+        <%= link_to raw("<i class=\"bi bi-person-plus-fill\"></i> Novo Usuário"), new_user_invitation_path, class: "btn btn-primary" %>
+      </div>
+    </div>
+    <table class="table table-striped mt-0" id="users">
+      <thead class="table-dark">
+        <tr>
+          <th>Nome</th>
+          <th>Sobrenome</th>
+          <th>Email</th>
+          <th>Tipo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @users.each do |user| %>
+          <tr id="<%= dom_id user %>">
+            <td><%= user.first_name%></td>
+            <td><%= user.last_name%></td>
+            <td><%= user.email%></td>
+            <td><%= user.role %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

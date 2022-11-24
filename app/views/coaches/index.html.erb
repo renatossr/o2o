@@ -8,12 +8,6 @@
   </h6>
 </nav>
 <!-- Breadcrumb -->
-<% if notice %>
-  <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-    <%= notice %>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-<%end%>
 <div class="container rounded bg-white mt-5 mb-5">
   <div class="p-3 py-5">
     <div class="d-flex p-0 mb-2 justify-content-between">
@@ -27,7 +21,7 @@
     </div>
     <%= search_form_for @q do |f| %>
       <div class="container d-flex bg-dark px-2 pt-2 mb-0 align-items-center justify-content-start">
-        <%= f.text_field :name_or_alias_or_cel_number_cont, placeholder: "Buscar...", class: "form-control form-control-sm mt-0 w-25" %>
+        <%= f.text_field :first_name_or_last_name_or_alias_or_cel_number_cont_any, placeholder: "Buscar...", class: "form-control form-control-sm mt-0 w-25" %>
         <%= f.submit "", style: "display:none;" %>
       </div>
     <% end %>
@@ -37,8 +31,10 @@
           <th><%= sort_link @q, :name, "Nome", default_order: :asc, class: "link-light text-decoration-none" %></th>
           <th><%= sort_link @q, :alias, "Apelido", default_order: :asc, class: "link-light text-decoration-none" %></th>
           <th>Celular</th>
-          <th>Salário Fixo</th>
-          <th>Valor por Aula</th>
+          <% if current_user&.admin? %>
+            <th>Salário Fixo</th>
+            <th>Valor por Aula</th>
+          <% end %>
         </tr>
       </thead>
       <tbody>
@@ -47,8 +43,10 @@
             <td><%= link_to coach.name, coach_path(coach) %></td>
             <td><%= coach.alias %></td>
             <td data-masks-target="phone"><%= coach.cel_number %></td>
-            <td><span>R$ </span><span data-masks-target="money"><%= coach.pay_fixed %></span></td>
-            <td><span>R$ </span><span data-masks-target="money"><%= coach.pay_per_workout %></span></td>
+            <% if current_user&.admin? %>
+              <td><span>R$ </span><span data-masks-target="money"><%= coach.pay_fixed %></span></td>
+              <td><span>R$ </span><span data-masks-target="money"><%= coach.pay_per_workout %></span></td>
+            <% end %>
           </tr>
         <% end %>
       </tbody>

@@ -1,8 +1,11 @@
 Rails.application.routes.draw do
+  devise_for :users, controllers: { invitations: "users/invitations" }
+
   post "iugu/invoice_status_webhook"
   root "members#index"
 
-  get "/admin", to: "admin#index", as: "admin"
+  get "/admin/settings", to: "admin#settings", as: "settings"
+  get "/admin/user_management", to: "admin#user_management", as: "user_management"
 
   get "calendar_event/index"
   get "calendar_event/process_events(/:id)", to: "calendar_event#process_events", as: "proc_events"
@@ -14,19 +17,28 @@ Rails.application.routes.draw do
   get "/events", to: "g_calendar#events", as: "events"
   get "/events/full", to: "g_calendar#eventsFullSync", as: "eventsFullSync"
 
-  get "billing/dashboard", as: "billing_dashboard"
-  get "billing/billing_cycle", as: "billing_cycle"
-  post "billing/start_cycle", as: "start_cycle"
-  resources :billing do
-    post :start_cycle, on: :member, as: :start_cycle
+  post "items_import/import_members"
+  post "items_import/import_coaches"
+
+  resources :billings do
+    post :start_cycle, on: :collection, as: :start_cycle
+    post :close_cycle, on: :member, as: :close_cycle
+    get :dashboard, on: :collection
   end
 
   resources :workouts
   resources :coaches
   resources :members
 
-  resources :invoices do
+  resources :payables do
     patch :confirm, on: :collection, as: :confirm
+    patch :cancel, on: :member, as: :cancel
+    get :new_from_workout, on: :collection
+  end
+
+  resources :invoices do
+    patch :confirm_all, on: :collection, as: :confirm_all
+    patch :confirm, on: :member, as: :confirm
     patch :cancel, on: :member, as: :cancel
     get :new_from_workout, on: :collection
   end

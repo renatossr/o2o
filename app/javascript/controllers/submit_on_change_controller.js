@@ -8,7 +8,7 @@ export default class extends Controller {
     const form = this.form_to_submitTarget;
     $(".js-s2-select").on("select2:select", function (e) {
       form.method = "get";
-      form.action = "/billing/billing_cycle";
+      form.action = "/billings";
       form.submit();
     });
   }

@@ -44,31 +44,35 @@
               <%= form.telephone_field :cel_number , class: "form-control form-control-sm", data: { masks_target: 'phone' }, placeholder: "Número do celular...", disabled: true %>
             </div>
           </div>
-          <div class="mt-5 text-center">
-            <%= link_to "Editar Coach", edit_coach_path(coach), class: "btn btn-primary" %>
-            <%= button_to "Apagar Coach", @coach, method: :delete, class: "btn btn-danger" %>
-          </div>
+          <% if current_user&.admin? %>
+            <div class="mt-5 text-center">
+              <%= link_to "Editar Coach", edit_coach_path(coach), class: "btn btn-primary" %>
+              <%= button_to "Apagar Coach", @coach, method: :delete, class: "btn btn-danger" %>
+            </div>
+          <% end %>
         </div>
       </div>
-      <div class="col-md-5">
-        <div class="p-3 py-5">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="text-right">Valores</h4>
-          </div>
-          <div class="row mt-2 mb-3">
-            <div class="col-md-5 pe-1">
-              <%= form.label :pay_fixed, "Fixo R$", style: "display: block", class:"form-label" %>
-              <%= form.text_field :pay_fixed , class: "form-control form-control-sm", data: { masks_target: 'money' }, placeholder: "-", disabled: true %>
+      <% if current_user&.admin? %>
+        <div class="col-md-5">
+          <div class="p-3 py-5">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h4 class="text-right">Valores</h4>
             </div>
-          </div>
-          <div class="row mt-2 mb-3">
-            <div class="col-md-5 pe-1">
-              <%= form.label :pay_per_workout, "Por aula R$", style: "display: block", class:"form-label" %>
-              <%= form.text_field :pay_per_workout , class: "form-control form-control-sm", data: { masks_target: 'money' }, placeholder: "-", disabled: true %>
+            <div class="row mt-2 mb-3">
+              <div class="col-md-5 pe-1">
+                <%= form.label :pay_fixed, "Fixo R$", style: "display: block", class:"form-label" %>
+                <%= form.text_field :pay_fixed , class: "form-control form-control-sm", data: { masks_target: 'money' }, placeholder: "-", disabled: true %>
+              </div>
+            </div>
+            <div class="row mt-2 mb-3">
+              <div class="col-md-5 pe-1">
+                <%= form.label :pay_per_workout, "Por aula R$", style: "display: block", class:"form-label" %>
+                <%= form.text_field :pay_per_workout , class: "form-control form-control-sm", data: { masks_target: 'money' }, placeholder: "-", disabled: true %>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      <% end %>
     </div>
   </div>
 <% end %>

@@ -1,4 +1,6 @@
 class BillingItem < ApplicationRecord
+  enum status: { draft: 0, processing: 10, pending: 11, paid: 12, cancelling: 20, cancelled: 21, expired: 30 }
+
   belongs_to :invoice, optional: true
   belongs_to :member
   belongs_to :payer, class_name: "Member", foreign_key: :payable_by
@@ -8,18 +10,15 @@ class BillingItem < ApplicationRecord
   validates :price_cents, numericality: { only_integer: true }
   validates :quantity, numericality: { only_integer: true }
 
-  scope :all_draft, -> { where(status: "draft") }
-
   before_validation :populate_member_and_payer, if: proc { self.invoice.present? }
   after_create :decrease_member_replacement_classes, if: proc { self.billing_type == "replacement" }
   before_update :decrease_member_replacement_classes,
                 if: proc { self.billing_type == "replacement" && self.quantity_changed? }
   before_update :increment_member_replacement_classes,
-                if: proc { self.billing_type == "replacement" && (self.status_changed? && self.status == "canceled") }
+                if: proc { self.billing_type == "replacement" && (self.status_changed? && self.cancelled?) }
+  after_save :set_workout_status
   before_destroy :increment_member_replacement_classes, if: proc { self.billing_type == "replacement" }
   before_destroy :set_workout_status_to_nil
-
-  after_save :set_workout_status
 
   def value_cents
     (price_cents || 0) * (quantity || 0)

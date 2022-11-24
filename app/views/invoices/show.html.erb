@@ -52,11 +52,11 @@
                 </div>
                 <div class="mt-4">
                   <h5 class="font-size-16 mb-1">Mês de referência</h5>
-                  <p><%= l(@invoice.reference_date, format: "%b, %Y") %></p>
+                  <p><%= I18n.l(@invoice.reference_date, format: "%b, %Y") %></p>
                 </div>
                 <div class="mt-4">
                   <h5 class="font-size-16 mb-1">Data de vencimento</h5>
-                  <p><%= l(@invoice.due_date, format: "%b, %Y") %></p>
+                  <p><%= I18n.l(@invoice.due_date, format: "%d %b, %Y") %></p>
                 </div>
               </div>
             </div>
@@ -82,25 +82,25 @@
                       <td>
                         <h6 class="mb-1"><%= item.description %></h6>
                       </td>
-                      <td class="text-end"><%= number_to_currency(item.price_cents/100, unit: "R$", separator: ",", delimiter: ".") %></td>
+                      <td class="text-end"><%= number_to_currency(item.price_cents/100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
                       <td class="text-end"><%= item.quantity %></td>
-                      <td colspan="2" class="text-end"><%= number_to_currency(item.value_cents/100, unit: "R$", separator: ",", delimiter: ".") %></td>
+                      <td colspan="2" class="text-end"><%= number_to_currency(item.value_cents/100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
                     </tr>
                     <% counter += 1%>
                   <% end %>
                   <tr>
                     <th scope="row" colspan="4" class="text-end">Sub Total</th>
-                    <td class="text-end"><%= number_to_currency(@invoice.total_value_cents/100, unit: "R$", separator: ",", delimiter: ".") %></td>
+                    <td class="text-end"><%= number_to_currency(@invoice.total_value_cents/100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
                   </tr>
                   <tr>
                     <th scope="row" colspan="4" class="border-0 text-end">
                       Desconto</th>
-                    <td class="border-0 text-end">- <%= number_to_currency(@invoice.discount_cents/100, unit: "R$", separator: ",", delimiter: ".") %></td>
+                    <td class="border-0 text-end">- <%= number_to_currency(@invoice.discount_cents/100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
                   </tr>
                   <tr>
                     <th scope="row" colspan="4" class="border-0 text-end">Total</th>
                     <td class="border-0 text-end">
-                      <h4 class="m-0"><%= number_to_currency(@invoice.final_value_cent/100, unit: "R$", separator: ",", delimiter: ".") %></h4>
+                      <h4 class="m-0"><%= number_to_currency(@invoice.final_value_cents/100.0, unit: "R$", separator: ",", delimiter: ".") %></h4>
                     </td>
                   </tr>
                 </tbody>
@@ -112,6 +112,7 @@
                   <%= f.hidden_field :id %>
                   <%= f.submit "2a via",  formaction: '', class: "btn btn-sm btn-primary" %>
                   <%= f.submit "Cancelar",  formaction: cancel_invoice_path, class: "btn btn-sm btn-danger" %>
+                  <%= f.submit "Emitir",  formaction: confirm_invoice_path(@invoice), class: "btn btn-sm btn-primary" if @invoice.draft? %>
                 <% end %>
               </div>
             </div>

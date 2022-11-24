@@ -1,0 +1,286 @@
+<h1>Fechamento: <%=@selected_date%></h1>
+<!-- Breadcrumb -->
+<nav class="d-flex">
+  <h6 class="ms-1 mb-0">
+    <%= link_to "Home", root_path, class: "text-reset"%>
+    <span>/</span>
+    <%= link_to "Fechamentos", billings_path, class: "text-reset"%>
+    <span>/</span>
+    <%= link_to @selected_date, @billing, class: "text-reset"%>
+  </h6>
+</nav>
+<!-- Breadcrumb -->
+<div class="container rounded bg-white mt-5">
+  <div class="p-3">
+    <%= simple_form_for :billing_cycle, url: start_cycle_billings_path, method: :post do |f|%>
+      <div class="d-flex row justify-content-between align-items-center">
+        <div class="col-4 ">
+          <h2 class="me-3 text-success">Receita: <%= number_to_currency((@billing.invoices.where.not(status: "canceled").sum(:total_value_cents)||0)/100.0, unit: "R$", separator: ",", delimiter: ".")%></h2>
+        </div>
+        <div class="col-4 ">
+          <h2 class="me-3 text-danger">Custo: <%= number_to_currency((@billing.payables.where.not(status: "canceled").sum(:total_value_cents)||0)/100.0, unit: "R$", separator: ",", delimiter: ".")%></h2>
+        </div>
+        <div class="col-auto">
+          <h3><%= render(BadgeComponent.new(text: @billing.status, color: @billing.status_color)) %></h3>
+        </div>
+        <% if @billing.editable? %>
+          <div class="col-1 d-flex justify-content-end">
+            <%= f.submit "Rodar", class: "btn btn-primary", disabled: !@billing.processable? %>
+            <%= f.submit "Fechar mês", formaction: close_cycle_billing_path, class: "btn btn-primary" if @billing.closable? %>
+          </div>
+          <%= hidden_field_tag "id", @billing.id %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+<div class="container rounded bg-white mt-5 mb-5">
+  <ul class="nav nav-tabs pt-3" id="tabs">
+    <li class="nav-item">
+      <a href="#invoices" class="nav-link <%= @invoice_tab_show %>" data-bs-toggle="tab">
+        <strong>Faturas</strong>
+        <% if @draft_invoice_count > 0 %>
+          <span class="badge rounded-pill bg-danger">
+            <%= @draft_invoice_count %>
+            <span class="visually-hidden">invoices to process</span>
+          </span>
+        <% end %>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="#payables" class="nav-link <%= @payable_tab_show %>" data-bs-toggle="tab">
+        <strong>Pagamentos</strong>
+        <% if @draft_payable_count > 0 %>
+          <span class="badge rounded-pill bg-danger">
+            <%= @draft_payable_count %>
+            <span class="visually-hidden">payables to process</span>
+          </span>
+        <% end %>
+      </a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane fade <%= @invoice_tab_show %>" id="invoices">
+      <% if @invoices %>
+        <%= simple_form_for :invoices_in_cycle, url: confirm_all_invoices_path, method: :patch, html: {"data-controller": "checkbox-select-all"} do |fi| %>
+          <%= hidden_field_tag "id", @billing.id %>
+          <div class="p-3">
+            <div class="d-flex p-0 mb-2 justify-content-between">
+              <div class="p-2">
+                <%= paginate @invoices, window: 1, theme: 'bootstrap-5', pagination_class: "pagination-sm" %>
+                <%= page_entries_info @invoices %>
+              </div>
+              <div class="ml-auto p-2 align-self-end">
+                <%= link_to raw("<i class=\"bi bi-clipboard2-plus\"></i> Nova Fatura"), new_invoice_path, class: "btn btn-primary" if @billing.reference_date == Date.current.beginning_of_month %>
+                <% if @billing.draft? %>
+                  <%= button_tag type: 'submit', class: 'btn btn-primary' do %>
+                    <i class="bi bi-check"></i> Confirmar selecionadas
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+            <table class="table table-hover mt-3 table-borderless" data-controller="masks" id="invoices">
+              <thead class="table-dark">
+                <tr>
+                  <th><%= fi.input :confirm, label: false, as: :boolean, input_html: {data: {"checkbox-select-all-target": "parent",  "action": "change->checkbox-select-all#toggleChildren"}} %></th>
+                  <th></th>
+                  <th>ID</th>
+                  <th>Aluno</th>
+                  <th>Data</th>
+                  <th>Status</th>
+                  <th>Valor Total</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @invoices.each do |invoice| %>
+                  <tr id="<%= dom_id invoice %>" class="border-top">
+                    <td><%= fi.input :confirm, label: false, as: :boolean, input_html: {name: "invoices_in_cycle[#{invoice.id}]", data: {"checkbox-select-all-target": "child",  "action": "change->checkbox-select-all#toggleParent"}} if invoice.status == "draft" %></td>
+                    <td><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#<%= dom_id invoice %>_items" aria-expanded="false" aria-controls="<%= dom_id invoice %>_items"><i class="bi bi-plus"></i></button></td>
+                    <td><%= invoice.id %></td>
+                    <td><%= invoice.member.name %></td>
+                    <td><%= invoice.reference_date %></td>
+                    <td><%= render(BadgeComponent.new(text: invoice.status, color: invoice.status_color)) %></td>
+                    <td><span>R$ </span><span data-masks-target="money"><%= invoice.total_value_cents %></span></td>
+                    <td class="text-end">
+                      <% if invoice.status == "draft" %>
+                        <%= link_to raw("<i class=\"bi bi-pencil-square\"></i>"), edit_invoice_path(invoice), class: "btn btn-sm btn-outline-warning" %>
+                        <%= button_tag type: 'submit', class: 'btn btn-sm btn-outline-success', data: {"checkbox-select-all-name-param": "invoices_in_cycle[#{invoice.id}]", "action": "checkbox-select-all#confirmIndividual"} do %>
+                          <i class="bi bi-check"></i>
+                        <% end %>
+                      <% end %>
+                      <%= link_to raw("<i class=\"bi bi-eye-fill\"></i>"), invoice_path(invoice), class: "btn btn-sm btn-outline-warning" unless invoice.status == "draft" %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="8" class="py-0">
+                      <div id="<%= dom_id invoice %>_items" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#<%= dom_id invoice %>">
+                        <div class="container py-3 px-3 pe-5">
+                          <h5 class="font-size-15">Detalhes da fatura</h5>
+                          <div class="table-responsive">
+                            <table class="table table-nowrap table-centered mb-0">
+                              <thead>
+                                <tr>
+                                  <th style="width: 70px;">No.</th>
+                                  <th>Descrição</th>
+                                  <th class="text-end">Preço</th>
+                                  <th class="text-end">Quantidade</th>
+                                  <th colspan="2" class="text-end" style="width: 120px;">Valor</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <% counter = 1 %>
+                                <% invoice.billing_items.each do |item| %>
+                                  <tr>
+                                    <th scope="row"><%= counter %></th>
+                                    <td>
+                                      <h6 class="mb-1"><%= item.description %></h6>
+                                    </td>
+                                    <td class="text-end"><%= number_to_currency((item.price_cents||0)/100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
+                                    <td class="text-end"><%= item.quantity %></td>
+                                    <td colspan="2" class="text-end"><%= number_to_currency(item.value_cents/100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
+                                  </tr>
+                                  <% counter += 1%>
+                                <% end %>
+                                <tr>
+                                  <th scope="row" colspan="4" class="text-end">Sub Total</th>
+                                  <td class="text-end"><%= number_to_currency((invoice.total_value_cents||0)/100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
+                                </tr>
+                                <tr>
+                                  <th scope="row" colspan="4" class="border-0 text-end">
+                                    Desconto</th>
+                                  <td class="border-0 text-end">- <%= number_to_currency((invoice.discount_cents||0)/100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
+                                </tr>
+                                <tr>
+                                  <th scope="row" colspan="4" class="border-0 text-end">Total</th>
+                                  <td class="border-0 text-end">
+                                    <h6 class="m-0"><%= number_to_currency((invoice.final_value_cents||0)/100.0, unit: "R$", separator: ",", delimiter: ".") %></h6>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+      <div class="tab-pane fade <%= @payable_tab_show %>" id="payables">
+        <% if @payables %>
+          <%= simple_form_for :payables_in_cycle, url: confirm_payables_path, method: :patch, html: {"data-controller": "checkbox-select-all"} do |fi| %>
+            <%= hidden_field_tag "id", @billing.id %>
+            <div class="p-3">
+              <div class="d-flex p-0 mb-2 justify-content-between">
+                <div class="p-2">
+                  <%= paginate @payables, window: 1, theme: 'bootstrap-5', pagination_class: "pagination-sm" %>
+                  <%= page_entries_info @payables %>
+                </div>
+                <div class="ml-auto p-2 align-self-end">
+                  <%= link_to raw("<i class=\"bi bi-clipboard2-plus\"></i> Novo Pagamento"), new_payable_path, class: "btn btn-primary" if @billing.reference_date == Date.current.beginning_of_month %>
+                  <% if @billing.draft? %>
+                    <%= button_tag type: 'submit', class: 'btn btn-primary' do %>
+                      <i class="bi bi-check"></i> Confirmar selecionadas
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+              <table class="table table-hover mt-3 table-borderless" data-controller="masks" id="payables">
+                <thead class="table-dark">
+                  <tr>
+                    <th><%= fi.input :confirm, label: false, as: :boolean, input_html: {data: {"checkbox-select-all-target": "parent",  "action": "change->checkbox-select-all#toggleChildren"}} %></th>
+                    <th></th>
+                    <th>ID</th>
+                    <th>Coach</th>
+                    <th>Data</th>
+                    <th>Status</th>
+                    <th>Valor Total</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @payables.each do |payable| %>
+                    <tr id="<%= dom_id payable %>" class="border-top">
+                      <td><%= fi.input :confirm, label: false, as: :boolean, input_html: {name: "payables_in_cycle[#{payable.id}]", data: {"checkbox-select-all-target": "child",  "action": "change->checkbox-select-all#toggleParent"}} if payable.status == "draft" %></td>
+                      <td><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#<%= dom_id payable %>_items" aria-expanded="false" aria-controls="<%= dom_id payable %>_items"><i class="bi bi-plus"></i></button></td>
+                      <td><%= payable.id %></td>
+                      <td><%= payable.coach.name %></td>
+                      <td><%= payable.reference_date %></td>
+                      <td><%= render(BadgeComponent.new(text: payable.status, color: payable.status_color)) %></td>
+                      <td><span>R$ </span><span data-masks-target="money"><%= payable.total_value_cents %></span></td>
+                      <td class="text-end">
+                        <% if payable.status == "draft" %>
+                          <%= link_to raw("<i class=\"bi bi-pencil-square\"></i>"), edit_payable_path(payable), class: "btn btn-sm btn-outline-warning" %>
+                          <%= button_tag type: 'submit', class: 'btn btn-sm btn-outline-success', data: {"checkbox-select-all-name-param": "payables_in_cycle[#{payable.id}]", "action": "checkbox-select-all#confirmIndividual"} do %>
+                            <i class="bi bi-check"></i>
+                          <% end %>
+                        <% end %>
+                        <%= link_to raw("<i class=\"bi bi-eye-fill\"></i>"), payable_path(payable), class: "btn btn-sm btn-outline-warning" unless payable.status == "draft" %>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="8" class="py-0">
+                        <div id="<%= dom_id payable %>_items" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#<%= dom_id payable %>">
+                          <div class="container py-3 px-3 pe-5">
+                            <h5 class="font-size-15">Detalhes do pagamento</h5>
+                            <div class="table-responsive">
+                              <table class="table table-nowrap table-centered mb-0">
+                                <thead>
+                                  <tr>
+                                    <th style="width: 70px;">No.</th>
+                                    <th>Descrição</th>
+                                    <th class="text-end">Valor</th>
+                                    <th class="text-end">Quantidade</th>
+                                    <th colspan="2" class="text-end" style="width: 120px;">Valor Total</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <% counter = 1 %>
+                                  <% payable.payable_items.each do |item| %>
+                                    <tr>
+                                      <th scope="row"><%= counter %></th>
+                                      <td>
+                                        <h6 class="mb-1"><%= item.description %></h6>
+                                      </td>
+                                      <td class="text-end"><%= number_to_currency((item.price_cents||0)/100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
+                                      <td class="text-end"><%= item.quantity %></td>
+                                      <td colspan="2" class="text-end"><%= number_to_currency(item.value_cents/100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
+                                    </tr>
+                                    <% counter += 1%>
+                                  <% end %>
+                                  <tr>
+                                    <th scope="row" colspan="4" class="text-end">Sub Total</th>
+                                    <td class="text-end"><%= number_to_currency((payable.total_value_cents||0)/100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
+                                  </tr>
+                                  <tr>
+                                    <th scope="row" colspan="4" class="border-0 text-end">
+                                      Desconto</th>
+                                    <td class="border-0 text-end">- <%= number_to_currency((payable.discount_cents||0)/100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
+                                  </tr>
+                                  <tr>
+                                    <th scope="row" colspan="4" class="border-0 text-end">Total</th>
+                                    <td class="border-0 text-end">
+                                      <h6 class="m-0"><%= number_to_currency((payable.final_value_cents||0)/100.0, unit: "R$", separator: ",", delimiter: ".") %></h6>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

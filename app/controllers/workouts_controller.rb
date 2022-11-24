@@ -3,28 +3,34 @@ class WorkoutsController < ApplicationController
 
   # GET /workouts or /workouts.json
   def index
+    authorize Workout
     @workouts = Workout.all.order("start_at desc").page(params[:page])
   end
 
   # GET /workouts/1 or /workouts/1.json
   def show
+    authorize @workout
   end
 
   # GET /workouts/new
   def new
     @workout = Workout.new
+    authorize @workout
   end
 
   # GET /workouts/1/edit
   def edit
+    authorize @workout
   end
 
   # POST /workouts or /workouts.json
   def create
     @workout = Workout.new(workout_params)
+    authorize @workout
     @workout.reviewed = true
     if @workout.save
-      redirect_to workouts_path, notice: "Workout was successfully created."
+      flash[:success] = "Treino criado com sucesso."
+      redirect_to workouts_path
     else
       render :new, status: :unprocessable_entity
     end
@@ -32,8 +38,10 @@ class WorkoutsController < ApplicationController
 
   # PATCH/PUT /workouts/1 or /workouts/1.json
   def update
+    authorize @workout
     if @workout.update(workout_params)
-      redirect_to workout_url(@workout), notice: "Workout was successfully updated."
+      flash[:success] = "Treino alterado com sucesso."
+      redirect_to workout_url(@workout)
     else
       render :edit, status: :unprocessable_entity
     end
@@ -41,8 +49,10 @@ class WorkoutsController < ApplicationController
 
   # DELETE /workouts/1 or /workouts/1.json
   def destroy
+    authorize @workout
     @workout.destroy
-    redirect_to workouts_url, notice: "Workout was successfully destroyed."
+    flash[:success] = "Treino removido com sucesso."
+    redirect_to workouts_url
   end
 
   private
@@ -54,6 +64,15 @@ class WorkoutsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def workout_params
-    params.require(:workout).permit(:coach_id, :start_at, :end_at, :location, :comments, member_ids: [])
+    params.require(:workout).permit(
+      :coach_id,
+      :with_replacement,
+      :cancelled,
+      :start_at,
+      :end_at,
+      :location,
+      :comments,
+      member_ids: [],
+    )
   end
 end

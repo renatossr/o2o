@@ -8,12 +8,6 @@
   </h6>
 </nav>
 <!-- Breadcrumb -->
-<% if notice %>
-  <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-    <%= notice %>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-<%end%>
 <div class="container rounded bg-white mt-5 mb-5">
   <div class="p-3 py-5">
     <div class="d-flex p-0 mb-2 justify-content-between">
@@ -27,7 +21,7 @@
     </div>
     <%= search_form_for @q do |f| %>
       <div class="container d-flex bg-dark px-2 pt-2 mb-0 align-items-center justify-content-start">
-        <%= f.text_field :name_or_alias_or_cel_number_cont, placeholder: "Buscar...", class: "form-control form-control-sm mt-0 w-25" %>
+        <%= f.text_field :first_name_or_last_name_or_alias_or_cel_number_cont_any, placeholder: "Buscar...", class: "form-control form-control-sm mt-0 w-25" %>
         <%= f.submit "", style: "display:none;" %>
       </div>
     <% end %>
@@ -38,7 +32,6 @@
           <th><%= sort_link @q, :alias, "Apelido", default_order: :asc, class: "link-light text-decoration-none" %></th>
           <th>Celular</th>
           <th class="text-center">Fidelizado</th>
-          <th class="text-center">Ativo</th>
           <th><%= sort_link @q, :subscription_price, "Mensalidade", default_order: :asc, class: "link-light text-decoration-none" %></th>
           <th><%= sort_link @q, :class_price, "Valor por aula", default_order: :asc, class: "link-light text-decoration-none" %></th>
         </tr>
@@ -54,13 +47,6 @@
             </td>
             <td class="text-center">
               <% if member.loyal? %>
-                <i class="bi bi-check-lg text-success fs-5 fw-bolder"></i>
-              <% else %>
-                <i class="bi bi-x-lg text-danger fs-5 fw-bolder"></i>
-              <% end %>
-            </td>
-            <td class="text-center">
-              <% if member.active? %>
                 <i class="bi bi-check-lg text-success fs-5 fw-bolder"></i>
               <% else %>
                 <i class="bi bi-x-lg text-danger fs-5 fw-bolder"></i>

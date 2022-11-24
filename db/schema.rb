@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_13_182307) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_22_175830) do
   create_table "billing_items", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "member_id"
     t.string "description"
     t.date "reference_date"
     t.integer "invoice_id"
-    t.string "status"
+    t.integer "status", default: 0
     t.integer "payable_by"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -28,6 +28,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_182307) do
   create_table "billings", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.date "reference_date"
+    t.integer "status", default: 0
+    t.integer "revenue_cents"
+    t.integer "cost_cents"
   end
 
   create_table "calendar_events", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -74,7 +78,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_182307) do
   create_table "invoices", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "external_id"
     t.string "external_url"
-    t.string "status"
+    t.integer "status", default: 0
     t.date "reference_date"
     t.integer "member_id"
     t.integer "total_value_cents"
@@ -86,6 +90,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_182307) do
     t.integer "paid_cents"
     t.string "invoice_type"
     t.date "due_date"
+    t.integer "billing_id"
   end
 
   create_table "members", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -115,7 +120,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_182307) do
     t.integer "member_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "status"
+    t.integer "status"
     t.integer "billing_item_id"
   end
 
@@ -138,12 +143,42 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_182307) do
     t.integer "total_value_cents"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "status", default: 0
+    t.integer "discount_cents", default: 0
+    t.string "payable_type"
+    t.integer "billing_id"
   end
 
   create_table "sync_tokens", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer "role"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "invitation_token"
+    t.datetime "invitation_created_at"
+    t.datetime "invitation_sent_at"
+    t.datetime "invitation_accepted_at"
+    t.integer "invitation_limit"
+    t.string "invited_by_type"
+    t.bigint "invited_by_id"
+    t.integer "invitations_count", default: 0
+    t.string "first_name"
+    t.string "last_name"
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
+    t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
+    t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by"
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   create_table "workouts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|

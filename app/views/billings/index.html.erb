@@ -1,0 +1,51 @@
+<h1>Fechamentos</h1>
+<!-- Breadcrumb -->
+<nav class="d-flex">
+  <h6 class="ms-1 mb-0">
+    <%= link_to "Home", root_path, class: "text-reset"%>
+    <span>/</span>
+    <%= link_to "Fechamentos", billings_path, class: "text-reset"%>
+  </h6>
+</nav>
+<!-- Breadcrumb -->
+<div class="container rounded bg-white mt-5 mb-5">
+  <div class="p-3 py-5">
+    <div class="d-flex p-0 mb-2 justify-content-between">
+      <div class="p-2">
+        <%= paginate @billings, window: 1, theme: 'bootstrap-5', pagination_class: "pagination-sm" %>
+        <%= page_entries_info @billings %>
+      </div>
+      <div class="ml-auto p-2 align-self-end">
+        <%= link_to raw("<i class=\"bi bi-clipboard2-plus\"></i> Fechar mês"), '', class: "btn btn-primary" %>
+      </div>
+    </div>
+    <table class="table table-hover table-borderless" data-controller="masks" id="billings">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Ano</th>
+          <th>Mês</th>
+          <th>status</th>
+          <th>Receita</th>
+          <th>Custo</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @billings.each do |billing| %>
+          <tr id="<%= dom_id billing %>" class="border-top">
+            <td><%= billing.id %></td>
+            <td><%= I18n.l(billing.reference_date, format: "%Y") %></td>
+            <td><%= I18n.l(billing.reference_date, format: "%B") %></td>
+            <td><%= render(BadgeComponent.new(text: billing.status, color: billing.status_color)) %></td>
+            <td><span>R$ </span><span data-masks-target="money"><%= billing.revenue_cents %></span></td>
+            <td><span>R$ </span><span data-masks-target="money"><%= billing.cost_cents %></span></td>
+            <td>
+              <%= link_to raw("<i class=\"bi bi-eye-fill\"></i>"), billing_path(billing, invoice_tab_show: true), class: "btn btn-sm btn-outline-warning"%>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

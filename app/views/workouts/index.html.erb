@@ -1,9 +1,3 @@
-<% if notice %>
-  <div class="alert alert-success alert-dismissible fade show" role="alert">
-    <%= notice %>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-<%end%>
 <h1>Aulas</h1>
 <!-- Breadcrumb -->
 <nav class="d-flex">
@@ -43,9 +37,9 @@
         <% @workouts.each do |workout| %>
           <tr id="<%= dom_id workout %>">
             <td><%= link_to workout.id, workout_path(workout)%></td>
-            <td><%= l(workout.start_at.localtime, format: "%d/%m - %a") %></td>
-            <td><%= l(workout.start_at.localtime, format: "%H:%M") %></td>
-            <td><%= l(workout.end_at.localtime, format: "%H:%M") %></td>
+            <td><%= I18n.l(workout.start_at.localtime, format: "%d/%m - %a") %></td>
+            <td><%= I18n.l(workout.start_at.localtime, format: "%H:%M") %></td>
+            <td><%= I18n.l(workout.end_at.localtime, format: "%H:%M") %></td>
             <td><%= workout.coach.name %></td>
             <td><%= workout.members.count %></td>
             <td><%= workout.members.map(&:name).join(', ') %></td>

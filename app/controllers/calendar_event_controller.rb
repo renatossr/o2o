@@ -2,15 +2,18 @@ class CalendarEventController < ApplicationController
   before_action :set_entities, only: %i[process_events confirm update destroy]
 
   def index
+    authorize CalendarEvent
     @events = CalendarEvent.all.page(params[:page])
   end
 
   def process_events
+    authorize CalendarEvent
     @unconfirmed_total_count = CalendarEvent.all_unreviewed.count
   end
 
   # PATCH/PUT /proc_event/1
   def update
+    authorize @current_event
     @current_event.reviewed = true
     if @current_event.update(event_params)
       @current_event = @events.first
@@ -30,6 +33,8 @@ class CalendarEventController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def event_params
-    params.require(:calendar_event).permit(workout_attributes: [:id, :with_replacement, :coach_id, member_ids: []])
+    params.require(:calendar_event).permit(
+      workout_attributes: [:id, :with_replacement, :cancelled, :coach_id, member_ids: []],
+    )
   end
 end

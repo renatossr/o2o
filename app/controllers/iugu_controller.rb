@@ -2,6 +2,7 @@ class IuguController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def invoice_status_webhook
+    authorize Iugu
     iugu_invoice_id = params["data"]["id"]
     status = params["data"]["status"]
     paid_at = params["data"]["paid_at"]

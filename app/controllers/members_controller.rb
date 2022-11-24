@@ -4,6 +4,7 @@ class MembersController < ApplicationController
 
   # GET /members or /members.json
   def index
+    authorize Member
     @q = Member.ransack(params[:q])
     @members = @q.result(distinct: true)
     @members = @members.page(params[:page])
@@ -11,23 +12,28 @@ class MembersController < ApplicationController
 
   # GET /members/1
   def show
+    authorize @member
   end
 
   # GET /members/new
   def new
     @member = Member.new
+    authorize @member
   end
 
   # GET /members/1/edit
   def edit
+    authorize @member
   end
 
   # POST /members
   def create
     @member = Member.new(member_params)
+    authorize @member
 
     if @member.save
-      redirect_to members_url, notice: "Member was successfully created."
+      flash[:success] = "Aluno criado com sucesso."
+      redirect_to members_url
     else
       render :new, status: :unprocessable_entity
     end
@@ -35,8 +41,10 @@ class MembersController < ApplicationController
 
   # PATCH/PUT /members/1
   def update
+    authorize @member
     if @member.update(member_params)
-      redirect_to members_url, notice: "Member was successfully updated."
+      flash[:success] = "Dados do aluno alterados com sucesso."
+      redirect_to members_url
     else
       render :edit, status: :unprocessable_entity
     end
@@ -44,8 +52,10 @@ class MembersController < ApplicationController
 
   # DELETE /members/1
   def destroy
+    authorize @member
     @member.destroy
-    redirect_to members_url, notice: "Member was successfully destroyed."
+    flash[:success] = "Aluno removido com sucesso."
+    redirect_to members_url
   end
 
   private

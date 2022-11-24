@@ -18,10 +18,10 @@
             <tbody>
               <% @members_workouts.each do |member_workout| %>
                 <tr id="<%= dom_id member_workout %>">
-                  <td><%= l(member_workout.workout.start_at.localtime, format: "%a, %d/%m - %H:%M") %></td>
+                  <td><%= I18n.l(member_workout.workout.start_at.localtime, format: "%a, %d/%m - %H:%M") %></td>
                   <td><%= member_workout.workout.coach&.name %></td>
                   <td><%= member_workout.workout.location %></td>
-                  <td class="text-center" style="font-size: 14px"><span class="badge bg-success rounded-pill"><%= member_workout.status %></span></td>
+                  <td class="text-center" style="font-size: 14px"><%= render(BadgeComponent.new(text: member_workout.status, color: member_workout.status_color)) %></td>
                   <td>
                     <% unless member.loyal? || member_workout.billed? %>
                       <%= link_to raw("<i class=\"bi bi-currency-dollar\"></i>"), new_from_workout_invoices_path(workout_id: member_workout.workout.id), class: "btn btn-sm btn-outline-success" %>
@@ -36,14 +36,19 @@
     </div>
     <div class="col-md-5">
       <div class="p-3 py-5">
-        <h4 class="mb-0">Faturas</h4>
-        <hr>
+        <div class="d-flex p-0 justify-content-between">
+          <h4 class="mb-0">Faturas</h4>
+          <div class="ml-auto align-self-end">
+            <%= link_to raw("<i class=\"bi bi-clipboard2-plus\"></i> Nova Fatura"), new_invoice_path(params: {member_id: member.id}), class: "btn btn-sm btn-primary" %>
+          </div>
+        </div>
+        <hr style="margin-top: 13px;">
         <div class="overflow-auto" style="max-height: 350px">
           <ul class="list-group">
             <% @member.invoices.order("reference_date desc").each do |invoice|%>
               <li class="list-group-item d-flex justify-content-between align-items-start">
                 <div class="ms-2 me-auto">
-                  <div class="fw-bold"><%= l(invoice.reference_date, format: "%Y - %B") %></div>
+                  <div class="fw-bold"><%= I18n.l(invoice.reference_date, format: "%Y - %B") %></div>
                   <span>R$ </span><span data-masks-target="money"><%= invoice.total_value_cents %></span>
                   <%= link_to '', invoice_path(invoice), class: "stretched-link" %>
                 </div>
