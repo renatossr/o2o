@@ -4,17 +4,18 @@ class InvoicesController < ApplicationController
 
   def index
     authorize Invoice
-    search_param =
-      params[:q][
+    search_param = params[:q]
+    search_terms =
+      search_param[
         :member_first_name_or_member_last_name_or_reference_date_or_status_or_total_value_cents_cont_any
-      ] if params[:q].present?
-    if search_param && search_param.kind_of?(Array) == false
-      words = search_param.split(" ")
-      params[:q][
+      ] if search_param.present?
+    if search_terms.present?
+      search_terms = search_terms.split(" ") unless search_terms.kind_of?(Array)
+      search_param[
         :member_first_name_or_member_last_name_or_reference_date_or_status_or_total_value_cents_cont_any
-      ] = words
+      ] = search_terms
     end
-    @q = Invoice.ransack(params[:q])
+    @q = Invoice.ransack(search_param)
     @q.sorts = ["reference_date desc", "id desc"]
     @invoices = @q.result.includes(:member)
     @invoices = @invoices.page(params[:page])
@@ -60,7 +61,7 @@ class InvoicesController < ApplicationController
 
   def edit
     authorize @invoice
-    redirect_to show_invoice_path(@invoice) unless @invoice.draft?
+    redirect_to invoice_path(@invoice) unless @invoice.draft?
   end
 
   def update
@@ -88,6 +89,14 @@ class InvoicesController < ApplicationController
     @invoice = Invoice.find(invoice_params[:id])
     authorize @invoice
     @invoice.cancel_invoice
+    redirect_to invoice_path(@invoice)
+  end
+
+  def cancel_and_mirror
+    @old_invoice = Invoice.find(invoice_params[:id])
+    authorize @old_invoice
+    @invoice = @old_invoice.cancel_and_mirror
+    flash[:danger] = "Não foi possível executar essa operação!" if @invoice == @old_invoice
     redirect_to invoice_path(@invoice)
   end
 

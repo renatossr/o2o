@@ -28,7 +28,10 @@
           <div class="col-md-5 pe-0">
             <div class="px-0">
               <div class="justify-content-start align-items-top">
-                <h6 class="text-right me-3">Coach</h6>
+                <div class="d-flex justify-content-start">
+                  <h6 class="text-right me-2">Coach</h6>
+                  <%= link_to raw("<i class=\"bi bi-person-plus-fill\"></i>"), new_coach_path %>
+                </div>
                 <%= w.input :coach_id, label: false, collection: Coach.all, input_html: { class: "js-s2-select", id: "coach_id_#{event.workout.id}", style: "width: 100%"} %>
               </div>
               <div class="d-flex justify-content-start align-items-top mt-3">

@@ -42,6 +42,10 @@ class InvoicePolicy < ApplicationPolicy
     user&.admin?
   end
 
+  def cancel_and_mirror?
+    user&.admin?
+  end
+
   def confirm_all?
     user&.admin?
   end

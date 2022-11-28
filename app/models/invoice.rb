@@ -11,9 +11,9 @@ class Invoice < ApplicationRecord
 
   accepts_nested_attributes_for :billing_items, allow_destroy: true
 
-  scope :all_from_cycles, -> { where(invoice_type: "billing_cycle") }
-  scope :all_manual, -> { where(invoice_type: "manual") }
-  scope :all_ad_hoc, -> { where(invoice_type: "ad-hoc") }
+  scope :from_cycles, -> { where(invoice_type: "billing_cycle") }
+  scope :manual, -> { where(invoice_type: "manual") }
+  scope :ad_hoc, -> { where(invoice_type: "ad-hoc") }
 
   before_save :update_totals
   after_save :set_billing_items_status
@@ -72,10 +72,93 @@ class Invoice < ApplicationRecord
     end
   end
 
+  def cancel_and_mirror
+    if self.mirrorable?
+      self.status = :cancelling
+
+      new_invoice = self.dup
+      new_invoice.status = :draft
+      new_invoice.due_date = Date.current + 5.days if self.due_date < (Date.current + 5.days)
+
+      self.billing_items.each do |item|
+        new_item = item.dup
+        new_item.members_workouts = item.members_workouts
+        new_invoice.billing_items << new_item
+        item.members_workouts = []
+      end
+
+      new_invoice.save! && self.save! ? new_invoice : self
+    end
+  end
+
   def whatsapp_link
     final_link = self.member.whatsapp_link
     message = "Segue o link da fatura: #{self.external_url}"
     final_link = final_link + "?text=" + URI.encode_www_form_component(message)
+  end
+
+  def whatsapp_invoice(preview = false)
+    final_link = self.member.whatsapp_link
+    payer = self.member
+    puts payer.alias
+    payer_alias = payer.alias.capitalize
+
+    invoice_total =
+      ActiveSupport::NumberHelper.number_to_currency(
+        self.final_value_cents / 100.0,
+        unit: "R$ ",
+        separator: ",",
+        delimiter: ".",
+        precision: 2,
+      )
+
+    message = "Oi #{payer_alias}, tudo bem?\nFechamos a sua fatura agora e o total ficou em: #{invoice_total}."
+
+    if preview
+      billing_details = []
+      n = 1
+      self.billing_items.each do |item|
+        item_price =
+          ActiveSupport::NumberHelper.number_to_currency(
+            item.price_cents / 100.0,
+            unit: "R$ ",
+            separator: ",",
+            delimiter: ".",
+            precision: 2,
+          )
+        item_value =
+          ActiveSupport::NumberHelper.number_to_currency(
+            item.value_cents / 100.0,
+            unit: "R$ ",
+            separator: ",",
+            delimiter: ".",
+            precision: 2,
+          )
+        item_message = "#{n}. #{item.description} | #{item.quantity}x #{item_price} | #{item_value}"
+        billing_details << item_message
+        n += 1
+      end
+      billing_details = billing_details.join("\n")
+      discount_value =
+        ActiveSupport::NumberHelper.number_to_currency(
+          self.discount_cents / 100.0,
+          unit: "R$ ",
+          separator: ",",
+          delimiter: ".",
+          precision: 2,
+        )
+      discount_message = "\n#{n}. Desconto: #{discount_value}" if self.discount_cents != 0
+      message +=
+        "\nDetalhes:\n#{billing_details}#{discount_message}\n\nDaqui a pouco envio a fatura para pagamento, ok?"
+    else
+      message += "\nDetalhes:\n#{billing_details}#{discount_message}\n\nSegue o link da fatura: #{self.external_url}"
+    end
+
+    final_link = final_link + "?text=" + URI.encode_www_form_component(message)
+  end
+
+  def mirrorable?
+    self.processing? || self.pending? || self.expired?
   end
 
   def issue_invoice

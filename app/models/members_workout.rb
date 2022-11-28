@@ -15,10 +15,10 @@ class MembersWorkout < ApplicationRecord
   belongs_to :workout
   belongs_to :billing_item, optional: true
 
-  scope :all_not_billed, -> { where(status: [nil, "canceled", "cancelling", "expired"]) }
-  scope :all_reviewed, -> { joins(:workout).where(workout: { reviewed: true }) }
+  scope :not_billed, -> { where(status: [nil, "canceled", "cancelling", "expired"]) }
+  scope :reviewed, -> { joins(:workout).where(workout: { reviewed: true }) }
   scope :within, ->(range) { joins(:workout).where(workout: { start_at: range }) }
-  scope :all_billable_within, ->(range) { all_not_billed.all_reviewed.within(range) }
+  scope :billable_within, ->(range) { not_billed.reviewed.within(range) }
 
   def status_color
     STATUS_COLORS[status&.to_sym] || "secondary"

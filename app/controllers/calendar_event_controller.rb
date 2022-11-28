@@ -8,7 +8,7 @@ class CalendarEventController < ApplicationController
 
   def process_events
     authorize CalendarEvent
-    @unconfirmed_total_count = CalendarEvent.all_unreviewed.count
+    @unconfirmed_total_count = CalendarEvent.all.unreviewed.count
   end
 
   # PATCH/PUT /proc_event/1
@@ -27,7 +27,7 @@ class CalendarEventController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_entities
-    @events = CalendarEvent.all_unreviewed.order("start_at desc").page(params[:page])
+    @events = CalendarEvent.all.unreviewed.order("start_at desc").page(params[:page])
     @current_event = CalendarEvent.find(params[:id]) unless params[:id].blank?
   end
 

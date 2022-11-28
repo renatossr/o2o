@@ -7,7 +7,7 @@ class Member < ApplicationRecord
   has_many :billing_items
   has_many :coaches, -> { distinct }, through: :workouts
 
-  scope :all_billable_in_range, ->(range) { joins(:workouts).where(workouts: { start_at: range, reviewed: true }).uniq }
+  scope :billable_in_range, ->(range) { joins(:workouts).where(workouts: { start_at: range, reviewed: true }).uniq }
 
   validates :first_name, presence: true
   validates :last_name, presence: true
@@ -16,7 +16,7 @@ class Member < ApplicationRecord
   after_create :assign_sponsor_self, if: proc { self.responsible_id.nil? }
 
   def self.all_billable_within(range)
-    Member.all_billable_in_range(range).select { |r| r.billable_in_range?(range) }
+    Member.all.billable_in_range(range).select { |r| r.billable_in_range?(range) }
   end
 
   def name
@@ -64,7 +64,7 @@ class Member < ApplicationRecord
   end
 
   def billable_workouts_in_range(range)
-    members_workouts.all_billable_within(range)
+    members_workouts.all.billable_within(range)
   end
 
   def responsible_self?

@@ -45,6 +45,7 @@
             </div>
           </div>
           <div class="mt-5 text-center">
+            <%= hidden_field_tag :previous_request, request.referer %>
             <%= form.submit "Salvar Coach", class: "btn btn-primary" %>
           </div>
         </div>

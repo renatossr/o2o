@@ -91,7 +91,7 @@ class Billing < ApplicationRecord
   def collect_billing_items(beneficiary)
     billing_items = []
 
-    billable_workouts = beneficiary.members_workouts.all_billable_within(range)
+    billable_workouts = beneficiary.members_workouts.billable_within(range)
     billable_extra_workouts_count = beneficiary.billable_extra_workouts_count(reference_date)
     replacements_for_discount = beneficiary.replacements_for_discount(billable_extra_workouts_count)
 
@@ -193,7 +193,7 @@ class Billing < ApplicationRecord
   def collect_payable_items(coach)
     payable_items = []
 
-    payable_workouts = coach.workouts.all_payable_within(range)
+    payable_workouts = coach.workouts.all.payable_within(range)
     payable_wokouts_count = payable_workouts.count
 
     payable_items += create_fixed_salary_payable_item(coach) if coach.has_fixed_salary?

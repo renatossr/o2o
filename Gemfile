@@ -70,7 +70,7 @@ gem "bootsnap", require: false
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
-  gem "debug", platforms: %i[ mri mingw x64_mingw ]
+  gem "debug", platforms: %i[ mri mingw x64_mingw ], require: false
   gem 'faker', :git => 'https://github.com/faker-ruby/faker.git', :branch => 'main'
 end
 
@@ -103,3 +103,5 @@ gem "pundit", "~> 2.2"
 gem "rubyXL", "~> 3.4"
 
 gem "roo", "~> 2.9"
+
+

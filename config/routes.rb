@@ -1,11 +1,21 @@
 Rails.application.routes.draw do
-  devise_for :users, controllers: { invitations: "users/invitations" }
+  devise_for :users, skip: [:registrations], controllers: { invitations: "users/invitations" }
+  as :user do
+    get "users/edit" => "users/registrations#edit", :as => "edit_user_profile"
+    patch "users/edit" => "users/registrations#update", :as => "user_profile"
+    put "users/edit" => "users/registrations#update"
+  end
 
   post "iugu/invoice_status_webhook"
   root "members#index"
 
-  get "/admin/settings", to: "admin#settings", as: "settings"
-  get "/admin/user_management", to: "admin#user_management", as: "user_management"
+  get "admin/settings", to: "admin#settings", as: "settings"
+  get "admin/user_management", to: "admin#user_management", as: "user_management"
+
+  delete "admin/users/:id" => "admin#destroy_user", :as => "destroy_user_registration"
+  get "admin/users/:id/edit" => "admin#edit_user", :as => "edit_user_registration"
+  patch "admin/users/:id/edit" => "admin#update_user", :as => "user_registration"
+  put "admin/users/:id/edit" => "admin#update_user"
 
   get "calendar_event/index"
   get "calendar_event/process_events(/:id)", to: "calendar_event#process_events", as: "proc_events"
@@ -40,6 +50,7 @@ Rails.application.routes.draw do
     patch :confirm_all, on: :collection, as: :confirm_all
     patch :confirm, on: :member, as: :confirm
     patch :cancel, on: :member, as: :cancel
+    patch :cancel_and_mirror, on: :member, as: :cancel_and_mirror
     get :new_from_workout, on: :collection
   end
 end

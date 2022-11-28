@@ -1,0 +1,38 @@
+<!-- Breadcrumb -->
+<h1>Perfil - <%= @user.name %></h1>
+<nav class="d-flex">
+  <h6 class="ms-1 mb-0">
+    <%= link_to "Home", root_path, class: "text-reset"%>
+    <span>/</span>
+    <a href=<%= user_management_path %> class="text-reset">Usuários</a>
+    <span>/</span>
+    <a href="" class="text-reset"><%= @user.name %></a>
+  </h6>
+</nav>
+<!-- Breadcrumb -->
+<div class="container bg-white rounded  mt-5 mb-5 p-3">
+  <%= simple_form_for(@user, url: user_registration_path(@user), html: { method: :put }) do |f| %>
+    <%= f.error_notification %>
+    <div class="form-inputs">
+      <div class="row">
+        <div class="col">
+          <%= f.input :first_name, label: false, placeholder: "Nome", input_html: {class: "form-control-sm"}, wrapper_html: {class: "mb-3"}  %>
+        </div>
+        <div class="col">
+          <%= f.input :last_name, label: false, placeholder: "Sobrenome", input_html: {class: "form-control-sm"}, wrapper_html: {class: "mb-3"}  %>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <%= f.input :email, label: false, placeholder: "Email", input_html: {class: "form-control-sm"}, wrapper_html: {class: "mb-3"}  %>
+        </div>
+        <div class="col"  data-controller="select2">
+          <%= f.select :role, User.roles.map { |key, value| [key.humanize, key] }, {prompt: "Selecionar tipo"}, class: "form-select js-s2-select" %>
+        </div>
+      </div>
+      <div class="form-actions">
+        <%= f.button :submit, "Alterar", class: "btn btn-sm btn-primary" %>
+      </div>
+    </div>
+  <% end %>
+</div>

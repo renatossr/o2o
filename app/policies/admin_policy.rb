@@ -13,4 +13,16 @@ class AdminPolicy < ApplicationPolicy
   def user_management?
     user&.admin?
   end
+
+  def edit_user?
+    user&.admin?
+  end
+
+  def update_user?
+    user&.admin?
+  end
+
+  def destroy_user?
+    user&.admin?
+  end
 end

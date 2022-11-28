@@ -1,3 +1,13 @@
+<!-- Breadcrumb -->
+<h1>Usuários</h1>
+<nav class="d-flex">
+  <h6 class="ms-1 mb-0">
+    <%= link_to "Home", root_path, class: "text-reset"%>
+    <span>/</span>
+    <a href="" class="text-reset">Usuários</a>
+  </h6>
+</nav>
+<!-- Breadcrumb -->
 <div class="container rounded bg-white mt-5 mb-5">
   <div class="p-3 py-5">
     <div class="d-flex p-0 mb-2 justify-content-between">
@@ -16,6 +26,7 @@
           <th>Sobrenome</th>
           <th>Email</th>
           <th>Tipo</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -25,6 +36,14 @@
             <td><%= user.last_name%></td>
             <td><%= user.email%></td>
             <td><%= user.role %></td>
+            <td>
+              <%= simple_form_for :user, url: destroy_user_registration_path(user.id), method: :delete do |f| %>
+                <%= link_to raw("<i class=\"bi bi-pencil-square\"></i>"), edit_user_registration_path(user.id), class: "btn btn-sm btn-warning"%>
+                <%= button_tag type: 'submit', class: "btn btn-sm btn-danger" do %>
+                  <i class="bi bi-x"></i>
+                <% end %>
+              <% end %>
+            </td>
           </tr>
         <% end %>
       </tbody>

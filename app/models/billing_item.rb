@@ -17,6 +17,7 @@ class BillingItem < ApplicationRecord
   before_update :increment_member_replacement_classes,
                 if: proc { self.billing_type == "replacement" && (self.status_changed? && self.cancelled?) }
   after_save :set_workout_status
+  after_save :free_members_workouts, if: proc { self.cancelled? }
   before_destroy :increment_member_replacement_classes, if: proc { self.billing_type == "replacement" }
   before_destroy :set_workout_status_to_nil
 
@@ -55,6 +56,13 @@ class BillingItem < ApplicationRecord
   def set_workout_status_to_nil
     self.members_workouts.each do |workout|
       workout.status = nil
+      workout.save!
+    end
+  end
+
+  def free_members_workouts
+    self.members_workouts.each do |workout|
+      workout.billing_item = nil
       workout.save!
     end
   end

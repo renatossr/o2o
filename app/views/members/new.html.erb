@@ -1,6 +1,13 @@
-<h1>Perfil do novo Aluno</h1>
+<h1>Novo Aluno</h1>
+<!-- Breadcrumb -->
+<nav class="d-flex">
+  <h6 class="ms-1 mb-0">
+    <%= link_to "Home", root_path, class: "text-reset"%>
+    <span>/</span>
+    <%= link_to "Alunos", members_path, class: "text-reset"%>
+    <span>/</span>
+    <a href="" class="text-reset">Novo Aluno</a>
+  </h6>
+</nav>
+<!-- Breadcrumb -->
 <%= render "form", member: @member %>
-<br>
-<div>
-  <%= link_to "Back to members", members_path %>
-</div>

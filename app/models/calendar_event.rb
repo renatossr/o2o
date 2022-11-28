@@ -2,8 +2,8 @@ class CalendarEvent < ApplicationRecord
   has_one :workout, dependent: :delete
   accepts_nested_attributes_for :workout
 
-  scope :all_unprocessed, -> { where(processed: false) }
-  scope :all_unreviewed, -> { where(reviewed: false) }
+  scope :unprocessed, -> { where(processed: false) }
+  scope :unreviewed, -> { where(reviewed: false) }
 
   after_save :process_event, if: proc { !self.processed? }
   after_save :set_workout_reviewed, if: proc { self.reviewed? }
@@ -18,7 +18,7 @@ class CalendarEvent < ApplicationRecord
     workout.location = self.location
 
     # Set cancelled status
-    workout.status = "cancelled" if cancelled?
+    workout.cancelled = true if cancelled?
 
     # Process Members
     workout.members = extract_members(processed_title.first) unless processed_title.first.blank?
@@ -45,7 +45,7 @@ class CalendarEvent < ApplicationRecord
   end
 
   def self.process_all
-    events = CalendarEvent.all_unprocessed
+    events = CalendarEvent.all.unprocessed
     events.each { |event| event.process_event }
   end
 

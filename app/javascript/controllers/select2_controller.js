@@ -16,4 +16,8 @@ export default class extends Controller {
 
     $(".is-valid").removeClass("is-valid");
   }
+
+  teardown() {
+    $(".js-s2-select").select2("destroy");
+  }
 }

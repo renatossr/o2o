@@ -5,7 +5,13 @@ class MembersController < ApplicationController
   # GET /members or /members.json
   def index
     authorize Member
-    @q = Member.ransack(params[:q])
+    search_param = params[:q]
+    search_terms = search_param[:first_name_or_last_name_or_alias_or_cel_number_cont_any] if search_param.present?
+    if search_terms.present?
+      search_terms = search_terms.split(" ") unless search_terms.kind_of?(Array)
+      search_param[:first_name_or_last_name_or_alias_or_cel_number_cont_any] = search_terms
+    end
+    @q = Member.ransack(search_param)
     @members = @q.result(distinct: true)
     @members = @members.page(params[:page])
   end
@@ -33,7 +39,11 @@ class MembersController < ApplicationController
 
     if @member.save
       flash[:success] = "Aluno criado com sucesso."
-      redirect_to members_url
+      if params[:previous_request]
+        redirect_to params[:previous_request]
+      else
+        redirect_to members_url
+      end
     else
       render :new, status: :unprocessable_entity
     end
@@ -78,6 +88,7 @@ class MembersController < ApplicationController
       :class_price,
       :loyal,
       :active,
+      :replacement_classes,
       :monday,
       :tuesday,
       :wednesday,

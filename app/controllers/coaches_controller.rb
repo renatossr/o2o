@@ -5,8 +5,13 @@ class CoachesController < ApplicationController
   # GET /coaches or /coaches.json
   def index
     authorize Coach
-
-    @q = Coach.ransack(params[:q])
+    search_param = params[:q]
+    search_terms = search_param[:first_name_or_last_name_or_alias_or_cel_number_cont_any] if search_param.present?
+    if search_terms.present?
+      search_terms = search_terms.split(" ") unless search_terms.kind_of?(Array)
+      search_param[:first_name_or_last_name_or_alias_or_cel_number_cont_any] = search_terms
+    end
+    @q = Coach.ransack(search_param)
     @coaches = @q.result(distinct: true)
     @coaches = @coaches.page(params[:page])
   end
@@ -34,7 +39,11 @@ class CoachesController < ApplicationController
 
     if @coach.save
       flash[:success] = "Coach criado com sucesso."
-      redirect_to coaches_url
+      if params[:previous_request]
+        redirect_to params[:previous_request]
+      else
+        redirect_to coaches_url
+      end
     else
       render :new, status: :unprocessable_entity
     end

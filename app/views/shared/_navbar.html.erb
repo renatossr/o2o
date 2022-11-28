@@ -24,6 +24,7 @@
           <li>
             <h6 class="dropdown-header">Minha Conta</h6>
           </li>
+          <li><%= button_to "Perfil", edit_user_profile_path, :method => :get, class:  "dropdown-item", data: { turbo: false } %></li>
           <li><%= button_to "Sair", destroy_user_session_path, :method => :delete, class:  "dropdown-item", data: { turbo: false } %></li>
         </ul>
       </li>

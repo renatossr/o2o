@@ -8,12 +8,11 @@ class Workout < ApplicationRecord
 
   accepts_nested_attributes_for :members
 
-  scope :all_processed, -> { where(status: %w[cancelled confirmed]) }
-  scope :all_unreviewed, -> { where(reviewed: false) }
-  scope :all_reviewed, -> { where(reviewed: true) }
-  scope :all_no_payable, -> { where(payable_item_id: nil) }
+  scope :unreviewed, -> { where(reviewed: false) }
+  scope :reviewed, -> { where(reviewed: true) }
+  scope :no_payable_item, -> { where(payable_item_id: nil) }
   scope :within, ->(range) { where(start_at: range) }
-  scope :all_payable_within, ->(range) { where.not(status: "cancelled").all_no_payable.all_reviewed.within(range) }
+  scope :payable_within, ->(range) { where(cancelled: false).no_payable_item.reviewed.within(range) }
 
   def mark_reviewed
     self.reviewed = true

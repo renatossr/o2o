@@ -4,4 +4,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable, :invitable
 
   enum role: { user: 0, admin: 99 }
+
+  def name
+    "#{first_name} #{last_name}"
+  end
 end

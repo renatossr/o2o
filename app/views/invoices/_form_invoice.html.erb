@@ -46,7 +46,7 @@
                   <div class="mt-4">
                     <h5 class="font-size-16 mb-1">Data de vencimento:</h5>
                     <div  class="mt-2 d-flex justify-content-end align-items-end">
-                      <%= f.input :due_date, label: false, html5: true, input_html: {class: "form-control-sm" } %>
+                      <%= f.input :due_date, label: false, autocomplete: false, html5: true, input_html: {class: "form-control-sm" } %>
                     </div>
                   </div>
                 </div>
@@ -114,7 +114,7 @@
                 <%= hidden_field_tag :previous_request, request.referer %>
                 <%= f.hidden_field :id %>
                 <%= f.submit "Salvar", class: "btn btn-primary"%>
-                <%= f.submit "Emitir",  formaction: confirm_invoice_path(@invoice), class: "btn btn-primary" if @invoice.id.present? && @invoice.draft? %>
+                <%= f.submit "Emitir", formaction: confirm_invoice_path(@invoice), class: "btn btn-primary" if @invoice.id.present? && @invoice.draft? %>
               </div>
             </div>
           </div>

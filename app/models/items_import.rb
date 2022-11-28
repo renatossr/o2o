@@ -27,8 +27,8 @@ class ItemsImport
           last_name: row[:last_name],
           alias: row[:alias],
           cel_number: row[:cel_number],
-          subscription_price: row[:subscription_price],
-          class_price: row[:class_price],
+          subscription_price: (row[:subscription_price] * 100.0).to_i,
+          class_price: (row[:class_price] * 100.0).to_i,
           monday: row[:monday],
           tuesday: row[:tuesday],
           wednesday: row[:wednesday],
@@ -64,8 +64,8 @@ class ItemsImport
           last_name: row[:last_name],
           alias: row[:alias],
           cel_number: row[:cel_number],
-          pay_fixed: row[:pay_fixed],
-          pay_per_workout: row[:pay_per_workout],
+          pay_fixed: (row[:pay_fixed] * 100.0).to_i,
+          pay_per_workout: (row[:pay_per_workout] * 100.0).to_i,
         )
       puts "Inserindo: #{coach.name}"
       import_count += 1

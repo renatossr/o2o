@@ -130,3 +130,11 @@ body {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+/*
+ * Select2 multi select option override
+ */
+
+.select2-selection__choice {
+  background-color: #f5f1ff;
+}
