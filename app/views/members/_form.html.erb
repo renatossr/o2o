@@ -66,7 +66,7 @@
             <h4 class="text-right">Planos</h4>
           </div>
           <div class="row mt-2 mb-3">
-            <div class="col-md-5 pe-1">
+            <div class="col-md-4 pe-1">
               <%= form.label :subscription_price, "Mensal R$", style: "display: block", class:"form-label" %>
               <%= form.text_field :subscription_price , class: "form-control form-control-sm", data: { masks_target: 'money' }, placeholder: "-"%>
             </div>
@@ -100,9 +100,23 @@
             </div>
           </div>
           <div class="row mt-2 mb-3">
-            <div class="col-md-5 pe-1">
-              <%= form.label :class_price, "Avulso R$", style: "display: block", class:"form-label" %>
+            <div class="col-md-4 pe-1" data-controller="select2">
+              <%= form.label :subscription_type, "Tipo de plano", style: "display: block", class:"form-label" %>
+              <%= form.select :subscription_type, options_for_select(Member.subscription_types.map { |key, value| [Member::SUBSCRIPTION_TYPE_DESCRIPTIONS[key.to_sym], value] }, :selected => member.subscription_type_for_database), {include_blank: "Selecionar..." }, class: "form-select js-s2-select"%>
+            </div>
+          </div>
+          <div class="row mt-2 mb-3">
+            <div class="col-md-4 pe-1">
+              <%= form.label :class_price, "Individual R$", style: "display: block", class:"form-label" %>
               <%= form.text_field :class_price , class: "form-control form-control-sm", data: { masks_target: 'money' }, placeholder: "-"%>
+            </div>
+            <div class="col-md-4 pe-1">
+              <%= form.label :double_class_price, "Dupla R$", style: "display: block", class:"form-label" %>
+              <%= form.text_field :double_class_price , class: "form-control form-control-sm", data: { masks_target: 'money' }, placeholder: "-"%>
+            </div>
+            <div class="col-md-4 pe-1">
+              <%= form.label :triple_class_price, "Trio R$", style: "display: block", class:"form-label" %>
+              <%= form.text_field :triple_class_price , class: "form-control form-control-sm", data: { masks_target: 'money' }, placeholder: "-"%>
             </div>
           </div>
           <div class="row mt-2 mb-3">

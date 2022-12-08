@@ -10,8 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_22_175830) do
-  create_table "billing_items", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+ActiveRecord::Schema[7.0].define(version: 2022_12_07_173634) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_trgm"
+  enable_extension "plpgsql"
+
+  create_table "billing_items", force: :cascade do |t|
     t.integer "member_id"
     t.string "description"
     t.date "reference_date"
@@ -25,7 +29,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_22_175830) do
     t.string "billing_type", default: "general"
   end
 
-  create_table "billings", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "billings", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.date "reference_date"
@@ -34,15 +38,15 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_22_175830) do
     t.integer "cost_cents"
   end
 
-  create_table "calendar_events", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "calendar_events", force: :cascade do |t|
     t.string "external_id"
     t.string "title"
     t.string "status"
     t.text "external_url"
     t.text "description"
     t.string "location"
-    t.timestamp "start_at"
-    t.timestamp "end_at"
+    t.datetime "start_at", precision: nil
+    t.datetime "end_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "processed", default: false
@@ -52,7 +56,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_22_175830) do
     t.index ["external_id"], name: "index_calendar_events_on_external_id"
   end
 
-  create_table "coaches", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "coaches", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
     t.datetime "created_at", null: false
@@ -63,19 +67,19 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_22_175830) do
     t.integer "pay_per_workout"
   end
 
-  create_table "g_calendars", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "g_calendars", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "g_tokens", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "g_tokens", force: :cascade do |t|
     t.string "token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "token_type"
   end
 
-  create_table "invoices", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "invoices", force: :cascade do |t|
     t.string "external_id"
     t.string "external_url"
     t.integer "status", default: 0
@@ -93,7 +97,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_22_175830) do
     t.integer "billing_id"
   end
 
-  create_table "members", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "members", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
     t.string "alias"
@@ -113,18 +117,23 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_22_175830) do
     t.integer "sunday"
     t.integer "replacement_classes", default: 0
     t.boolean "loyal", default: false
+    t.integer "double_class_price"
+    t.integer "triple_class_price"
+    t.integer "subscription_type", default: 1
   end
 
-  create_table "members_workouts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "members_workouts", force: :cascade do |t|
     t.integer "workout_id"
     t.integer "member_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "status"
     t.integer "billing_item_id"
+    t.index ["member_id"], name: "index_members_workouts_on_member_id"
+    t.index ["workout_id"], name: "index_members_workouts_on_workout_id"
   end
 
-  create_table "payable_items", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "payable_items", force: :cascade do |t|
     t.integer "coach_id"
     t.string "description"
     t.integer "price_cents"
@@ -137,7 +146,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_22_175830) do
     t.string "payable_type"
   end
 
-  create_table "payables", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "payables", force: :cascade do |t|
     t.integer "coach_id"
     t.date "reference_date"
     t.integer "total_value_cents"
@@ -149,13 +158,13 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_22_175830) do
     t.integer "billing_id"
   end
 
-  create_table "sync_tokens", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "sync_tokens", force: :cascade do |t|
     t.string "token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -181,10 +190,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_22_175830) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  create_table "workouts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "workouts", force: :cascade do |t|
     t.integer "coach_id"
-    t.timestamp "start_at"
-    t.timestamp "end_at"
+    t.datetime "start_at", precision: nil
+    t.datetime "end_at", precision: nil
     t.string "location"
     t.text "comments"
     t.datetime "created_at", null: false
@@ -195,7 +204,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_22_175830) do
     t.boolean "with_replacement", default: false
     t.integer "billing_item_id"
     t.integer "payable_item_id"
-    t.boolean "cancelled"
+    t.boolean "cancelled", default: false
+    t.boolean "gympass", default: false
+    t.index ["calendar_event_id"], name: "index_workouts_on_calendar_event_id"
   end
 
 end

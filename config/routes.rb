@@ -52,5 +52,6 @@ Rails.application.routes.draw do
     patch :cancel, on: :member, as: :cancel
     patch :cancel_and_mirror, on: :member, as: :cancel_and_mirror
     get :new_from_workout, on: :collection
+    get :ready_to_send, on: :collection
   end
 end

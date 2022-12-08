@@ -3,7 +3,7 @@ class CreateInvoices < ActiveRecord::Migration[7.0]
     create_table :invoices do |t|
       t.string :external_id
       t.string :external_url
-      t.string :status
+      t.integer :status
       t.date :reference_date
       t.integer :member_id
       t.integer :total_value_cents

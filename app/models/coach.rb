@@ -12,11 +12,11 @@ class Coach < ApplicationRecord
   end
 
   def has_fixed_salary?
-    pay_fixed > 0
+    pay_fixed.present? && pay_fixed > 0
   end
 
   def has_individual?
-    pay_per_workout > 0
+    pay_per_workout.present? && pay_per_workout > 0
   end
 
   def is_already_in_billing_cycle?(range)

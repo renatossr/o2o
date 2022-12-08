@@ -14,19 +14,21 @@
   <div class="p-3">
     <%= simple_form_for :billing_cycle, url: start_cycle_billings_path, method: :post do |f|%>
       <div class="d-flex row justify-content-between align-items-center">
-        <div class="col-4 ">
-          <h2 class="me-3 text-success">Receita: <%= number_to_currency((@billing.invoices.where.not(status: "canceled").sum(:total_value_cents)||0)/100.0, unit: "R$", separator: ",", delimiter: ".")%></h2>
+        <div class="col-2 p-0">
+          <h2 class="me-3 text-success">Receita:<br/>
+            <%= number_to_currency((@billing.invoices.where.not(status: "canceled").sum(:total_value_cents)||0)/100.0, unit: "R$", separator: ",", delimiter: ".")%></h2>
         </div>
-        <div class="col-4 ">
-          <h2 class="me-3 text-danger">Custo: <%= number_to_currency((@billing.payables.where.not(status: "canceled").sum(:total_value_cents)||0)/100.0, unit: "R$", separator: ",", delimiter: ".")%></h2>
+        <div class="col-2 p-0">
+          <h2 class="me-3 text-danger">Custo:<br/>
+            <%= number_to_currency((@billing.payables.where.not(status: "canceled").sum(:total_value_cents)||0)/100.0, unit: "R$", separator: ",", delimiter: ".")%></h2>
         </div>
         <div class="col-auto">
           <h3><%= render(BadgeComponent.new(text: @billing.status, color: @billing.status_color)) %></h3>
         </div>
         <% if @billing.editable? %>
-          <div class="col-1 d-flex justify-content-end">
-            <%= f.submit "Rodar", class: "btn btn-primary", disabled: !@billing.processable? %>
-            <%= f.submit "Fechar mês", formaction: close_cycle_billing_path, class: "btn btn-primary" if @billing.closable? %>
+          <div class="col-2 d-flex justify-content-end">
+            <%= f.submit "Rodar", class: "btn btn-primary me-2", disabled: !@billing.processable? %>
+            <%= f.submit "Encerrar fechamento", formaction: close_cycle_billing_path, class: "btn btn-primary" if @billing.closable? %>
           </div>
           <%= hidden_field_tag "id", @billing.id %>
         <% end %>
@@ -72,7 +74,7 @@
               </div>
               <div class="ml-auto p-2 align-self-end">
                 <%= link_to raw("<i class=\"bi bi-clipboard2-plus\"></i> Nova Fatura"), new_invoice_path, class: "btn btn-primary" if @billing.reference_date == Date.current.beginning_of_month %>
-                <% if @billing.draft? %>
+                <% if @billing.draft? || @billing.processing? %>
                   <%= button_tag type: 'submit', class: 'btn btn-primary' do %>
                     <i class="bi bi-check"></i> Confirmar selecionadas
                   <% end %>
@@ -182,7 +184,7 @@
                 </div>
                 <div class="ml-auto p-2 align-self-end">
                   <%= link_to raw("<i class=\"bi bi-clipboard2-plus\"></i> Novo Pagamento"), new_payable_path, class: "btn btn-primary" if @billing.reference_date == Date.current.beginning_of_month %>
-                  <% if @billing.draft? %>
+                  <% if @billing.draft? || @billing.processing? %>
                     <%= button_tag type: 'submit', class: 'btn btn-primary' do %>
                       <i class="bi bi-check"></i> Confirmar selecionadas
                     <% end %>

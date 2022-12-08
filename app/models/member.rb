@@ -1,4 +1,7 @@
 class Member < ApplicationRecord
+  enum subscription_type: { single: 1, double: 2, triple: 3 }
+  SUBSCRIPTION_TYPE_DESCRIPTIONS = { single: "Individual", double: "Dupla", triple: "Trio" }
+
   has_many :members_workouts
   has_many :beneficiaries, class_name: "Member", foreign_key: "responsible_id"
   belongs_to :responsible, class_name: "Member", optional: true
@@ -40,7 +43,15 @@ class Member < ApplicationRecord
   end
 
   def has_individual?
-    class_price > 0
+    (class_price || 0) > 0
+  end
+
+  def has_double?
+    (double_class_price || 0) > 0
+  end
+
+  def has_triple?
+    (triple_class_price || 0) > 0
   end
 
   def has_billing_items_in_range?(range)
@@ -108,7 +119,7 @@ class Member < ApplicationRecord
       "LOWER",
       [
         Arel::Nodes::NamedFunction.new(
-          "concat_ws",
+          "CONCAT_WS",
           [Arel::Nodes::SqlLiteral.new("' '"), parent.table[:first_name], parent.table[:last_name]],
         ),
       ],
@@ -124,7 +135,7 @@ class Member < ApplicationRecord
 
   def replacements_for_discount(billable_extra_workouts_count)
     replacements = self.replacement_classes
-    replacements_for_discount = [billable_extra_workouts_count, replacements].min
+    replacements_for_discount = [billable_extra_workouts_count, replacements || 0].min
   end
 
   private

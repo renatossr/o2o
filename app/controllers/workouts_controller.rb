@@ -4,7 +4,7 @@ class WorkoutsController < ApplicationController
   # GET /workouts or /workouts.json
   def index
     authorize Workout
-    @workouts = Workout.all.order("start_at desc").page(params[:page])
+    @workouts = Workout.reviewed.order("start_at desc").page(params[:page])
   end
 
   # GET /workouts/1 or /workouts/1.json
@@ -64,15 +64,6 @@ class WorkoutsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def workout_params
-    params.require(:workout).permit(
-      :coach_id,
-      :with_replacement,
-      :cancelled,
-      :start_at,
-      :end_at,
-      :location,
-      :comments,
-      member_ids: [],
-    )
+    params.require(:workout).permit(:coach_id, :with_replacement, :cancelled, :gympass, :start_at, :end_at, :location, :comments, member_ids: [])
   end
 end

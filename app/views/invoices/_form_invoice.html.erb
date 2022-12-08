@@ -15,7 +15,7 @@
         <div class="card border-white py2">
           <div class="card-body">
             <div class="invoice-title">
-              <h4 class="float-end">Fatura #<%= @invoice.id %> <%= render(BadgeComponent.new(text: @invoice.status, color: @invoice.status_color)) %></h4>
+              <h4 class="float-end"><%= "Fatura ##{@invoice.id}" if @invoice.id.present?  %> <%= render(BadgeComponent.new(text: @invoice.status, color: @invoice.status_color)) %></h4>
               <div class="mb-4 d-flex justify-content-left">
                 <%= image_tag "logo-one2one.png", alt: "One 2 One", height: "100" %>
                 <div class="container pt-2">

@@ -100,58 +100,29 @@ class Invoice < ApplicationRecord
   def whatsapp_invoice(preview = false)
     final_link = self.member.whatsapp_link
     payer = self.member
-    puts payer.alias
     payer_alias = payer.alias.capitalize
-
-    invoice_total =
-      ActiveSupport::NumberHelper.number_to_currency(
-        self.final_value_cents / 100.0,
-        unit: "R$ ",
-        separator: ",",
-        delimiter: ".",
-        precision: 2,
-      )
+    invoice_total = value_formatter(self.final_value_cents)
 
     message = "Oi #{payer_alias}, tudo bem?\nFechamos a sua fatura agora e o total ficou em: #{invoice_total}."
 
+    billing_details = []
+    n = 1
+    self.billing_items.each do |item|
+      item_price = value_formatter(item.price_cents)
+      item_value = value_formatter(item.value_cents)
+      item_message = "- #{item.description} | #{item.quantity}x #{item_price} = #{item_value}"
+      billing_details << item_message
+      n += 1
+    end
+    billing_details = billing_details.join("\n")
+    discount_value = value_formatter(self.discount_cents)
+    discount_message = "\n- Desconto: #{discount_value}" if self.discount_cents != 0
     if preview
-      billing_details = []
-      n = 1
-      self.billing_items.each do |item|
-        item_price =
-          ActiveSupport::NumberHelper.number_to_currency(
-            item.price_cents / 100.0,
-            unit: "R$ ",
-            separator: ",",
-            delimiter: ".",
-            precision: 2,
-          )
-        item_value =
-          ActiveSupport::NumberHelper.number_to_currency(
-            item.value_cents / 100.0,
-            unit: "R$ ",
-            separator: ",",
-            delimiter: ".",
-            precision: 2,
-          )
-        item_message = "#{n}. #{item.description} | #{item.quantity}x #{item_price} | #{item_value}"
-        billing_details << item_message
-        n += 1
-      end
-      billing_details = billing_details.join("\n")
-      discount_value =
-        ActiveSupport::NumberHelper.number_to_currency(
-          self.discount_cents / 100.0,
-          unit: "R$ ",
-          separator: ",",
-          delimiter: ".",
-          precision: 2,
-        )
-      discount_message = "\n#{n}. Desconto: #{discount_value}" if self.discount_cents != 0
       message +=
         "\nDetalhes:\n#{billing_details}#{discount_message}\n\nDaqui a pouco envio a fatura para pagamento, ok?"
     else
-      message += "\nDetalhes:\n#{billing_details}#{discount_message}\n\nSegue o link da fatura: #{self.external_url}"
+      message +=
+        "\nDetalhes:\n#{billing_details}#{discount_message}\n\nSegue o link da fatura para facilitar o pagamento. É só usar o copia e cola do PIX. Obrigada!\n#{self.external_url}"
     end
 
     final_link = final_link + "?text=" + URI.encode_www_form_component(message)
@@ -177,7 +148,17 @@ class Invoice < ApplicationRecord
     end
   end
 
+  def value_formatter(value)
+    ActiveSupport::NumberHelper.number_to_currency(
+      value / 100.0,
+      unit: "R$ ",
+      separator: ",",
+      delimiter: ".",
+      precision: 2,
+    )
+  end
+
   ransacker :total_value_cents do
-    Arel.sql("CONVERT(#{table_name}.total_value_cents, CHAR(8))")
+    Arel.sql("to_char(#{table_name}.total_value_cents, '9999999')")
   end
 end

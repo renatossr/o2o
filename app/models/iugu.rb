@@ -3,41 +3,12 @@ class Iugu
   require "net/http"
   require "openssl"
 
-  def self.send_post_api_call(api, body)
-    api_key = Rails.application.credentials.iugu.api_key
-    url = URI("https://api.iugu.com/v1/#{api}?api_token=#{api_key}")
-
-    http = Net::HTTP.new(url.host, url.port)
-    http.use_ssl = true
-
-    request = Net::HTTP::Post.new(url)
-    request["accept"] = "application/json"
-    request["content-type"] = "application/json"
-    request.body = body
-
-    response = http.request(request)
-  end
-
-  def self.send_put_api_call(api)
-    api_key = Rails.application.credentials.iugu.api_key
-    url = URI("https://api.iugu.com/v1/#{api}?api_token=#{api_key}")
-
-    http = Net::HTTP.new(url.host, url.port)
-    http.use_ssl = true
-
-    request = Net::HTTP::Put.new(url)
-    request["accept"] = "application/json"
-    request["content-type"] = "application/json"
-
-    response = http.request(request)
-  end
-
   def self.create_invoice(invoice)
     api = "invoices"
     iugu_invoice = {
       items: [],
       payable_with: "pix",
-      email: "renato.fairbanks@gmail.com",
+      email: "one2onefight@gmail.com",
       due_date: invoice.due_date,
       discount_cents: invoice.discount_cents,
     }
@@ -79,5 +50,36 @@ class Iugu
 
   def self.cancel_invoices(invoices)
     invoices.each { |invoice| Iugu.cancel_invoice(invoice) }
+  end
+
+  private
+
+  def self.send_post_api_call(api, body)
+    api_key = Rails.application.credentials.iugu.api_key
+    url = URI("https://api.iugu.com/v1/#{api}?api_token=#{api_key}")
+
+    http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = true
+
+    request = Net::HTTP::Post.new(url)
+    request["accept"] = "application/json"
+    request["content-type"] = "application/json"
+    request.body = body
+
+    response = http.request(request)
+  end
+
+  def self.send_put_api_call(api)
+    api_key = Rails.application.credentials.iugu.api_key
+    url = URI("https://api.iugu.com/v1/#{api}?api_token=#{api_key}")
+
+    http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = true
+
+    request = Net::HTTP::Put.new(url)
+    request["accept"] = "application/json"
+    request["content-type"] = "application/json"
+
+    response = http.request(request)
   end
 end

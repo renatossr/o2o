@@ -3,12 +3,17 @@ class CalendarEventController < ApplicationController
 
   def index
     authorize CalendarEvent
-    @events = CalendarEvent.all.page(params[:page])
+    final_date = DateTime.current.end_of_day
+    start_date = final_date.beginning_of_month - 1.month
+    @events = CalendarEvent.where(end_at: (start_date..final_date)).page(params[:page])
   end
 
   def process_events
     authorize CalendarEvent
-    @unconfirmed_total_count = CalendarEvent.all.unreviewed.count
+    @coaches = Coach.all
+    @members = Member.all
+    @unconfirmed_total_count = @events.count
+    @events = @events.page(params[:page])
   end
 
   # PATCH/PUT /proc_event/1
@@ -27,14 +32,14 @@ class CalendarEventController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_entities
-    @events = CalendarEvent.all.unreviewed.order("start_at desc").page(params[:page])
+    final_date = DateTime.current.end_of_day
+    start_date = final_date.beginning_of_month - 1.month
+    @events = CalendarEvent.includes(workout: :members_workouts).where(start_at: (start_date..final_date)).unreviewed.order("start_at desc")
     @current_event = CalendarEvent.find(params[:id]) unless params[:id].blank?
   end
 
   # Only allow a list of trusted parameters through.
   def event_params
-    params.require(:calendar_event).permit(
-      workout_attributes: [:id, :with_replacement, :cancelled, :coach_id, member_ids: []],
-    )
+    params.require(:calendar_event).permit(workout_attributes: [:id, :with_replacement, :gympass, :cancelled, :coach_id, member_ids: []])
   end
 end

@@ -7,6 +7,9 @@ import { application } from "./application"
 import CheckboxSelectAllController from "./checkbox_select_all_controller"
 application.register("checkbox-select-all", CheckboxSelectAllController)
 
+import ConfirmationController from "./confirmation_controller"
+application.register("confirmation", ConfirmationController)
+
 import InvoiceValueCalculatorController from "./invoice_value_calculator_controller"
 application.register("invoice-value-calculator", InvoiceValueCalculatorController)
 

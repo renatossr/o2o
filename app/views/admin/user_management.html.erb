@@ -39,7 +39,7 @@
             <td>
               <%= simple_form_for :user, url: destroy_user_registration_path(user.id), method: :delete do |f| %>
                 <%= link_to raw("<i class=\"bi bi-pencil-square\"></i>"), edit_user_registration_path(user.id), class: "btn btn-sm btn-warning"%>
-                <%= button_tag type: 'submit', class: "btn btn-sm btn-danger" do %>
+                <%= button_tag type: 'submit', class: "btn btn-sm btn-danger", data: { controller:  "confirmation", "confirmation-message-value": "Você tem certeza?", action: "confirmation#confirm" } do %>
                   <i class="bi bi-x"></i>
                 <% end %>
               <% end %>

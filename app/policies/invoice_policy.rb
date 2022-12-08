@@ -10,6 +10,10 @@ class InvoicePolicy < ApplicationPolicy
     user.present?
   end
 
+  def ready_to_send?
+    user&.admin?
+  end
+
   def new?
     user.present?
   end

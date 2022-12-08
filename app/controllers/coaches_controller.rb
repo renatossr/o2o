@@ -12,7 +12,7 @@ class CoachesController < ApplicationController
       search_param[:first_name_or_last_name_or_alias_or_cel_number_cont_any] = search_terms
     end
     @q = Coach.ransack(search_param)
-    @coaches = @q.result(distinct: true)
+    @coaches = @q.result
     @coaches = @coaches.page(params[:page])
   end
 

@@ -12,7 +12,7 @@ class MembersController < ApplicationController
       search_param[:first_name_or_last_name_or_alias_or_cel_number_cont_any] = search_terms
     end
     @q = Member.ransack(search_param)
-    @members = @q.result(distinct: true)
+    @members = @q.result
     @members = @members.page(params[:page])
   end
 
@@ -85,7 +85,10 @@ class MembersController < ApplicationController
       :cel_number,
       :responsible_id,
       :subscription_price,
+      :subscription_type,
       :class_price,
+      :double_class_price,
+      :triple_class_price,
       :loyal,
       :active,
       :replacement_classes,
@@ -101,9 +104,10 @@ class MembersController < ApplicationController
 
   def sanitize_values
     params[:member][:cel_number] = params[:member][:cel_number].sub("(", "").sub(")", "").sub("-", "").sub(" ", "")
-    params[:member][:subscription_price] = (
-      params[:member][:subscription_price].sub(".", "").sub(",", ".").to_d * 100
-    ).to_i
+    params[:member][:subscription_price] = (params[:member][:subscription_price].sub(".", "").sub(",", ".").to_d * 100).to_i
+    params[:member][:subscription_type] = params[:member][:subscription_type].to_i if params[:member][:subscription_type].present?
     params[:member][:class_price] = (params[:member][:class_price].sub(".", "").sub(",", ".").to_d * 100).to_i
+    params[:member][:double_class_price] = (params[:member][:double_class_price].sub(".", "").sub(",", ".").to_d * 100).to_i
+    params[:member][:triple_class_price] = (params[:member][:triple_class_price].sub(".", "").sub(",", ".").to_d * 100).to_i
   end
 end

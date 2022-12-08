@@ -21,9 +21,17 @@ class GCalendar
 
     begin
       if additive
-        eventList = service.list_events(Rails.application.config.default_calendar, max_results: 500, sync_token: syncToken, page_token: pageToken)
+        eventList = service.list_events(Rails.application.config.default_calendar, single_events: true, max_results: 500, sync_token: syncToken, page_token: pageToken)
       else #Full Sync
-        eventList = service.list_events(Rails.application.config.default_calendar, max_results: 500, page_token: pageToken, time_min: (DateTime.current - 6.months))
+        eventList =
+          service.list_events(
+            Rails.application.config.default_calendar,
+            single_events: true,
+            max_results: 500,
+            page_token: pageToken,
+            time_min: (DateTime.current.beginning_of_month),
+            time_max: (DateTime.current.end_of_day),
+          )
       end
 
       pageToken = eventList.next_page_token
@@ -39,7 +47,11 @@ class GCalendar
     events.each do |event|
       next if (event.start.nil? || event.start.date_time.nil? || event.summary.nil?) && event.status != "cancelled"
 
-      calendarEvent = CalendarEvent.find_by(external_id: event.id, ical_id: event.i_cal_uid)
+      if event.start&.date_time.present?
+        calendarEvent = CalendarEvent.find_by(external_id: event.id, ical_id: event.i_cal_uid, start_at: event.start.date_time)
+      else
+        calendarEvent = CalendarEvent.find_by(external_id: event.id, ical_id: event.i_cal_uid)
+      end
       calendarEvent = CalendarEvent.find_by(external_id: event.id) if event.i_cal_uid.blank?
       calendarEvent = CalendarEvent.new if calendarEvent.nil?
 
@@ -52,7 +64,7 @@ class GCalendar
       calendarEvent.location = event.location
       calendarEvent.start_at = event.start.date_time unless event.start.blank?
       calendarEvent.end_at = event.end.date_time unless event.end.blank?
-      calendarEvent.color_id = event.color_id
+      calendarEvent.color_id = event.color_id.to_i
       calendarEvent.processed = false
 
       calendarEvent.status == "cancelled" ? calendarEvent.destroy! : calendarEvent.save!

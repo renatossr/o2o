@@ -6,19 +6,19 @@ class GCalendarPolicy < ApplicationPolicy
     # end
   end
 
-  def index
+  def index?
     true
   end
 
-  def redirect
+  def redirect?
     true
   end
 
-  def callback
+  def callback?
     true
   end
 
-  def events
+  def events?
     true
   end
 

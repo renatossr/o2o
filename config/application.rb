@@ -19,8 +19,8 @@ module O2o
     config.time_zone = "America/Sao_Paulo"
     # config.eager_load_paths << Rails.root.join("extras")
 
-    #config.default_calendar = "one2onefight@gmail.com"
-    config.default_calendar = "renato.fairbanks@gmail.com"
+    config.default_calendar = "one2onefight@gmail.com"
+    #config.default_calendar = "renato.fairbanks@gmail.com"
     config.i18n.default_locale = :"pt-BR"
   end
 end

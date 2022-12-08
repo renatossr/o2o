@@ -31,6 +31,8 @@ class BillingsController < ApplicationController
     @billing = Billing.find(params[:id])
     authorize @billing
     if @billing.run_billing_cycle
+      @payable_tab_show = params[:payable_tab_show] ? "show active" : ""
+      @invoice_tab_show = params[:invoice_tab_show] ? "show active" : ""
       redirect_to @billing
     else
       flash[:error] = "Não foi possível rodar o faturamento para o mês!"

@@ -12,7 +12,11 @@ class Workout < ApplicationRecord
   scope :reviewed, -> { where(reviewed: true) }
   scope :no_payable_item, -> { where(payable_item_id: nil) }
   scope :within, ->(range) { where(start_at: range) }
-  scope :payable_within, ->(range) { where(cancelled: false).no_payable_item.reviewed.within(range) }
+  scope :billable_within, ->(range) { not_billed.reviewed.within(range) }
+  scope :payable_within, ->(range) { where(cancelled: false).where.not(coach_id: nil).no_payable_item.reviewed.within(range) }
+  scope :one_member, -> { joins(:members_workouts).group("workouts.id").having("count(members_workouts.workout_id) = 1") }
+  scope :two_members, -> { joins(:members_workouts).group("workouts.id").having("count(members_workouts.workout_id) = 2") }
+  scope :three_or_more_members, -> { joins(:members_workouts).group("workouts.id").having("count(members_workouts.workout_id) > 2") }
 
   def mark_reviewed
     self.reviewed = true
@@ -28,6 +32,10 @@ class Workout < ApplicationRecord
   def mark_replacement
     self.with_replacement = true
     self.save
+  end
+
+  def title
+    self.calendar_event.title
   end
 
   def has_not_loyal_billed_member

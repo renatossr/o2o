@@ -21,6 +21,26 @@ class InvoicesController < ApplicationController
     @invoices = @invoices.page(params[:page])
   end
 
+  def ready_to_send
+    authorize Invoice
+
+    search_param = params[:q]
+    search_terms =
+      search_param[
+        :member_first_name_or_member_last_name_or_reference_date_or_status_or_total_value_cents_cont_any
+      ] if search_param.present?
+    if search_terms.present?
+      search_terms = search_terms.split(" ") unless search_terms.kind_of?(Array)
+      search_param[
+        :member_first_name_or_member_last_name_or_reference_date_or_status_or_total_value_cents_cont_any
+      ] = search_terms
+    end
+    @q = Invoice.all.pending.ransack(search_param)
+    @q.sorts = ["reference_date desc", "id desc"]
+    @invoices = @q.result.includes(:member)
+    @invoices = @invoices.page(params[:page])
+  end
+
   def new
     @invoice = Invoice.new(member_id: params[:member_id], due_date: Date.current + 5.days)
     authorize @invoice

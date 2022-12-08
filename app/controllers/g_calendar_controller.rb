@@ -12,20 +12,20 @@ class GCalendarController < ApplicationController
     authorize GCalendar
     GCalendar.fetch_access_token(params[:code])
     flash[:success] = "Autenticação realizada com sucesso."
-    redirect_to admin_url
+    redirect_to settings_path
   end
 
   def events
     authorize GCalendar
     GCalendar.syncEvents(additive: true)
     flash[:success] = "Eventos sincronizados com sucesso!"
-    redirect_to admin_url
+    redirect_to settings_path
   end
 
   def eventsFullSync
     authorize GCalendar
     GCalendar.syncEvents(additive: false)
     flash[:success] = "Eventos sincronizados com sucesso!"
-    redirect_to admin_url
+    redirect_to settings_path
   end
 end

@@ -5,7 +5,7 @@ class CreateItems < ActiveRecord::Migration[7.0]
       t.string :description
       t.date :reference_date
       t.integer :invoice_id
-      t.string :status
+      t.integer :status
       t.integer :payable_by
 
       t.timestamps

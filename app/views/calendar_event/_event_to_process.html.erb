@@ -21,7 +21,7 @@
                   <h6 class="text-right me-2">Alunos</h6>
                   <%= link_to raw("<i class=\"bi bi-person-plus-fill\"></i>"), new_member_path %>
                 </div>
-                <%= w.association :members, label: false, input_html: { class: "js-s2-select", id: "members_id_#{event.workout.id}", style: "width: 100%;"} %>
+                <%= w.association :members, label: false, collection: @members, input_html: {data: { placeholder: 'Selecionar...' }, class: "js-s2-select", id: "members_id_#{event.workout.id}", style: "width: 100%;"} %>
               </div>
             </div>
           </div>
@@ -32,7 +32,7 @@
                   <h6 class="text-right me-2">Coach</h6>
                   <%= link_to raw("<i class=\"bi bi-person-plus-fill\"></i>"), new_coach_path %>
                 </div>
-                <%= w.input :coach_id, label: false, collection: Coach.all, input_html: { class: "js-s2-select", id: "coach_id_#{event.workout.id}", style: "width: 100%"} %>
+                <%= w.input :coach_id, label: false, collection: @coaches, input_html: {data: { placeholder: 'Selecionar...' }, class: "js-s2-select", id: "coach_id_#{event.workout.id}", style: "width: 100%"} %>
               </div>
               <div class="d-flex justify-content-start align-items-top mt-3">
                 <h6 class="text-right me-2">Cancelada</h6>
@@ -42,6 +42,12 @@
                 <h6 class="text-right me-2">Reposição</h6>
                 <div class="col-md-auto">
                   <%= w.input :with_replacement, label: false %>
+                </div>
+              </div>
+              <div class="d-flex justify-content-start align-items-top mt-3">
+                <h6 class="text-right me-2">Gympass</h6>
+                <div class="col-md-auto me-4">
+                  <%= w.input :gympass, label: false %>
                 </div>
               </div>
             </div>
