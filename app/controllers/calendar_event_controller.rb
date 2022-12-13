@@ -20,6 +20,7 @@ class CalendarEventController < ApplicationController
   def update
     authorize @current_event
     @current_event.reviewed = true
+    @current_event.alerts = []
     if @current_event.update(event_params)
       @current_event = @events.first
       redirect_to proc_events_url

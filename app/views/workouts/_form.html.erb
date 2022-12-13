@@ -1,11 +1,18 @@
 <% if workout.errors.any? %>
-  <div style="color: red">
-    <h2><%= pluralize(workout.errors.count, "error") %> prohibited this workout from being saved:</h2>
-    <ul>
-      <% workout.errors.each do |error| %>
-        <li><%= error.full_message %></li>
-      <% end %>
-    </ul>
+  <div id="error_explanation">
+    <div style="color: red">
+      <h2>
+        <%= I18n.t("errors.messages.not_saved",
+                 count: resource.errors.count,
+                 resource: resource.class.model_name.human.downcase)
+       %>
+      </h2>
+      <ul>
+        <% workout.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
   </div>
 <% end %>
 <%= simple_form_for workout do |f| %>
@@ -31,12 +38,12 @@
           </div>
           <div class="row mt-3">
             <div class="col-md-12">
-              <%= f.input :coach_id, label: "Coach", collection: Coach.all, input_html: { class: "js-s2-select form-control-sm", id: "coach_id_#{workout.id}", style: "width: 100%"} %>
+              <%= f.input :coach_id, label: "Coach", collection: Coach.all, input_html: {data: { placeholder: 'Selecionar...' }, class: "js-s2-select form-control-sm", id: "coach_id_#{workout.id}", style: "width: 100%"} %>
             </div>
           </div>
           <div class="row mt-3">
             <div class="col-md-12">
-              <%= f.association :members, label: "Alunos", input_html: { class: "js-s2-select form-control-sm", id: "members_id_#{workout.id}", style: "width: 100%;"} %>
+              <%= f.association :members, label: "Alunos", input_html: {data: { placeholder: 'Selecionar...' }, class: "js-s2-select form-control-sm", id: "members_id_#{workout.id}", style: "width: 100%;"} %>
             </div>
           </div>
           <div class="row mt-3">

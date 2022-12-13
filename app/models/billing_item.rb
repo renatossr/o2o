@@ -8,14 +8,12 @@ class BillingItem < ApplicationRecord
 
   validates :description, presence: true
   validates :price_cents, numericality: { only_integer: true }
-  validates :quantity, numericality: { only_integer: true }
+  validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
   before_validation :populate_member_and_payer, if: proc { self.invoice.present? }
   after_create :decrease_member_replacement_classes, if: proc { self.billing_type == "replacement" }
-  before_update :decrease_member_replacement_classes,
-                if: proc { self.billing_type == "replacement" && self.quantity_changed? }
-  before_update :increment_member_replacement_classes,
-                if: proc { self.billing_type == "replacement" && (self.status_changed? && self.cancelled?) }
+  before_update :decrease_member_replacement_classes, if: proc { self.billing_type == "replacement" && self.quantity_changed? }
+  before_update :increment_member_replacement_classes, if: proc { self.billing_type == "replacement" && (self.status_changed? && self.cancelled?) }
   after_save :set_workout_status
   after_save :free_members_workouts, if: proc { self.cancelled? }
   before_destroy :increment_member_replacement_classes, if: proc { self.billing_type == "replacement" }

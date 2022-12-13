@@ -108,3 +108,4 @@ gem "rubyXL", "~> 3.4"
 gem "roo", "~> 2.9"
 
 
+gem 'leftovers', require: false

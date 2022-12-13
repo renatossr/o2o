@@ -14,7 +14,8 @@ class Member < ApplicationRecord
 
   validates :first_name, presence: true
   validates :last_name, presence: true
-  validates :cel_number, presence: true
+  validates :alias, presence: true
+  validates :cel_number, presence: true, numericality: true
 
   after_create :assign_sponsor_self, if: proc { self.responsible_id.nil? }
 
@@ -54,15 +55,10 @@ class Member < ApplicationRecord
     (triple_class_price || 0) > 0
   end
 
-  def has_billing_items_in_range?(range)
-    billing_items.where(reference_date: range).count > 0
-  end
-
   def is_not_in_billing_cycle?(range)
     result = true
     billing_items.each do |item|
-      if item.invoice.present? && range.cover?(item.invoice.reference_date) &&
-           item.invoice.invoice_type == "billing_cycle" && item.invoice.status != "canceled"
+      if item.invoice.present? && range.cover?(item.invoice.reference_date) && item.invoice.invoice_type == "billing_cycle" && item.invoice.status != "canceled"
         result = false
         break
       end
@@ -115,27 +111,7 @@ class Member < ApplicationRecord
   end
 
   ransacker :name, formatter: proc { |v| v.mb_chars.downcase.to_s } do |parent|
-    Arel::Nodes::NamedFunction.new(
-      "LOWER",
-      [
-        Arel::Nodes::NamedFunction.new(
-          "CONCAT_WS",
-          [Arel::Nodes::SqlLiteral.new("' '"), parent.table[:first_name], parent.table[:last_name]],
-        ),
-      ],
-    )
-  end
-
-  def billable_extra_workouts_count(month)
-    workouts_count = billable_workouts_in_range(month.beginning_of_month..month.end_of_month).count
-    available_workouts = self.workouts_available_in_month(month.beginning_of_month)
-    billable_extra_workouts = workouts_count - available_workouts # (total de aulas) - (aulas no plano)
-    billable_extra_workouts = [0, billable_extra_workouts].max
-  end
-
-  def replacements_for_discount(billable_extra_workouts_count)
-    replacements = self.replacement_classes
-    replacements_for_discount = [billable_extra_workouts_count, replacements || 0].min
+    Arel::Nodes::NamedFunction.new("LOWER", [Arel::Nodes::NamedFunction.new("CONCAT_WS", [Arel::Nodes::SqlLiteral.new("' '"), parent.table[:first_name], parent.table[:last_name]])])
   end
 
   private

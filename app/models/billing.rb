@@ -156,23 +156,6 @@ class Billing < ApplicationRecord
     )
   end
 
-  def create_individual_class_billing_items(beneficiary, billable_workouts, billable_extra_workouts_count)
-    billing_items = []
-    item =
-      BillingItem.new(
-        member_id: beneficiary.id,
-        description: "Aula Individual#{description_complement(beneficiary)}",
-        price_cents: beneficiary.class_price,
-        reference_date: reference_date.beginning_of_month,
-        status: :draft,
-        payer: beneficiary,
-        quantity: billable_extra_workouts_count,
-        billing_type: "workout",
-      )
-    item.members_workouts = billable_workouts
-    billing_items << item
-  end
-
   def create_discount_for_replacement_classes_billing_items(beneficiary, replacements_for_discount)
     billing_items = []
     item =

@@ -1,7 +1,28 @@
 ---
 pt-BR:
   activerecord:
+    attributes:
+      member:
+        first_name: "Nome"
+        last_name: "Sobrenome"
+        alias: "Apelido"
+        cel_number: "Número do celular"
+      invoice:
+        due_date: "Data de Vencimento"
+        discount_cents: "Desconto"
+        member: "Aluno"
+        billing_items: "Linha de detalhe"
+      billing_items:
+        member: "Aluno"
+        description: "Descrição"
+        price_cents: "Preço"
+        quantity: "Quantidade"
+      billing_item:
+        description: "Descrição"
     models:
+      billing_item:
+        one: "linha de detalhe"
+        other: "linhas de detalhe"
       invoice:
         one: "fatura"
         other: "faturas"
@@ -16,6 +37,9 @@ pt-BR:
         other: "pagamentos"
     errors:
       messages:
+        not_saved:
+          one: "1 erro impediu esse %{resource} de ser salvo:"
+          other: "%{count} erros impediram esse %{resource} de ser salvo:"
         record_invalid: "A validação falhou: %{errors}"
         restrict_dependent_destroy:
           has_one: Não é possível excluir o registro pois existe um %{record} dependente

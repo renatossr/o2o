@@ -1,14 +1,4 @@
-<%= form_with(model: member, html: { data: { controller: "masks" } }) do |form| %>
-  <% if member.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(member.errors.count, "error") %> prohibited this member from being saved:</h2>
-      <ul>
-        <% member.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+<%= simple_form_for(member, html: { data: { controller: "masks" } }) do |form| %>
   <div class="container rounded bg-white mt-5 mb-5">
     <div class="row">
       <div class="col-md-3 border-end">
@@ -28,30 +18,25 @@
           </div>
           <div class="row mt-2">
             <div class="col-md-6">
-              <%= form.label :first_name, "Primeiro Nome", style: "display: block", class:"form-label" %>
-              <%= form.text_field :first_name , class: "form-control form-control-sm", placeholder: "Primeiro Nome..."%>
+              <%= form.input :first_name, label: "Primeiro Nome", input_html: {class: "form-control form-control-sm mt-2", placeholder: "Primeiro Nome"} %>
             </div>
             <div class="col-md-6">
-              <%= form.label :last_name, "Sobrenome", style: "display: block", class:"form-label" %>
-              <%= form.text_field :last_name , class: "form-control form-control-sm", placeholder: "Sobrenome..."%>
+              <%= form.input :last_name, label: "Sobrenome", input_html: {class: "form-control form-control-sm mt-2", placeholder: "Sobrenome"} %>
             </div>
           </div>
           <div class="row mt-3">
             <div class="col-md-12">
-              <%= form.label :alias, "Apelido", style: "display: block", class:"form-label" %>
-              <%= form.text_field :alias , class: "form-control form-control-sm", placeholder: "Apelido..."%>
+              <%= form.input :alias, label: "Apelido", input_html: {class: "form-control form-control-sm mt-2", placeholder: "Apelido"} %>
             </div>
           </div>
           <div class="row mt-3">
             <div class="col-md-12">
-              <%= form.label :cel_number, "Celular", style: "display: block", class:"form-label" %>
-              <%= form.telephone_field :cel_number , class: "form-control form-control-sm", data: { masks_target: 'phone' }, placeholder: "Número do celular..."%>
+              <%= form.input :cel_number, label: "Celular", input_html: {class: "form-control form-control-sm mt-2", placeholder: "Número do celular..."} %>
             </div>
           </div>
           <div class="row mt-3">
             <div class="col-md-12" data-controller="select2">
-              <%= form.label :class_price, "Responsável pelo pagamento", style: "display: block", class:"form-label" %>
-              <%= form.select :responsible_id, Member.all.map { |m| [m.name, m.id]}, {include_blank: "Selecionar..." }, class: "form-select js-s2-select"%>
+              <%= form.association :responsible, label: "Responsável pelo pagamento", collection: Member.all, label_html: {class: "mb-2"}, input_html: {data: { placeholder: 'Selecionar...' }, class: "js-s2-select form-control form-control-sm ms-2 w-25"} %>
             </div>
           </div>
           <div class="mt-5 text-center">
@@ -67,62 +52,49 @@
           </div>
           <div class="row mt-2 mb-3">
             <div class="col-md-4 pe-1">
-              <%= form.label :subscription_price, "Mensal R$", style: "display: block", class:"form-label" %>
-              <%= form.text_field :subscription_price , class: "form-control form-control-sm", data: { masks_target: 'money' }, placeholder: "-"%>
+              <%= form.input :subscription_price, as: :string, label: "Mensal R$", input_html: {class: "form-control form-control-sm mt-2", data: { masks_target: 'money' }, placeholder: "-"} %>
             </div>
             <div class="col-md-1 px-1">
-              <%= form.label :monday, "S", style: "display: block", class:"form-label text-center" %>
-              <%= form.text_field :monday , class: "form-control form-control-sm text-center", placeholder: "-"%>
+              <%= form.input :monday, as: :string, label: "S", label_html: {style: "display: block", class: "text-center"}, input_html: {class: "form-control form-control-sm mt-2 text-center", placeholder: "-"} %>
             </div>
             <div class="col-md-1 px-1">
-              <%= form.label :tuesday, "T", style: "display: block", class:"form-label text-center" %>
-              <%= form.text_field :tuesday , class: "form-control form-control-sm text-center", placeholder: "-"%>
+              <%= form.input :tuesday, as: :string, label: "T", label_html: {style: "display: block", class: "text-center"}, input_html: {class: "form-control form-control-sm mt-2 text-center", placeholder: "-"} %>
             </div>
             <div class="col-md-1 px-1">
-              <%= form.label :wednesday, "Q", style: "display: block", class:"form-label text-center" %>
-              <%= form.text_field :wednesday , class: "form-control form-control-sm text-center", placeholder: "-" %>
+              <%= form.input :wednesday, as: :string, label: "Q", label_html: {style: "display: block", class: "text-center"}, input_html: {class: "form-control form-control-sm mt-2 text-center", placeholder: "-"} %>
             </div>
             <div class="col-md-1 px-1">
-              <%= form.label :thursday, "Q", style: "display: block", class:"form-label text-center" %>
-              <%= form.text_field :thursday , class: "form-control form-control-sm text-center", placeholder: "-"%>
+              <%= form.input :thursday, as: :string, label: "Q", label_html: {style: "display: block", class: "text-center"}, input_html: {class: "form-control form-control-sm mt-2 text-center", placeholder: "-"} %>
             </div>
             <div class="col-md-1 px-1">
-              <%= form.label :friday, "S", style: "display: block", class:"form-label text-center" %>
-              <%= form.text_field :friday , class: "form-control form-control-sm text-center", placeholder: "-"%>
+              <%= form.input :friday, as: :string, label: "S", label_html: {style: "display: block", class: "text-center"}, input_html: {class: "form-control form-control-sm mt-2 text-center", placeholder: "-"} %>
             </div>
             <div class="col-md-1 px-1">
-              <%= form.label :saturday, "S", style: "display: block", class:"form-label text-center" %>
-              <%= form.text_field :saturday , class: "form-control form-control-sm text-center", placeholder: "-"%>
+              <%= form.input :saturday, as: :string, label: "S", label_html: {style: "display: block", class: "text-center"}, input_html: {class: "form-control form-control-sm mt-2 text-center", placeholder: "-"} %>
             </div>
             <div class="col-md-1 px-1">
-              <%= form.label :sunday, "D", style: "display: block", class:"form-label text-center" %>
-              <%= form.text_field :sunday , class: "form-control form-control-sm text-center", placeholder: "-"%>
+              <%= form.input :sunday, as: :string, label: "D", label_html: {style: "display: block", class: "text-center"}, input_html: {class: "form-control form-control-sm mt-2 text-center", placeholder: "-"} %>
             </div>
           </div>
           <div class="row mt-2 mb-3">
             <div class="col-md-4 pe-1" data-controller="select2">
-              <%= form.label :subscription_type, "Tipo de plano", style: "display: block", class:"form-label" %>
-              <%= form.select :subscription_type, options_for_select(Member.subscription_types.map { |key, value| [Member::SUBSCRIPTION_TYPE_DESCRIPTIONS[key.to_sym], value] }, :selected => member.subscription_type_for_database), {include_blank: "Selecionar..." }, class: "form-select js-s2-select"%>
+              <%= form.input :subscription_type, label: "Tipo de plano", collection: Member.subscription_types.map { |key, value| [Member::SUBSCRIPTION_TYPE_DESCRIPTIONS[key.to_sym], value] }, selected: member.subscription_type_for_database, prompt: 'Selecionar...', label_html: {class: "mb-2"}, input_html: {class: "js-s2-select form-select form-select-sm"} %>
             </div>
           </div>
           <div class="row mt-2 mb-3">
             <div class="col-md-4 pe-1">
-              <%= form.label :class_price, "Individual R$", style: "display: block", class:"form-label" %>
-              <%= form.text_field :class_price , class: "form-control form-control-sm", data: { masks_target: 'money' }, placeholder: "-"%>
+              <%= form.input :class_price, as: :string, label: "Individual R$", input_html: {class: "form-control form-control-sm mt-2", data: { masks_target: 'money' }, placeholder: "-"} %>
             </div>
             <div class="col-md-4 pe-1">
-              <%= form.label :double_class_price, "Dupla R$", style: "display: block", class:"form-label" %>
-              <%= form.text_field :double_class_price , class: "form-control form-control-sm", data: { masks_target: 'money' }, placeholder: "-"%>
+              <%= form.input :double_class_price, as: :string, label: "Dupla R$", input_html: {class: "form-control form-control-sm mt-2", data: { masks_target: 'money' }, placeholder: "-"} %>
             </div>
             <div class="col-md-4 pe-1">
-              <%= form.label :triple_class_price, "Trio R$", style: "display: block", class:"form-label" %>
-              <%= form.text_field :triple_class_price , class: "form-control form-control-sm", data: { masks_target: 'money' }, placeholder: "-"%>
+              <%= form.input :triple_class_price, as: :string, label: "Trio R$", input_html: {class: "form-control form-control-sm mt-2", data: { masks_target: 'money' }, placeholder: "-"} %>
             </div>
           </div>
           <div class="row mt-2 mb-3">
             <div class="col-md-5 pe-1">
-              <%= form.label :class_price, "Reposições", style: "display: block", class:"form-label" %>
-              <%= form.text_field :replacement_classes , class: "form-control form-control-sm", placeholder: "-"%>
+              <%= form.input :replacement_classes, label: "Individual R$", input_html: {class: "form-control form-control-sm mt-2", data: { masks_target: 'money' }, placeholder: "-"} %>
             </div>
           </div>
         </div>

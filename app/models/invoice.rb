@@ -6,8 +6,10 @@ class Invoice < ApplicationRecord
   belongs_to :billing, optional: true
   has_many :billing_items, dependent: :destroy
 
-  validates :member_id, presence: true
-  validates :billing_items, presence: true
+  validates :member, :due_date, :billing_items, presence: true
+  validates_associated :billing_items
+  validates :discount_cents, numericality: { greater_than_or_equal_to: 0 }
+  validates :due_date, comparison: { greater_than: Date.current.end_of_day }
 
   accepts_nested_attributes_for :billing_items, allow_destroy: true
 
@@ -118,11 +120,9 @@ class Invoice < ApplicationRecord
     discount_value = value_formatter(self.discount_cents)
     discount_message = "\n- Desconto: #{discount_value}" if self.discount_cents != 0
     if preview
-      message +=
-        "\nDetalhes:\n#{billing_details}#{discount_message}\n\nDaqui a pouco envio a fatura para pagamento, ok?"
+      message += "\nDetalhes:\n#{billing_details}#{discount_message}\n\nDaqui a pouco envio a fatura para pagamento, ok?"
     else
-      message +=
-        "\nDetalhes:\n#{billing_details}#{discount_message}\n\nSegue o link da fatura para facilitar o pagamento. É só usar o copia e cola do PIX. Obrigada!\n#{self.external_url}"
+      message += "\nDetalhes:\n#{billing_details}#{discount_message}\n\nSegue o link da fatura para facilitar o pagamento. É só usar o copia e cola do PIX. Obrigada!\n#{self.external_url}"
     end
 
     final_link = final_link + "?text=" + URI.encode_www_form_component(message)
@@ -134,6 +134,10 @@ class Invoice < ApplicationRecord
 
   def issue_invoice
     self.processing!
+  end
+
+  def cancellable?
+    %i[paid cancelling cancelled expired].include?(status)
   end
 
   def cancel_invoice
@@ -149,13 +153,7 @@ class Invoice < ApplicationRecord
   end
 
   def value_formatter(value)
-    ActiveSupport::NumberHelper.number_to_currency(
-      value / 100.0,
-      unit: "R$ ",
-      separator: ",",
-      delimiter: ".",
-      precision: 2,
-    )
+    ActiveSupport::NumberHelper.number_to_currency(value / 100.0, unit: "R$ ", separator: ",", delimiter: ".", precision: 2)
   end
 
   ransacker :total_value_cents do

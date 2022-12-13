@@ -3,6 +3,9 @@ class Coach < ApplicationRecord
   has_many :payables
   has_many :payable_items
 
+  validates :first_name, presence: true
+  validates :last_name, presence: true
+
   def name
     "#{first_name} #{last_name}"
   end
@@ -31,14 +34,6 @@ class Coach < ApplicationRecord
   end
 
   ransacker :name, formatter: proc { |v| v.mb_chars.downcase.to_s } do |parent|
-    Arel::Nodes::NamedFunction.new(
-      "LOWER",
-      [
-        Arel::Nodes::NamedFunction.new(
-          "concat_ws",
-          [Arel::Nodes::SqlLiteral.new("' '"), parent.table[:first_name], parent.table[:last_name]],
-        ),
-      ],
-    )
+    Arel::Nodes::NamedFunction.new("LOWER", [Arel::Nodes::NamedFunction.new("concat_ws", [Arel::Nodes::SqlLiteral.new("' '"), parent.table[:first_name], parent.table[:last_name]])])
   end
 end

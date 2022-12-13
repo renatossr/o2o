@@ -15,8 +15,6 @@ class MembersWorkout < ApplicationRecord
   scope :two_members, -> { where(workout: Workout.two_members) }
   scope :three_or_more_members, -> { where(workout: Workout.three_or_more_members) }
 
-  #Post.joins(:comments).group(:id).having("count(comments.id) > 1")
-
   def status_color
     STATUS_COLORS[status&.to_sym] || "secondary"
   end

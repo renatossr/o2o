@@ -6,8 +6,6 @@ class Workout < ApplicationRecord
   belongs_to :billing_item, optional: true
   belongs_to :payable_item, optional: true
 
-  accepts_nested_attributes_for :members
-
   scope :unreviewed, -> { where(reviewed: false) }
   scope :reviewed, -> { where(reviewed: true) }
   scope :no_payable_item, -> { where(payable_item_id: nil) }
@@ -17,6 +15,8 @@ class Workout < ApplicationRecord
   scope :one_member, -> { joins(:members_workouts).group("workouts.id").having("count(members_workouts.workout_id) = 1") }
   scope :two_members, -> { joins(:members_workouts).group("workouts.id").having("count(members_workouts.workout_id) = 2") }
   scope :three_or_more_members, -> { joins(:members_workouts).group("workouts.id").having("count(members_workouts.workout_id) > 2") }
+
+  accepts_nested_attributes_for :members
 
   def mark_reviewed
     self.reviewed = true

@@ -22,7 +22,7 @@
             <div class="col">
               <strong class="mb-3">Synch Adicional</strong>
               <p class="text-muted mb-0">Sincronizar. Última sincronização: </p>
-              <span><%= SyncToken.last.blank? ? 'Sincronização total ainda não realizada' : SyncToken.last.created_at%></span>
+              <span><%= SyncToken.last.blank? ? 'Sincronização total ainda não realizada' : SyncToken.last.created_at %></span>
             </div>
             <div class="col-auto">
               <%= link_to 'Sync', events_url, class: 'btn btn-primary' + (SyncToken.last.blank? ? ' disabled' : '') %>

@@ -12,6 +12,7 @@ class MembersController < ApplicationController
       search_param[:first_name_or_last_name_or_alias_or_cel_number_cont_any] = search_terms
     end
     @q = Member.ransack(search_param)
+    @q.sorts = "name asc" if @q.sorts.empty?
     @members = @q.result
     @members = @members.page(params[:page])
   end
@@ -45,6 +46,7 @@ class MembersController < ApplicationController
         redirect_to members_url
       end
     else
+      flash.now[:error] = I18n.t("errors.messages.not_saved", count: @member.errors.count, resource: @member.class.model_name.human.downcase)
       render :new, status: :unprocessable_entity
     end
   end
@@ -56,6 +58,7 @@ class MembersController < ApplicationController
       flash[:success] = "Dados do aluno alterados com sucesso."
       redirect_to members_url
     else
+      flash.now[:error] = I18n.t("errors.messages.not_saved", count: @member.errors.count, resource: @member.class.model_name.human.downcase)
       render :edit, status: :unprocessable_entity
     end
   end
@@ -73,7 +76,7 @@ class MembersController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_member
     @member = Member.find(params[:id])
-    @members_workouts = @member.members_workouts.joins(:workout).order("start_at DESC")
+    @members_workouts = @member.members_workouts.reviewed.joins(:workout).order("start_at DESC")
   end
 
   # Only allow a list of trusted parameters through.

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_12_07_173634) do
+ActiveRecord::Schema[7.0].define(version: 2022_12_13_214723) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -53,7 +53,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_07_173634) do
     t.integer "color_id"
     t.string "ical_id"
     t.boolean "reviewed", default: false
+    t.text "alerts", default: [], array: true
     t.index ["external_id"], name: "index_calendar_events_on_external_id"
+    t.index ["start_at"], name: "index_calendar_events_on_start_at"
   end
 
   create_table "coaches", force: :cascade do |t|
@@ -207,6 +209,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_07_173634) do
     t.boolean "cancelled", default: false
     t.boolean "gympass", default: false
     t.index ["calendar_event_id"], name: "index_workouts_on_calendar_event_id"
+    t.index ["start_at"], name: "index_workouts_on_start_at"
   end
 
 end

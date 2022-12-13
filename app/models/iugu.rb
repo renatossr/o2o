@@ -5,19 +5,8 @@ class Iugu
 
   def self.create_invoice(invoice)
     api = "invoices"
-    iugu_invoice = {
-      items: [],
-      payable_with: "pix",
-      email: "one2onefight@gmail.com",
-      due_date: invoice.due_date,
-      discount_cents: invoice.discount_cents,
-    }
-    invoice
-      .billing_items
-      .select(:description, :quantity, :price_cents)
-      .each do |item|
-        iugu_invoice[:items].push(description: item.description, quantity: item.quantity, price_cents: item.price_cents)
-      end
+    iugu_invoice = { items: [], payable_with: "pix", email: "one2onefight@gmail.com", due_date: invoice.due_date, discount_cents: invoice.discount_cents }
+    invoice.billing_items.select(:description, :quantity, :price_cents).each { |item| iugu_invoice[:items].push(description: item.description, quantity: item.quantity, price_cents: item.price_cents) }
     response = Iugu.send_post_api_call(api, iugu_invoice.to_json)
 
     if response.is_a? Net::HTTPSuccess

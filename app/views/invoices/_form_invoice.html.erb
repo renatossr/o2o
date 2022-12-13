@@ -1,13 +1,3 @@
-<% if @invoice.errors.any? %>
-  <div style="color: red">
-    <h2><%= pluralize(@invoice.errors.count, "error") %> prohibited this workout from being saved:</h2>
-    <ul>
-      <% @invoice.errors.each do |error| %>
-        <li><%= error.full_message %></li>
-      <% end %>
-    </ul>
-  </div>
-<% end %>
 <%= simple_form_for @invoice, html: { data: {controller: 'masks nested-form replacement-discount-line', nested_form_wrapper_selector_value: '.nested-form-wrapper'} } do |f| %>
   <div class="container rounded bg-white mt-5 mb-5" data-controller="select2">
     <div class="row">
@@ -30,7 +20,7 @@
               <div class="col-sm-3">
                 <div class="text-muted">
                   <h5 class="mb-3">Aluno faturado:</h5>
-                  <h6 class="mb-2"><%= f.association :member, label: false, collection: Member.all, input_html: {class: "js-s2-select form-control form-control-sm ms-2 w-25"} %></h6>
+                  <h6 class="mb-2"><%= f.association :member, label: false, collection: Member.all, input_html: {data: { placeholder: 'Selecionar...' }, class: "js-s2-select form-control form-control-sm ms-2 w-25"} %></h6>
                 </div>
               </div>
               <div class="col-sm-9">

@@ -26,7 +26,7 @@ class ItemsImport
       next if row_index == 0 || Member.find_by(first_name: row[:first_name].capitalize, last_name: row[:last_name].capitalize).present?
 
       member =
-        Member.create!(
+        Member.upsert(
           first_name: row[:first_name].capitalize,
           last_name: row[:last_name].capitalize,
           alias: row[:alias].capitalize,

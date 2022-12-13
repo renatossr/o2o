@@ -9,30 +9,29 @@ class CalendarEvent < ApplicationRecord
   after_save :set_workout_reviewed, if: proc { self.reviewed? }
 
   def process_event
-    workout = self.workout
-    workout = Workout.new if workout.nil?
+    self.alerts = []
+    workout = self.workout || Workout.new
 
-    workout.calendar_event_id = self.id
     workout.start_at = self.start_at
     workout.end_at = self.end_at
     workout.location = self.location
 
     # Set cancelled status
-    workout.cancelled = true if cancelled?
+    workout.cancelled = self.cancelled?
 
     # Process Members
     workout.members = extract_members(processed_title.first) unless processed_title.first.blank?
 
     # Process replacement
-    workout.with_replacement = true if replacement?
+    workout.with_replacement = self.replacement?
 
     # Process gympass
-    workout.gympass = true if gympass?
+    workout.gympass = self.gympass?
 
     # Process Coach
     workout.coach = extract_coach(processed_title.second) unless processed_title.second.blank?
-    workout.save!
 
+    self.workout = workout
     self.processed = true
     self.save!
   end
@@ -104,8 +103,12 @@ class CalendarEvent < ApplicationRecord
     first_name = coach_name.split(/\s* \s*/).first.downcase
     last_name = coach_name.split(/\s* \s*/).last.downcase
 
-    coaches = Coach.where("lower(first_name) % ? and lower(last_name) % ?", Coach.sanitize_sql_like(first_name), Coach.sanitize_sql_like(last_name))
-    coaches = Coach.where("lower(first_name) % ? or lower(last_name) % ?", Coach.sanitize_sql_like(first_name), Coach.sanitize_sql_like(last_name)) if coaches.blank?
+    #coaches = Coach.where("lower(first_name) % ? and lower(last_name) % ?", Coach.sanitize_sql_like(first_name), Coach.sanitize_sql_like(last_name))
+    #coaches = Coach.where("lower(first_name) % ? or lower(last_name) % ?", Coach.sanitize_sql_like(first_name), Coach.sanitize_sql_like(last_name)) if coaches.blank?
+    coaches =
+      Coach.where("SIMILARITY(CONCAT(first_name, ' ', last_name), ?) > 0.3", coach_name).order(
+        Coach.sanitize_sql_for_order([Arel.sql("SIMILARITY(CONCAT(first_name, ' ', last_name), ?) DESC"), coach_name]),
+      )
     coaches = Coach.all if coaches.blank?
 
     if coaches.length > 1
@@ -114,10 +117,13 @@ class CalendarEvent < ApplicationRecord
         coach_distances.push(coach: coach.id, score: score)
       end
       coach_distances.sort_by! { |k| k[:score] }
-      Coach.find(coach_distances.first[:coach]) if coach_distances.first[:score] >= 1
+      coach_result = Coach.find(coach_distances.first[:coach]) if coach_distances.first[:score] >= 1
     else
-      coaches.first
+      coach_result = coaches.first
     end
+
+    self.alerts << "Coach não identificado!" if coach_result.blank?
+    coach_result
   end
 
   def extract_members(member_names)
@@ -149,6 +155,9 @@ class CalendarEvent < ApplicationRecord
         member_results.push(members.first)
       end
     end
+
+    self.alerts << "Quantidade de alunos diferente!" if names.count != member_results.count
+
     member_results
   end
 

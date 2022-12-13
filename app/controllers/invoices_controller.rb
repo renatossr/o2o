@@ -5,15 +5,10 @@ class InvoicesController < ApplicationController
   def index
     authorize Invoice
     search_param = params[:q]
-    search_terms =
-      search_param[
-        :member_first_name_or_member_last_name_or_reference_date_or_status_or_total_value_cents_cont_any
-      ] if search_param.present?
+    search_terms = search_param[:member_first_name_or_member_last_name_or_reference_date_or_status_or_total_value_cents_cont_any] if search_param.present?
     if search_terms.present?
       search_terms = search_terms.split(" ") unless search_terms.kind_of?(Array)
-      search_param[
-        :member_first_name_or_member_last_name_or_reference_date_or_status_or_total_value_cents_cont_any
-      ] = search_terms
+      search_param[:member_first_name_or_member_last_name_or_reference_date_or_status_or_total_value_cents_cont_any] = search_terms
     end
     @q = Invoice.ransack(search_param)
     @q.sorts = ["reference_date desc", "id desc"]
@@ -25,15 +20,10 @@ class InvoicesController < ApplicationController
     authorize Invoice
 
     search_param = params[:q]
-    search_terms =
-      search_param[
-        :member_first_name_or_member_last_name_or_reference_date_or_status_or_total_value_cents_cont_any
-      ] if search_param.present?
+    search_terms = search_param[:member_first_name_or_member_last_name_or_reference_date_or_status_or_total_value_cents_cont_any] if search_param.present?
     if search_terms.present?
       search_terms = search_terms.split(" ") unless search_terms.kind_of?(Array)
-      search_param[
-        :member_first_name_or_member_last_name_or_reference_date_or_status_or_total_value_cents_cont_any
-      ] = search_terms
+      search_param[:member_first_name_or_member_last_name_or_reference_date_or_status_or_total_value_cents_cont_any] = search_terms
     end
     @q = Invoice.all.pending.ransack(search_param)
     @q.sorts = ["reference_date desc", "id desc"]
@@ -71,6 +61,7 @@ class InvoicesController < ApplicationController
         redirect_to invoices_path
       end
     else
+      flash.now[:error] = I18n.t("errors.messages.not_saved", count: @invoice.errors.count, resource: @invoice.class.model_name.human.downcase)
       render :new, status: :unprocessable_entity
     end
   end
@@ -97,7 +88,8 @@ class InvoicesController < ApplicationController
         redirect_to billing_path(@billing, params: { invoice_tab_show: true })
       end
     else
-      render :process_events, status: :unprocessable_entity
+      flash.now[:error] = I18n.t("errors.messages.not_saved", count: @invoice.errors.count, resource: @invoice.class.model_name.human.downcase)
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -116,7 +108,7 @@ class InvoicesController < ApplicationController
     @old_invoice = Invoice.find(invoice_params[:id])
     authorize @old_invoice
     @invoice = @old_invoice.cancel_and_mirror
-    flash[:danger] = "Não foi possível executar essa operação!" if @invoice == @old_invoice
+    flash.now[:error] = "Não foi possível executar essa operação!" if @invoice == @old_invoice
     redirect_to invoice_path(@invoice)
   end
 
@@ -138,12 +130,11 @@ class InvoicesController < ApplicationController
   private
 
   def sanitize_currency
-    params[:invoice][:discount_cents] = (params[:invoice][:discount_cents].sub(".", "").sub(",", ".").to_d * 100).to_i
+    params[:invoice][:discount_cents] = (params[:invoice][:discount_cents].sub(".", "").sub(",", ".").to_d * 100).to_i || 0
     if params[:invoice][:billing_items_attributes].present?
       params[:invoice][:billing_items_attributes].each do |key, value|
-        value[:price_cents] = (value[:price_cents].sub(".", "").sub(",", ".").to_d * 100).to_i if value[
-          :price_cents
-        ].present?
+        value[:price_cents] = ((value[:price_cents].sub(".", "").sub(",", ".").to_d * 100).to_i if value[:price_cents].present?) || 0
+        value[:quantity] = ((value[:quantity].sub(".", "").sub(",", ".").to_d * 100).to_i if value[:quantity].present?) || 0
       end
     end
   end
@@ -155,12 +146,6 @@ class InvoicesController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def invoice_params
-    params.require(:invoice).permit(
-      :id,
-      :member_id,
-      :due_date,
-      :discount_cents,
-      billing_items_attributes: %i[id description price_cents quantity billing_type member_id payable_by _destroy],
-    )
+    params.require(:invoice).permit(:id, :member_id, :due_date, :discount_cents, billing_items_attributes: %i[id description price_cents quantity billing_type member_id payable_by _destroy])
   end
 end

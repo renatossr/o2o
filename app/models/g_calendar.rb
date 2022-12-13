@@ -47,12 +47,11 @@ class GCalendar
     events.each do |event|
       next if (event.start.nil? || event.start.date_time.nil? || event.summary.nil?) && event.status != "cancelled"
 
-      if event.start&.date_time.present?
-        calendarEvent = CalendarEvent.find_by(external_id: event.id, ical_id: event.i_cal_uid, start_at: event.start.date_time)
+      if event.i_cal_uid.blank?
+        calendarEvent = CalendarEvent.find_by(external_id: event.id)
       else
         calendarEvent = CalendarEvent.find_by(external_id: event.id, ical_id: event.i_cal_uid)
       end
-      calendarEvent = CalendarEvent.find_by(external_id: event.id) if event.i_cal_uid.blank?
       calendarEvent = CalendarEvent.new if calendarEvent.nil?
 
       calendarEvent.external_id = event.id
