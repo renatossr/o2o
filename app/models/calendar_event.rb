@@ -1,4 +1,6 @@
 class CalendarEvent < ApplicationRecord
+  EVENT_COLORS = { 1 => "#7986cb", 2 => "#33b679", 3 => "#8e24aa", 4 => "#e67c73", 5 => "#f6c026", 6 => "#f5511f", 7 => "#039be5", 8 => "#616161", 9 => "#3f51b5", 10 => "#0b8043", 11 => "#d60000" }
+
   has_one :workout, dependent: :delete
   accepts_nested_attributes_for :workout
 
@@ -62,35 +64,26 @@ class CalendarEvent < ApplicationRecord
   end
 
   def cancelled?
-    status = title
-
-    return false if status.blank?
-    return true if status.downcase.include?("cancelado")
-    status.split(/\W+/).each { |word| return true if generate_score("cancelado", word) >= 0.75 }
-    return false
+    title_include?("cancelado")
   end
 
   def replacement?
-    status = title
-
-    return false if status.blank?
-    return true if status.downcase.include?("reposição")
-    status.split(/\W+/).each { |word| return true if generate_score("reposição", word) >= 0.75 }
-    return false
+    title_include?("reposição")
   end
 
   def gympass?
-    status = title
+    title_include?("gymp")
+  end
 
-    return false if status.blank?
-    return true if status.downcase.include?("gymp")
-    status.split(/\W+/).each { |word| return true if generate_score("gymp", word) >= 0.75 }
+  def title_include?(term)
+    return false if title.blank?
+    return true if title.downcase.include?(term)
+    title.split(/\W+/).each { |word| return true if generate_score(term, word) >= 0.75 }
     return false
   end
 
   def color
-    color_hash = { 1 => "#7986cb", 2 => "#33b679", 3 => "#8e24aa", 4 => "#e67c73", 5 => "#f6c026", 6 => "#f5511f", 7 => "#039be5", 8 => "#616161", 9 => "#3f51b5", 10 => "#0b8043", 11 => "#d60000" }
-    color_id.nil? ? "#039be5" : color_hash[color_id]
+    color_id.nil? ? "#039be5" : EVENT_COLORS[color_id]
   end
 
   def process_title(title)
